@@ -1,9 +1,8 @@
 import 'package:animate_do/animate_do.dart' as anim;
 import 'package:flutter/material.dart';
-import 'package:graphql/client.dart';
 
 class Step00Connect extends StatefulWidget {
-  final Function(GraphQLClient) onDone;
+  final Function() onDone;
   Step00Connect(this.onDone);
 
   @override
@@ -18,7 +17,8 @@ class _Step00ConnectState extends State<Step00Connect> {
   String _errorMessage = '';
 
   final TextEditingController _controller =
-      TextEditingController(text: 'http://192.168.1.39:8081/query');
+      // TextEditingController(text: 'http://192.168.1.39:8081/query');
+      TextEditingController(text: 'http://localhost:8081/query');
 
   @override
   Widget build(BuildContext context) {
@@ -72,36 +72,11 @@ class _Step00ConnectState extends State<Step00Connect> {
       _connecting = true;
     });
 
-    final _httpLink = HttpLink(_controller.text);
-    final _wsLink = WebSocketLink('${_controller.text}/ws');
-    final _link = Link.split(
-      (request) => request.isSubscription,
-      _wsLink,
-      _httpLink,
-    );
-
-    final client = GraphQLClient(
-      cache: GraphQLCache(),
-      link: _link,
-    );
-
-    final res = await client.query(QueryOptions(document: gql(r' { hello }')));
-
     _connecting = false;
     _triedConnecting = true;
 
     setState(() {
-      if (res.hasException) {
-        _connectionError = true;
-        if (res.exception.graphqlErrors.isNotEmpty) {
-          _errorMessage = res.exception.graphqlErrors[0].message;
-        } else if (res.exception.linkException != null) {
-          _errorMessage = res.exception.linkException.toString();
-        }
-      } else {
-        _connectionError = false;
-        widget.onDone(client);
-      }
+      widget.onDone();
     });
   }
 }

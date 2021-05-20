@@ -32,7 +32,7 @@ class Step01Dashboard extends StatelessWidget {
               _buildButton(
                 theme: theme,
                 icon: Mdi.wrench,
-                btnLabel: Text('MIGRATION\n'),
+                btnLabel: Text('MIGRATION'),
                 description: _buildText(
                   'Upload a migration file from another Blitz',
                 ),
