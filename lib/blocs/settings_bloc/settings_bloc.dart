@@ -7,14 +7,16 @@ part 'settings_event.dart';
 part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
-  SettingsBloc() : super(SettingsState(isDarkTheme: false));
+  SettingsBloc() : super(SettingsState(darkTheme: false));
 
   @override
   Stream<SettingsState> mapEventToState(
     SettingsEvent event,
   ) async* {
     if (event is ToggleThemeEvent) {
-      yield SettingsState(isDarkTheme: !state.isDarkTheme);
+      yield state.copyWith(darkTheme: !state.darkTheme);
+    } else if (event is ChangeLanguageEvent) {
+      yield state.copyWith(langCode: event.languageCode);
     }
   }
 }

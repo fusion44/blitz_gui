@@ -1,0 +1,17 @@
+{
+  "app": {
+    "title": "Blitz GUI"
+  },
+   "dashboard": {
+    "info_button": "Info",
+    "invoice_button": "Rechnung",
+    "node_button": "Node",
+    "settings_button": "Einstellungen"
+  },
+  "settings": {
+    "language_label": "Sprache",
+    "reboot_button": "Neustart",
+    "shutdown_button": "Herunterfahren",
+    "theme_label": "Dunkles Theme"
+  }
+}

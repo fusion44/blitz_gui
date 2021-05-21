@@ -1,8 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../blocs/settings_bloc/settings_bloc.dart';
+import '../common/utils.dart';
+import '../common/widgets/translated_text.dart';
 import 'info_page.dart';
 import 'settings_page.dart';
 
@@ -13,6 +19,30 @@ class BlitzDashboard extends StatefulWidget {
 
 class _BlitzDashboardState extends State<BlitzDashboard> {
   int state = 0;
+
+  StreamSubscription<SettingsState> _sub;
+
+  @override
+  void initState() {
+    changeLocale(context, 'en');
+    updateTimeAgoLib('en');
+
+    final bloc = BlocProvider.of<SettingsBloc>(context);
+    _sub = bloc.stream.listen((state) {
+      changeLocale(context, state.langCode);
+      updateTimeAgoLib(state.langCode);
+      setState(() {});
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
@@ -69,7 +99,11 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                                     state = 0;
                                   });
                                 },
-                                child: Text('INFO'),
+                                child: TrText(
+                                  'dashboard.info_button',
+                                  overflow: TextOverflow.ellipsis,
+                                  isButton: true,
+                                ),
                               ),
                             ),
                             Container(
@@ -80,7 +114,11 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                                     state = 1;
                                   });
                                 },
-                                child: Text('NODE'),
+                                child: TrText(
+                                  'dashboard.node_button',
+                                  overflow: TextOverflow.ellipsis,
+                                  isButton: true,
+                                ),
                               ),
                             ),
                             Container(
@@ -91,7 +129,11 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                                     state = 2;
                                   });
                                 },
-                                child: Text('INVOICE'),
+                                child: TrText(
+                                  'dashboard.invoice_button',
+                                  overflow: TextOverflow.ellipsis,
+                                  isButton: true,
+                                ),
                               ),
                             ),
                             Container(
@@ -102,7 +144,11 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                                     state = 3;
                                   });
                                 },
-                                child: Text('SETTINGS'),
+                                child: TrText(
+                                  'dashboard.settings_button',
+                                  overflow: TextOverflow.ellipsis,
+                                  isButton: true,
+                                ),
                               ),
                             ),
                           ],
