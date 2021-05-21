@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import 'info_page.dart';
+import 'settings_page.dart';
 
 class BlitzDashboard extends StatefulWidget {
   @override
@@ -55,7 +56,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                     Material(
                       elevation: 4.0,
                       child: Container(
-                        width: 75,
+                        width: 80,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -101,7 +102,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                                     state = 3;
                                   });
                                 },
-                                child: Text('OFF'),
+                                child: Text('SETTINGS'),
                               ),
                             ),
                           ],
@@ -162,32 +163,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
         );
         break;
       case 3:
-        return Center(
-          child: Column(
-            children: [
-              SizedBox(height: 32.0),
-              Container(
-                height: 50.0,
-                width: 100.0,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(primary: Colors.orange),
-                  child: Text('REBOOT'),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Container(
-                height: 50.0,
-                width: 100.0,
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(primary: Colors.red),
-                  child: Text('Shutdown'),
-                ),
-              ),
-            ],
-          ),
-        );
+        return SettingsPage();
         break;
       default:
         return Text('Other State');

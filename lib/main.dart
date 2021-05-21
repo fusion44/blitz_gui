@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'blocs/settings_bloc/settings_bloc.dart';
 import 'dashboard/dashboard.dart';
 
 void main() {
@@ -7,14 +9,29 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: ThemeData.dark(),
-      home: BlitzDashboard(),
+    final bloc = SettingsBloc();
+    return BlocProvider(
+      create: (context) => bloc,
+      child: BlocBuilder<SettingsBloc, SettingsState>(
+        buildWhen: (prev, curr) {
+          if (prev is SettingsState &&
+              curr is SettingsState &&
+              prev.isDarkTheme != curr.isDarkTheme) {
+            return true;
+          }
+          return false;
+        },
+        builder: (context, state) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Demo',
+            theme: state.isDarkTheme ? ThemeData.dark() : ThemeData.light(),
+            home: BlitzDashboard(),
+          );
+        },
+      ),
     );
   }
 }
