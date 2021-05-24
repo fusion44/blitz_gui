@@ -162,11 +162,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
             SizedBox(width: 16.0),
             Container(
               height: 20,
-              child: Image.file(
-                File(
-                  '/home/pi/blitz_gui/RaspiBlitz_Logo_Icon_Negative.png',
-                ),
-              ),
+              child: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png'),
             ),
             SizedBox(width: 8),
             Text(

@@ -66,6 +66,7 @@ flutter:
     - assets/flags/no.png
 
     # icons
+    - assets/RaspiBlitz_Logo_Icon_Negative.png
     - assets/icons/link.png
     - assets/icons/lightning.png
     - assets/icons/satoshi-v2.png
