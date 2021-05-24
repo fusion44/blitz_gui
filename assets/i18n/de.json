@@ -4,7 +4,7 @@
   },
    "dashboard": {
     "info_button": "Info",
-    "invoice_button": "Rechnung",
+    "funds_button": "Gelder",
     "node_button": "Node",
     "settings_button": "Einstellungen"
   },

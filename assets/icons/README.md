@@ -1,0 +1,1 @@
+Bitcoin Icons: https://github.com/BitcoinDesign/Bitcoin-Icons

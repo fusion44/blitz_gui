@@ -9,6 +9,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../blocs/settings_bloc/settings_bloc.dart';
 import '../common/utils.dart';
 import '../common/widgets/translated_text.dart';
+import 'funds_page.dart';
 import 'info_page.dart';
 import 'settings_page.dart';
 
@@ -48,123 +49,132 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     var theme = Theme.of(context);
     return Scaffold(
       body: Container(
-        constraints: BoxConstraints.expand(),
-        // color: Colors.cyan,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Material(
-              elevation: 3.0,
-              child: Container(
-                // color: Colors.black,
-                height: 35,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 20,
-                      child: Image.file(
-                        File(
-                          '/home/pi/blitz_gui/RaspiBlitz_Logo_Icon_Negative.png',
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      'Raspiblitz V1.7 - bitcoin - mainnet',
-                      style: theme.textTheme.headline5,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+            _buildHeaderBar(theme),
+            _buildBottom(theme),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottom(ThemeData theme) {
+    return Expanded(
+      child: Container(
+        child: Row(
+          children: [
+            _buildSideBar(),
+            Expanded(
+              child: _buildBody(theme.textTheme.headline4),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Material _buildSideBar() {
+    return Material(
+      elevation: 4.0,
+      child: Container(
+        width: 80,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Container(
+              height: 50,
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    state = 0;
+                  });
+                },
+                child: TrText(
+                  'dashboard.info_button',
+                  overflow: TextOverflow.ellipsis,
+                  isButton: true,
                 ),
               ),
             ),
-            Expanded(
-              child: Container(
-                child: Row(
-                  children: [
-                    Material(
-                      elevation: 4.0,
-                      child: Container(
-                        width: 80,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                              height: 50,
-                              child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    state = 0;
-                                  });
-                                },
-                                child: TrText(
-                                  'dashboard.info_button',
-                                  overflow: TextOverflow.ellipsis,
-                                  isButton: true,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: 50,
-                              child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    state = 1;
-                                  });
-                                },
-                                child: TrText(
-                                  'dashboard.node_button',
-                                  overflow: TextOverflow.ellipsis,
-                                  isButton: true,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: 50,
-                              child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    state = 2;
-                                  });
-                                },
-                                child: TrText(
-                                  'dashboard.invoice_button',
-                                  overflow: TextOverflow.ellipsis,
-                                  isButton: true,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              height: 50,
-                              child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    state = 3;
-                                  });
-                                },
-                                child: TrText(
-                                  'dashboard.settings_button',
-                                  overflow: TextOverflow.ellipsis,
-                                  isButton: true,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: Center(
-                            child: _buildBody(theme.textTheme.headline4)),
-                      ),
-                    )
-                  ],
+            Container(
+              height: 50,
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    state = 1;
+                  });
+                },
+                child: TrText(
+                  'dashboard.node_button',
+                  overflow: TextOverflow.ellipsis,
+                  isButton: true,
                 ),
               ),
-            )
+            ),
+            Container(
+              height: 50,
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    state = 2;
+                  });
+                },
+                child: TrText(
+                  'dashboard.funds_button',
+                  overflow: TextOverflow.ellipsis,
+                  isButton: true,
+                ),
+              ),
+            ),
+            Container(
+              height: 50,
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    state = 3;
+                  });
+                },
+                child: TrText(
+                  'dashboard.settings_button',
+                  overflow: TextOverflow.ellipsis,
+                  isButton: true,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Material _buildHeaderBar(ThemeData theme) {
+    return Material(
+      elevation: 3.0,
+      child: Container(
+        color: Colors.transparent,
+        height: 35,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(width: 16.0),
+            Container(
+              height: 20,
+              child: Image.file(
+                File(
+                  '/home/pi/blitz_gui/RaspiBlitz_Logo_Icon_Negative.png',
+                ),
+              ),
+            ),
+            SizedBox(width: 8),
+            Text(
+              'Raspiblitz V1.7',
+              style: theme.textTheme.headline5,
+              textAlign: TextAlign.center,
+            ),
+            ..._buildMenu(),
           ],
         ),
       ),
@@ -186,27 +196,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
         );
         break;
       case 2:
-        return SingleChildScrollView(
-          child: Column(
-            children: [
-              Text('GIMME\nINVOICE', style: styl),
-              Divider(),
-              Text('GIMME\nINVOICE', style: styl),
-              Divider(),
-              Text('GIMME\nINVOICE', style: styl),
-              Divider(),
-              Text('GIMME\nINVOICE', style: styl),
-              Divider(),
-              Text('GIMME\nINVOICE', style: styl),
-              Divider(),
-              Text('GIMME\nINVOICE', style: styl),
-              Divider(),
-              Text('GIMME\nINVOICE', style: styl),
-              Divider(),
-              Text('GIMME\nINVOICE', style: styl),
-            ],
-          ),
-        );
+        return FundsPage();
         break;
       case 3:
         return SettingsPage();
@@ -214,5 +204,21 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
       default:
         return Text('Other State');
     }
+  }
+
+  List<Widget> _buildMenu() {
+    if (state == 2) {
+      return [
+        Spacer(),
+        TextButton(
+          onPressed: () {
+            print('add');
+          },
+          child: Text('RECEIVE'),
+        ),
+        SizedBox(width: 16.0),
+      ];
+    }
+    return [];
   }
 }
