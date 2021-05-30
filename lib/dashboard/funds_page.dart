@@ -44,6 +44,8 @@ class _FundsPageState extends State<FundsPage> {
     );
 
     final left = state.currSymbolIsLeft;
+    final color = state.darkTheme ? Colors.white : Colors.black;
+
     return Row(
       children: [
         Image.asset('assets/icons/link.png', color: Colors.deepOrange[800]),
@@ -51,13 +53,13 @@ class _FundsPageState extends State<FundsPage> {
         if (left)
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 4.0),
-            child: Image.asset('assets/icons/satoshi-v2.png'),
+            child: Image.asset('assets/icons/satoshi-v2.png', color: color),
           ),
         Text(f.format(onchain), style: theme.textTheme.headline6),
         if (!left)
           Padding(
             padding: const EdgeInsets.only(left: 4.0),
-            child: Image.asset('assets/icons/satoshi-v2.png'),
+            child: Image.asset('assets/icons/satoshi-v2.png', color: color),
           ),
         Spacer(),
         Image.asset('assets/icons/lightning.png', color: Colors.yellow[800]),
@@ -65,13 +67,13 @@ class _FundsPageState extends State<FundsPage> {
         if (left)
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 4.0),
-            child: Image.asset('assets/icons/satoshi-v2.png'),
+            child: Image.asset('assets/icons/satoshi-v2.png', color: color),
           ),
         Text(f.format(ln), style: theme.textTheme.headline6),
         if (!left)
           Padding(
             padding: const EdgeInsets.only(left: 4.0),
-            child: Image.asset('assets/icons/satoshi-v2.png'),
+            child: Image.asset('assets/icons/satoshi-v2.png', color: color),
           ),
       ],
     );

@@ -39,6 +39,7 @@ class MoneyValueView extends StatelessWidget {
         if (!settled) style = style.copyWith(color: Colors.grey);
 
         if (fee != null) {
+          final dark = state.darkTheme;
           return Container(
             width: 120,
             child: Column(
@@ -48,26 +49,26 @@ class MoneyValueView extends StatelessWidget {
                         ? MainAxisAlignment.start
                         : MainAxisAlignment.end,
                     children: [
-                      if (left) _buildSatIcon(isLeft: left),
+                      if (left) _buildSatIcon(isLeft: left, darkMode: dark),
                       Text(
                         '${numberFormat.format(amount)}',
                         style: style,
                         textAlign: textAlign,
                       ),
-                      if (!left) _buildSatIcon(isLeft: left),
+                      if (!left) _buildSatIcon(isLeft: left, darkMode: dark),
                     ]),
                 Row(
                     mainAxisAlignment: textAlign == TextAlign.start
                         ? MainAxisAlignment.start
                         : MainAxisAlignment.end,
                     children: [
-                      if (left) _buildSatIcon(isLeft: left),
+                      if (left) _buildSatIcon(isLeft: left, darkMode: dark),
                       Text(
                         '${numberFormat.format(fee)}',
                         style: style.copyWith(fontSize: 11),
                         textAlign: textAlign,
                       ),
-                      if (!left) _buildSatIcon(isLeft: left),
+                      if (!left) _buildSatIcon(isLeft: left, darkMode: dark),
                     ]),
               ],
             ),
@@ -83,16 +84,17 @@ class MoneyValueView extends StatelessWidget {
     );
   }
 
-  Widget _buildSatIcon({bool isLeft = true, dense = true}) {
+  Widget _buildSatIcon({bool isLeft = true, darkMode = false}) {
+    final color = darkMode ? Colors.white : Colors.black;
     if (isLeft) {
       return Padding(
         padding: const EdgeInsets.only(right: 2.0),
-        child: Image.asset('assets/icons/satoshi-v2.png'),
+        child: Image.asset('assets/icons/satoshi-v2.png', color: color),
       );
     } else {
       return Padding(
         padding: const EdgeInsets.only(left: 2.0),
-        child: Image.asset('assets/icons/satoshi-v2.png'),
+        child: Image.asset('assets/icons/satoshi-v2.png', color: color),
       );
     }
   }
