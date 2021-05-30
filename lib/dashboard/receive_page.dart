@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../common/widgets/translated_text.dart';
+import 'add_invoice_page.dart';
 
 class ReceivePage extends StatefulWidget {
   @override
@@ -25,7 +26,14 @@ class _ReceivePageState extends State<ReceivePage> {
                   width: 150,
                   height: 150,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => AddInvoicePage(),
+                        ),
+                      );
+                    },
                     child: TrText(
                       'wallet.lightning.short',
                       style: theme.textTheme.headline5,
