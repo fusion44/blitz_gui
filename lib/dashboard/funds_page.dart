@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -7,11 +8,48 @@ import '../common/widgets/money_value_view.dart';
 import '../common/widgets/time_ago.dart';
 
 class FundsPage extends StatefulWidget {
+  final Function(bool) _setFABVisible;
+
+  FundsPage(this._setFABVisible);
+
   @override
   _FundsPageState createState() => _FundsPageState();
 }
 
 class _FundsPageState extends State<FundsPage> {
+  ScrollController _hideFABController;
+  var _fabVisible;
+
+  @override
+  void initState() {
+    super.initState();
+    _fabVisible = true;
+    _hideFABController = ScrollController();
+    _hideFABController.addListener(() {
+      if (_hideFABController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_fabVisible == true) {
+          _fabVisible = false;
+          widget._setFABVisible(_fabVisible);
+        }
+      } else {
+        if (_hideFABController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          if (_fabVisible == false) {
+            _fabVisible = true;
+            widget._setFABVisible(_fabVisible);
+          }
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _hideFABController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -20,6 +58,7 @@ class _FundsPageState extends State<FundsPage> {
         return Padding(
           padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 3.0),
           child: ListView(
+            controller: _hideFABController,
             children: [
               _buildFundsRow(state, 2503519, 29193727, theme),
               Divider(),

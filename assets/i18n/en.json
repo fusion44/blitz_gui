@@ -3,8 +3,8 @@
     "title": "Blitz GUI"
   },
   "dashboard": {
-    "info_button": "Info",
     "funds_button": "Funds",
+    "info_button": "Info",
     "node_button": "Node",
     "settings_button": "SETTINGS"
   },
@@ -13,5 +13,13 @@
     "reboot_button": "reboot",
     "shutdown_button": "shutdown",
     "theme_label": "Dark Theme"
+  },
+  "wallet": {
+    "lightning": {
+      "short": "ln"
+    },
+    "onchain": {
+      "short": "onchain"
+    }
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +10,7 @@ import '../common/utils.dart';
 import '../common/widgets/translated_text.dart';
 import 'funds_page.dart';
 import 'info_page.dart';
+import 'receive_page.dart';
 import 'settings_page.dart';
 
 class BlitzDashboard extends StatefulWidget {
@@ -22,6 +22,8 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   int state = 0;
 
   StreamSubscription<SettingsState> _sub;
+
+  bool _fabVisible = false;
 
   @override
   void initState() {
@@ -48,6 +50,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     return Scaffold(
+      floatingActionButton: _buildFAB(context),
       body: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -90,6 +93,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                 onPressed: () {
                   setState(() {
                     state = 0;
+                    _fabVisible = false;
                   });
                 },
                 child: TrText(
@@ -105,6 +109,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                 onPressed: () {
                   setState(() {
                     state = 1;
+                    _fabVisible = false;
                   });
                 },
                 child: TrText(
@@ -120,6 +125,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                 onPressed: () {
                   setState(() {
                     state = 2;
+                    _fabVisible = true;
                   });
                 },
                 child: TrText(
@@ -135,6 +141,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                 onPressed: () {
                   setState(() {
                     state = 3;
+                    _fabVisible = false;
                   });
                 },
                 child: TrText(
@@ -170,7 +177,6 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
               style: theme.textTheme.headline5,
               textAlign: TextAlign.center,
             ),
-            ..._buildMenu(),
           ],
         ),
       ),
@@ -192,7 +198,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
         );
         break;
       case 2:
-        return FundsPage();
+        return FundsPage(_setFABVisible);
         break;
       case 3:
         return SettingsPage();
@@ -202,19 +208,27 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     }
   }
 
-  List<Widget> _buildMenu() {
-    if (state == 2) {
-      return [
-        Spacer(),
-        TextButton(
-          onPressed: () {
-            print('add');
-          },
-          child: Text('RECEIVE'),
-        ),
-        SizedBox(width: 16.0),
-      ];
-    }
-    return [];
+  void _setFABVisible(bool visible) {
+    setState(() {
+      _fabVisible = visible;
+    });
+  }
+
+  Visibility _buildFAB(BuildContext context) {
+    return Visibility(
+      visible: _fabVisible,
+      child: FloatingActionButton(
+        mini: true,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => ReceivePage(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+      ),
+    );
   }
 }

@@ -2,9 +2,9 @@
   "app": {
     "title": "Blitz GUI"
   },
-   "dashboard": {
-    "info_button": "Info",
+  "dashboard": {
     "funds_button": "Gelder",
+    "info_button": "Info",
     "node_button": "Node",
     "settings_button": "Einstellungen"
   },
@@ -13,5 +13,13 @@
     "reboot_button": "Neustart",
     "shutdown_button": "Herunterfahren",
     "theme_label": "Dunkles Theme"
+  },
+  "wallet": {
+    "lightning": {
+      "short": "ln"
+    },
+    "onchain": {
+      "short": "onchain"
+    }
   }
 }
