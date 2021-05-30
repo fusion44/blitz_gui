@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_translate/flutter_translate.dart';
 
 import '../blocs/settings_bloc/settings_bloc.dart';
 import '../common/utils.dart';
 import '../common/widgets/translated_text.dart';
+import 'debug_view.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({
@@ -83,9 +83,20 @@ class SettingsPage extends StatelessWidget {
                     isButton: true,
                   ),
                 ),
-              )
+              ),
             ],
-          )
+          ),
+          SizedBox(height: 8.0),
+          TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => DebugView(),
+                  ),
+                );
+              },
+              child: Text('DebugView'))
         ],
       ),
     );
