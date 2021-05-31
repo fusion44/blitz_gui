@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../common/widgets/keyboard/custom_keyboard.dart';
+import '../common/widgets/keyboard/keyboard.dart';
 
 class AddInvoicePage extends StatefulWidget {
   @override
@@ -18,14 +18,14 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
   void initState() {
     super.initState();
     _amtNode.addListener(() {
-      if (!_amtNode.hasFocus) {
+      if (_amtNode.hasFocus) {
         setState(() {
           _showKeyboard = true;
         });
       }
     });
     _memoNode.addListener(() {
-      if (!_memoNode.hasFocus) {
+      if (_memoNode.hasFocus) {
         setState(() {
           _showKeyboard = true;
         });
@@ -70,13 +70,25 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
             if (_showKeyboard)
               CustomKeyboard(
                 onTextInput: (input) {
-                  if (_amtNode.hasFocus) {
-                    _amtController.text = _amtController.text + input;
-                  } else if (_memoNode.hasFocus) {
-                    _memoController.text = _memoController.text + input;
+                  final ctrl = _getCurrentController();
+                  if (ctrl != null) {
+                    handleInsertText(ctrl, input);
+                  } else {
+                    print(
+                      'Warning: Receiving input but no text field is active',
+                    );
                   }
                 },
-                onBackspace: () {},
+                onBackspace: () {
+                  final ctrl = _getCurrentController();
+                  if (ctrl != null) {
+                    handleBackspace(ctrl);
+                  } else {
+                    print(
+                      'Warning: Receiving input but no text field is active',
+                    );
+                  }
+                },
                 onEnter: () {
                   if (_amtNode.hasFocus) {
                     _amtNode.nextFocus();
@@ -133,5 +145,15 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
     setState(() {
       _showKeyboard = false;
     });
+  }
+
+  TextEditingController _getCurrentController() {
+    if (_amtNode.hasFocus) {
+      return _amtController;
+    } else if (_memoNode.hasFocus) {
+      return _memoController;
+    }
+
+    return null;
   }
 }
