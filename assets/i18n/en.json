@@ -16,8 +16,12 @@
   },
   "wallet": {
     "lightning": {
+      "add_invoice": "Add Invoice",
+      "get_invoice": "Generate Invoice",
+      "memo": "Memo",
       "short": "ln"
     },
+    "new_invoice_amount": "Amount",
     "onchain": {
       "short": "onchain"
     }

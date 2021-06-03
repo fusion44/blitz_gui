@@ -16,8 +16,12 @@
   },
   "wallet": {
     "lightning": {
+      "add_invoice": "Neue Rechnung",
+      "get_invoice": "Rechnung erstellen",
+      "memo": "Memo",
       "short": "ln"
     },
+    "new_invoice_amount": "Satoshis",
     "onchain": {
       "short": "onchain"
     }
