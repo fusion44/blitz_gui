@@ -1,17 +1,16 @@
 part of 'settings_bloc.dart';
 
-@immutable
-class SettingsState {
+abstract class SettingsBaseState {
   final bool darkTheme;
   final String langCode;
   final bool currSymbolIsLeft;
-  SettingsState({
+  SettingsBaseState({
     this.darkTheme = false,
     this.langCode = 'en',
     this.currSymbolIsLeft = false,
   });
 
-  SettingsState copyWith({
+  SettingsBaseState copyWith({
     bool darkTheme,
     String langCode,
     bool currSymbolIsLeft,
@@ -23,4 +22,30 @@ class SettingsState {
     );
     return newState;
   }
+}
+
+@immutable
+class SettingsState extends SettingsBaseState {
+  SettingsState({
+    darkTheme = false,
+    langCode = 'en',
+    currSymbolIsLeft = false,
+  }) : super(
+          darkTheme: darkTheme,
+          langCode: langCode,
+          currSymbolIsLeft: currSymbolIsLeft,
+        );
+}
+
+@immutable
+class SettingsLoadedState extends SettingsBaseState {
+  SettingsLoadedState({
+    darkTheme = false,
+    langCode = 'en',
+    currSymbolIsLeft = false,
+  }) : super(
+          darkTheme: darkTheme,
+          langCode: langCode,
+          currSymbolIsLeft: currSymbolIsLeft,
+        );
 }

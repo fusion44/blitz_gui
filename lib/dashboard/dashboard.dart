@@ -21,7 +21,7 @@ class BlitzDashboard extends StatefulWidget {
 class _BlitzDashboardState extends State<BlitzDashboard> {
   int state = 0;
 
-  StreamSubscription<SettingsState> _sub;
+  StreamSubscription<SettingsBaseState> _sub;
 
   bool _fabVisible = false;
 

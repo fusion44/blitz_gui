@@ -26,7 +26,7 @@ class MoneyValueView extends StatelessWidget {
     var textTheme = theme.textTheme;
     return BlocBuilder(
       bloc: BlocProvider.of<SettingsBloc>(context),
-      builder: (BuildContext context, SettingsState state) {
+      builder: (BuildContext context, SettingsBaseState state) {
         final numberFormat = NumberFormat.currency(
           locale: state.langCode,
           symbol: '',

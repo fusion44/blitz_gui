@@ -17,7 +17,7 @@ class SettingsPage extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: 32.0),
-          BlocBuilder<SettingsBloc, SettingsState>(
+          BlocBuilder<SettingsBloc, SettingsBaseState>(
             bloc: BlocProvider.of(context),
             builder: (context, state) {
               return ListTile(
@@ -34,7 +34,7 @@ class SettingsPage extends StatelessWidget {
               );
             },
           ),
-          BlocBuilder<SettingsBloc, SettingsState>(
+          BlocBuilder<SettingsBloc, SettingsBaseState>(
             bloc: BlocProvider.of(context),
             builder: (context, state) {
               return ListTile(

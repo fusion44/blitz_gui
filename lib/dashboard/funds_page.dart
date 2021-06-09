@@ -53,7 +53,7 @@ class _FundsPageState extends State<FundsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return BlocBuilder<SettingsBloc, SettingsState>(
+    return BlocBuilder<SettingsBloc, SettingsBaseState>(
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 3.0),
@@ -71,7 +71,7 @@ class _FundsPageState extends State<FundsPage> {
   }
 
   Widget _buildFundsRow(
-    SettingsState state,
+    SettingsBaseState state,
     int onchain,
     int ln,
     ThemeData theme,
