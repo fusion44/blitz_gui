@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,6 +17,25 @@ class _Step00ConnectState extends State<Step00Connect> {
   final TextEditingController _controller =
       TextEditingController(text: 'http://127.0.0.1:8000/');
 
+  StreamSubscription<SetupState> _sub;
+
+  @override
+  void initState() {
+    super.initState();
+    final bloc = BlocProvider.of<SetupBloc>(context);
+    _sub = bloc.stream.listen((state) {
+      if (state is ConnectingNodeSuccess) {
+        widget.onDone();
+      }
+    });
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await _sub.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -30,10 +51,6 @@ class _Step00ConnectState extends State<Step00Connect> {
             error: state.errorMessage,
           );
         } else if (state is ConnectingNodeSuccess) {
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            widget.onDone();
-          });
-
           var buffer = StringBuffer();
           for (var key in state.state.keys) {
             buffer.writeln(key + ': ' + state.state[key].toString());
