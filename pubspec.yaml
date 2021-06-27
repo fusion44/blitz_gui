@@ -38,6 +38,7 @@ dependencies:
   flutter_translate: ^3.0.1
   hive_flutter: ^1.0.0
   dio: ^4.0.0
+  http: ^0.13.3
 
 dev_dependencies:
   flutter_test:

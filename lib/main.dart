@@ -57,10 +57,7 @@ class MyApp extends StatelessWidget {
             ],
             supportedLocales: localizationDelegate.supportedLocales,
             locale: localizationDelegate.currentLocale,
-            home: BlocProvider(
-              create: (context) => SetupBloc(),
-              child: SetupPage(),
-            ),
+            home: SetupPage(),
           );
         },
       ),

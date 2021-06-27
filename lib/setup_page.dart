@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 
 import 'setup/00_connect.dart';
 import 'setup/01_setup_type.dart';
 import 'setup/02_setup_from_scratch.dart';
+import 'setup/setup/bloc/setup_bloc.dart';
 
 class SetupPage extends StatefulWidget {
   @override
@@ -11,8 +13,7 @@ class SetupPage extends StatefulWidget {
 }
 
 class _SetupPageState extends State<SetupPage> {
-  // Step 0: Connect to node
-  // Step 1: Chose setup mode
+  final _setupBloc = SetupBloc();
 
   int _currentStep = 0;
   bool _step0Done = false;
@@ -21,20 +22,29 @@ class _SetupPageState extends State<SetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: IntroductionScreen(
-        pages: _buildPages(),
-        showNextButton: _currentStepDone,
-        freeze: !_currentStepDone,
-        next: Text('NEXT'),
-        onChange: (next) {
-          setState(() {
-            _currentStep = next;
-          });
-        },
-        showDoneButton: false,
+    return BlocProvider.value(
+      value: _setupBloc,
+      child: Container(
+        child: IntroductionScreen(
+          pages: _buildPages(),
+          showNextButton: _currentStepDone,
+          freeze: !_currentStepDone,
+          next: Text('NEXT'),
+          onChange: (next) {
+            setState(() {
+              _currentStep = next;
+            });
+          },
+          showDoneButton: false,
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    await _setupBloc.dispose();
   }
 
   List<PageViewModel> _buildPages() {
@@ -80,7 +90,10 @@ class _SetupPageState extends State<SetupPage> {
           return Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => Step02SetupFromScratch(),
+              builder: (BuildContext context) => BlocProvider.value(
+                value: _setupBloc,
+                child: Step02SetupFromScratch(),
+              ),
             ),
           );
         } else {
