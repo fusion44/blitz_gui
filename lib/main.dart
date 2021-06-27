@@ -8,7 +8,8 @@ import 'package:path_provider/path_provider.dart';
 
 import 'blocs/settings_bloc/settings_bloc.dart';
 import 'common/utils.dart';
-import 'dashboard/dashboard.dart';
+import 'setup/setup/bloc/setup_bloc.dart';
+import 'setup_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -56,7 +57,10 @@ class MyApp extends StatelessWidget {
             ],
             supportedLocales: localizationDelegate.supportedLocales,
             locale: localizationDelegate.currentLocale,
-            home: BlitzDashboard(),
+            home: BlocProvider(
+              create: (context) => SetupBloc(),
+              child: SetupPage(),
+            ),
           );
         },
       ),
