@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
 
+import '../common/widgets/translated_text.dart';
+
 class Step01Dashboard extends StatelessWidget {
-  static final String newNode = 'newNode';
-  static final String migration = 'migration';
-  static final String recover = 'recover';
+  static const String newNode = 'newNode';
+  static const String migration = 'migration';
+  static const String recover = 'recover';
 
   final Function(String) onPressed;
 
@@ -15,47 +17,46 @@ class Step01Dashboard extends StatelessWidget {
     final theme = Theme.of(context);
     return Column(
       children: [
-        Text('Hard Drive setup', style: theme.textTheme.headline5),
+        TrText('setup.choose_setup_type', style: theme.textTheme.headline5),
         SizedBox(height: 8),
-        Container(
-          child: Wrap(
-            spacing: 25,
-            runSpacing: 25,
-            children: [
-              _buildButton(
-                theme: theme,
-                icon: Mdi.bitcoin,
-                btnLabel: Text('BITCOIN / LIGHTNING'),
-                description: _buildText('Setup the node from scratch'),
-                onPressed: () => onPressed(newNode),
+        Wrap(
+          spacing: 25,
+          runSpacing: 25,
+          children: [
+            _buildButton(
+              theme: theme,
+              icon: Mdi.bitcoin,
+              btnLabel: TrText('setup.btn.new_node_from_scratch'),
+              description: TrText(
+                'setup.btn.new_node_from_scratch_desc',
+                textAlign: TextAlign.center,
               ),
-              _buildButton(
-                theme: theme,
-                icon: Mdi.wrench,
-                btnLabel: Text('MIGRATION'),
-                description: _buildText(
-                  'Upload a migration file from another Blitz',
-                ),
-                onPressed: () => onPressed(migration),
+              onPressed: () => onPressed(newNode),
+            ),
+            _buildButton(
+              theme: theme,
+              icon: Mdi.wrench,
+              btnLabel: TrText('setup.btn.migrate'),
+              description: TrText(
+                'setup.btn.migrate_desc',
+                textAlign: TextAlign.center,
               ),
-              _buildButton(
-                theme: theme,
-                icon: Icons.import_export,
-                btnLabel: Text('RECOVER'),
-                description: _buildText(
-                  'Use data found on the connected external hard drive.',
-                ),
-                onPressed: () => onPressed(recover),
-              )
-            ],
-          ),
+              onPressed: () => onPressed(migration),
+            ),
+            _buildButton(
+              theme: theme,
+              icon: Icons.import_export,
+              btnLabel: TrText('setup.btn.recover'),
+              description: TrText(
+                'setup.btn.recover_desc',
+                textAlign: TextAlign.center,
+              ),
+              onPressed: () => onPressed(recover),
+            )
+          ],
         ),
       ],
     );
-  }
-
-  Text _buildText(String text, [TextAlign align = TextAlign.center]) {
-    return Text(text, maxLines: 2, textAlign: align);
   }
 
   Widget _buildButton({
@@ -63,7 +64,7 @@ class Step01Dashboard extends StatelessWidget {
     Widget btnLabel,
     IconData icon,
     Widget description,
-    double size = 250,
+    double size = 200,
     Function onPressed,
   }) {
     final btn = Container(

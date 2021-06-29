@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import '../common/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../common/widgets/translated_text.dart';
 import 'setup/bloc/setup_bloc.dart';
 
 class Step00Connect extends StatefulWidget {
@@ -20,20 +22,9 @@ class _Step00ConnectState extends State<Step00Connect> {
   StreamSubscription<SetupState> _sub;
 
   @override
-  void initState() {
-    super.initState();
-    final bloc = BlocProvider.of<SetupBloc>(context);
-    _sub = bloc.stream.listen((state) {
-      if (state is ConnectingNodeSuccess) {
-        widget.onDone();
-      }
-    });
-  }
-
-  @override
   void dispose() async {
     super.dispose();
-    await _sub.cancel();
+    await _sub?.cancel();
   }
 
   @override
@@ -63,7 +54,7 @@ class _Step00ConnectState extends State<Step00Connect> {
     );
   }
 
-  Column _buildBody(
+  Widget _buildBody(
     ThemeData theme, {
     String error = '',
     String successText = '',
@@ -73,38 +64,28 @@ class _Step00ConnectState extends State<Step00Connect> {
 
     return Column(
       children: [
-        Text('Connect to your Raspiblitz', style: theme.textTheme.headline5),
+        SizedBox(height: 8),
+        TrText(
+          'setup.header_establish_connection',
+          style: theme.textTheme.headline6,
+        ),
         SizedBox(height: 8),
         TextField(
           controller: _controller,
           enabled: !working,
           decoration: InputDecoration(
-            labelText: 'Enter the URL of your Blitz here',
+            labelText: tr('setup.input_label.enter_url'),
           ),
         ),
         SizedBox(height: 16),
         error.isNotEmpty ? Text(error) : Container(),
-        successText.isNotEmpty
-            ? Text(
-                'TODO: Make it look nicer',
-                style: theme.textTheme.bodyText1.copyWith(
-                  color: Colors.yellow,
-                ),
-              )
-            : Container(),
-        successText.isNotEmpty
-            ? Text(
-                'Response:',
-                style: theme.textTheme.headline6,
-              )
-            : Container(),
-        successText.isNotEmpty ? Text(successText, maxLines: 5) : Container(),
-        successText.isNotEmpty
-            ? Text(
-                'You may proceed to next screen',
-                style: theme.textTheme.headline6,
-              )
-            : Container(),
+        if (successText.isNotEmpty) Text('Response:'),
+        if (successText.isNotEmpty) Text(successText, maxLines: 5),
+        if (successText.isNotEmpty)
+          ElevatedButton(
+            onPressed: () => widget.onDone(),
+            child: TrText('setup.btn.next_step', isButton: true),
+          ),
         SizedBox(height: 16),
         successText.isEmpty
             ? Row(
@@ -112,12 +93,15 @@ class _Step00ConnectState extends State<Step00Connect> {
                 children: [
                   ElevatedButton(
                     onPressed: working ? null : () => _connect(),
-                    child: Text('connect'.toUpperCase()),
+                    child: TrText('setup.btn.connect_to_api', isButton: true),
                   ),
                   SizedBox(width: 8.0),
                   ElevatedButton(
                     onPressed: working ? null : () => _scan_qr(),
-                    child: Text('scan qr'.toUpperCase()),
+                    child: TrText(
+                      'setup.btn.scan_qr_with_connection_details',
+                      isButton: true,
+                    ),
                   )
                 ],
               )

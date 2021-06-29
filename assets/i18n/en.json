@@ -14,6 +14,31 @@
     "shutdown_button": "shutdown",
     "theme_label": "Dark Theme"
   },
+  "setup": {
+    "btn": {
+      "connect_to_api": "Connect",
+      "migrate": "Migrate",
+      "migrate_desc": "Upload a migration file from another Blitz",
+      "new_node_from_scratch": "New",
+      "new_node_from_scratch_desc": "Setup a new node from scratch. This will erase all data on the disk.",
+      "next_step": "next",
+      "recover": "Recover",
+      "recover_desc": "If data on the external drive is found then this data will be used to recover the RaspiBlitz",
+      "scan_qr_with_connection_details": "Scan QR Code"
+    },
+    "choose_setup_type": "Chose the type of the setup",
+    "header_establish_connection": "Connect to your RaspiBlitz",
+    "input_label": {
+      "enter_url": "Enter the URL of your RaspiBlitz here"
+    },
+    "timeline": {
+      "choose_setup_type": "Setup Type",
+      "final_steps": "Final Steps",
+      "initial_connect_to_node": "Connect",
+      "set_node_name": "Node Name",
+      "set_passwords_a_b": "Passwords"
+    }
+  },
   "wallet": {
     "lightning": {
       "add_invoice": "Add Invoice",

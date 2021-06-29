@@ -14,6 +14,31 @@
     "shutdown_button": "Herunterfahren",
     "theme_label": "Dunkles Theme"
   },
+  "setup": {
+    "btn": {
+      "connect_to_api": "Verbinden",
+      "migrate": "Migrieren",
+      "migrate_desc": "Die Migrationsdatei eines alten RaspiBlitz hoch laden",
+      "new_node_from_scratch": "Neu",
+      "new_node_from_scratch_desc": "Setze eine neue Node auf. Dies wird alle Daten auf der Festplatte löschen.",
+      "next_step": "Weiter",
+      "recover": "Wiederherstellen",
+      "recover_desc": "Wenn alte Daten auf der HDD vorhanden sind, wird der RaspiBlitz anhand dieser Daten wieder hergestellt.",
+      "scan_qr_with_connection_details": "QR Code Einscannen"
+    },
+    "choose_setup_type": "Wähle die Art des Setups",
+    "header_establish_connection": "Verbindung zum RaspiBlitz herstellen",
+    "input_label": {
+      "enter_url": "Die URL deines RaspiBlitz hier eintragen"
+    },
+    "timeline": {
+      "choose_setup_type": "Setup Type",
+      "final_steps": "Letzte Schritte",
+      "initial_connect_to_node": "Verbinden",
+      "set_node_name": "Node Name",
+      "set_passwords_a_b": "Passwörter A / B"
+    }
+  },
   "wallet": {
     "lightning": {
       "add_invoice": "Neue Rechnung",
