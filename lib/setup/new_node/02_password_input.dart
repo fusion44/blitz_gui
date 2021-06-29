@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:validators/validators.dart' as v;
 
-class Step02SetupFromScratch extends StatefulWidget {
+class PasswordInputPage extends StatefulWidget {
   @override
-  _Step02SetupFromScratchState createState() => _Step02SetupFromScratchState();
+  _PasswordInputPageState createState() => _PasswordInputPageState();
 }
 
-class _Step02SetupFromScratchState extends State<Step02SetupFromScratch>
+class _PasswordInputPageState extends State<PasswordInputPage>
     with TickerProviderStateMixin {
   final _nameController = TextEditingController();
   final _passAController = TextEditingController();

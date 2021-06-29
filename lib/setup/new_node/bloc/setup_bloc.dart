@@ -9,13 +9,13 @@ import 'package:meta/meta.dart';
 part 'setup_event.dart';
 part 'setup_state.dart';
 
-class SetupBloc extends Bloc<SetupEvent, SetupState> {
+class NewNodeSetupBloc extends Bloc<SetupEvent, SetupState> {
   final _client = http.Client();
   StreamSubscription<http.StreamedResponse> _sub;
 
   String url;
 
-  SetupBloc() : super(SetupInitial());
+  NewNodeSetupBloc() : super(SetupInitial());
 
   Future<void> dispose() async {
     if (_sub != null) {

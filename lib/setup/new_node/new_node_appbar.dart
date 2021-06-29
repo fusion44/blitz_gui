@@ -1,10 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:mdi/mdi.dart';
 import 'package:timelines/timelines.dart';
 
-import '../common/widgets/translated_text.dart';
+import '../../common/widgets/translated_text.dart';
 
 const completeColor = Color(0xff5e6172);
 const inProgressColor = Color(0xff5ec792);
@@ -12,12 +11,12 @@ const todoColor = Color(0xffd1d2d7);
 
 const _steps = [
   {
-    'name': 'setup.timeline.initial_connect_to_node',
-    'icon': Icons.add_link,
+    'name': 'setup.timeline.prepare_sd_card',
+    'icon': Icons.sd_card,
   },
   {
-    'name': 'setup.timeline.choose_setup_type',
-    'icon': Mdi.hammerScrewdriver,
+    'name': 'setup.timeline.initial_connect_to_node',
+    'icon': Icons.add_link,
   },
   {
     'name': 'setup.timeline.set_node_name',
@@ -33,10 +32,10 @@ const _steps = [
   },
 ];
 
-class TimelineAppBar extends StatelessWidget implements PreferredSizeWidget {
+class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final int _currentStep;
 
-  const TimelineAppBar(this._currentStep, {Key key}) : super(key: key);
+  const NewNodeAppBar(this._currentStep, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

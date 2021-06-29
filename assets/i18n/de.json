@@ -17,6 +17,7 @@
   "setup": {
     "btn": {
       "connect_to_api": "Verbinden",
+      "flash_sd_card": "Erstellen",
       "migrate": "Migrieren",
       "migrate_desc": "Die Migrationsdatei eines alten RaspiBlitz hoch laden",
       "new_node_from_scratch": "Neu",
@@ -24,17 +25,23 @@
       "next_step": "Weiter",
       "recover": "Wiederherstellen",
       "recover_desc": "Wenn alte Daten auf der HDD vorhanden sind, wird der RaspiBlitz anhand dieser Daten wieder hergestellt.",
-      "scan_qr_with_connection_details": "QR Code Einscannen"
+      "scan_qr_with_connection_details": "QR Code Einscannen",
+      "skip_to_next_step": "Überspringen"
     },
     "choose_setup_type": "Wähle die Art des Setups",
+    "flash_sd_header": "SD-Karte vorbereiten",
     "header_establish_connection": "Verbindung zum RaspiBlitz herstellen",
     "input_label": {
       "enter_url": "Die URL deines RaspiBlitz hier eintragen"
+    },
+    "question": {
+      "existing_sd_or_flash_new": "Wenn du eine frisch erstellte SD Karte hast, dann kannst du die Erstellung überspringen."
     },
     "timeline": {
       "choose_setup_type": "Setup Type",
       "final_steps": "Letzte Schritte",
       "initial_connect_to_node": "Verbinden",
+      "prepare_sd_card": "SD Karte",
       "set_node_name": "Node Name",
       "set_passwords_a_b": "Passwörter A / B"
     }

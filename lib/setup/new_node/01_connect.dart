@@ -1,21 +1,21 @@
 import 'dart:async';
 
-import '../common/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../common/widgets/translated_text.dart';
-import 'setup/bloc/setup_bloc.dart';
+import '../../common/utils.dart';
+import '../../common/widgets/translated_text.dart';
+import 'bloc/setup_bloc.dart';
 
-class Step00Connect extends StatefulWidget {
+class ConnectPage extends StatefulWidget {
   final Function() onDone;
-  Step00Connect(this.onDone);
+  ConnectPage(this.onDone);
 
   @override
-  _Step00ConnectState createState() => _Step00ConnectState();
+  _ConnectPageState createState() => _ConnectPageState();
 }
 
-class _Step00ConnectState extends State<Step00Connect> {
+class _ConnectPageState extends State<ConnectPage> {
   final TextEditingController _controller =
       TextEditingController(text: 'http://127.0.0.1:8000/');
 
@@ -30,7 +30,7 @@ class _Step00ConnectState extends State<Step00Connect> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return BlocBuilder<SetupBloc, SetupState>(
+    return BlocBuilder<NewNodeSetupBloc, SetupState>(
       builder: (context, state) {
         if (state is SetupInitial) {
           return _buildBody(theme);
@@ -111,7 +111,7 @@ class _Step00ConnectState extends State<Step00Connect> {
   }
 
   void _connect() async {
-    BlocProvider.of<SetupBloc>(context).add(
+    BlocProvider.of<NewNodeSetupBloc>(context).add(
       ConnectNodeEvent(_controller.text),
     );
   }

@@ -3,14 +3,14 @@ import 'package:mdi/mdi.dart';
 
 import '../common/widgets/translated_text.dart';
 
-class Step01Dashboard extends StatelessWidget {
+class SetupTypeSwitch extends StatelessWidget {
   static const String newNode = 'newNode';
   static const String migration = 'migration';
   static const String recover = 'recover';
 
   final Function(String) onPressed;
 
-  const Step01Dashboard({Key key, this.onPressed}) : super(key: key);
+  const SetupTypeSwitch({Key key, this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

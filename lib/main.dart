@@ -8,8 +8,9 @@ import 'package:path_provider/path_provider.dart';
 
 import 'blocs/settings_bloc/settings_bloc.dart';
 import 'common/utils.dart';
-import 'setup/setup/bloc/setup_bloc.dart';
-import 'setup_page.dart';
+import 'setup/new_node/new_node_setup_page.dart';
+import 'setup/setup_home.dart';
+import 'setup/setup_type_switch.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,16 +35,23 @@ void main() async {
   runApp(LocalizedApp(delegate, MyApp(bloc)));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final SettingsBloc _bloc;
 
   MyApp(this._bloc);
 
   @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  String _setupType;
+
+  @override
   Widget build(BuildContext context) {
     var localizationDelegate = LocalizedApp.of(context).delegate;
     return BlocProvider.value(
-      value: _bloc,
+      value: widget._bloc,
       child: BlocBuilder<SettingsBloc, SettingsBaseState>(
         builder: (context, state) {
           return MaterialApp(
@@ -57,10 +65,24 @@ class MyApp extends StatelessWidget {
             ],
             supportedLocales: localizationDelegate.supportedLocales,
             locale: localizationDelegate.currentLocale,
-            home: SetupPage(),
+            home: _buildHome(context),
           );
         },
       ),
     );
+  }
+
+  Widget _buildHome(BuildContext context) {
+    if (_setupType == null || _setupType.isEmpty) {
+      return SetupHome((type) {
+        setState(() {
+          _setupType = type;
+        });
+      });
+    } else if (_setupType == SetupTypeSwitch.newNode) {
+      return NewNodeSetupPage();
+    } else {
+      return Scaffold(body: Center(child: Text('Unknown: $_setupType')));
+    }
   }
 }
