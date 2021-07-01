@@ -8,7 +8,7 @@ import '../../common/widgets/translated_text.dart';
 import 'bloc/setup_bloc.dart';
 
 class ConnectPage extends StatefulWidget {
-  final Function() onDone;
+  final Function(int) onDone;
   ConnectPage(this.onDone);
 
   @override
@@ -83,7 +83,7 @@ class _ConnectPageState extends State<ConnectPage> {
         if (successText.isNotEmpty) Text(successText, maxLines: 5),
         if (successText.isNotEmpty)
           ElevatedButton(
-            onPressed: () => widget.onDone(),
+            onPressed: () => widget.onDone(1),
             child: TrText('setup.btn.next_step', isButton: true),
           ),
         SizedBox(height: 16),

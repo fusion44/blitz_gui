@@ -1,4 +1,12 @@
 {
+  "alert_dialog": {
+    "cancel": "Cancel",
+    "confirm_overwrite_file_body": "Overwrite file?",
+    "confirm_overwrite_file_title": "File exists.",
+    "ok": "OK",
+    "overwrite": "Overwrite",
+    "retry": "Retry"
+  },
   "app": {
     "title": "Blitz GUI"
   },
@@ -17,18 +25,24 @@
   "setup": {
     "btn": {
       "connect_to_api": "Connect",
+      "delete_downloaded_files": "Delete",
+      "finish_step": "Finish",
       "flash_sd_card": "Flash",
       "migrate": "Migrate",
       "migrate_desc": "Upload a migration file from another Blitz",
       "new_node_from_scratch": "New",
       "new_node_from_scratch_desc": "Setup a new node from scratch. This will erase all data on the disk.",
       "next_step": "next",
+      "open_etcher_application": "Open Etcher",
       "recover": "Recover",
       "recover_desc": "If data on the external drive is found then this data will be used to recover the RaspiBlitz",
       "scan_qr_with_connection_details": "Scan QR Code",
-      "skip_to_next_step": "Skip"
+      "skip_to_next_step": "Skip",
+      "start_download_files": "Download"
     },
     "choose_setup_type": "Chose the type of the setup",
+    "downloading_file": "Downloading {file}",
+    "downloading_file_progress_next": "{downloadedMiB} MiB of {totalMiB} MiB ({percent} %)",
     "flash_sd_header": "Memory card preparation",
     "header_establish_connection": "Connect to your RaspiBlitz",
     "input_label": {
@@ -37,6 +51,12 @@
     "question": {
       "existing_sd_or_flash_new": "Do you have a flashed SD card with latest RaspiBlitz version already? If so, you can skip the next step. If not, we'll help you flashing a new one."
     },
+    "sd_card_is_ready_header": "Your SD-Card is ready!",
+    "sd_card_ready_delete_downloaded_files": "You may also delete downloaded resources or keep them for your next RaspiBlitz if you want.",
+    "sd_card_ready_next_steps_message": "Now put the SD-card into your RaspiBlitz and turn it on. It may take a while until the RaspiBlitz is fully booted.",
+    "sd_card_ready_to_flash_explanation": "The sd card will be flashed by an external application called \"balena Etcher\". Click the button below to start Etcher. Make sure the SD-card is inserted and recognized by the operating system. Proceed in Etcher by choosing the SD-card and the hit flash! We'll proceed when the Etcher window is closed.",
+    "sd_card_ready_to_flash_header": "Ready to flash the SD-card",
+    "sd_cart_waiting_for_etcher": "Waiting for Etcher to finish ...",
     "timeline": {
       "choose_setup_type": "Setup Type",
       "final_steps": "Final Steps",

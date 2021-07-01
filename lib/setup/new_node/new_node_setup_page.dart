@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '00_prepare_sd_card_page.dart';
+import '01_connect.dart';
 import 'bloc/setup_bloc.dart';
 import 'new_node_appbar.dart';
 
@@ -44,6 +45,8 @@ class _NewNodeSetupPageState extends State<NewNodeSetupPage> {
     switch (_currentStep) {
       case 0:
         return PrepareSDCardPage(_onStepDone);
+      case 1:
+        return ConnectPage(_onStepDone);
       default:
         return Center(child: Text('Unknown: $_currentStep'));
     }

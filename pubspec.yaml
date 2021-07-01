@@ -39,6 +39,7 @@ dependencies:
   dio: ^4.0.0
   http: ^0.13.3
   timelines: ^0.1.0
+  equatable: ^2.0.3
 
 dev_dependencies:
   flutter_test:

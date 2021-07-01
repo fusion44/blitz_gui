@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../common/widgets/translated_text.dart';
+import 'prepare_sd_card/flash_sd_card.dart';
 
 class PrepareSDCardPage extends StatefulWidget {
   final Function(int) onStepDone;
@@ -23,8 +24,10 @@ class _PrepareSDCardPageState extends State<PrepareSDCardPage> {
             SizedBox(height: 8.0),
             TrText('setup.flash_sd_header', style: theme.textTheme.headline4),
             SizedBox(height: 8.0),
-            TrText('setup.question.existing_sd_or_flash_new',
-                textAlign: TextAlign.center),
+            TrText(
+              'setup.question.existing_sd_or_flash_new',
+              textAlign: TextAlign.center,
+            ),
             SizedBox(height: 8.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +49,20 @@ class _PrepareSDCardPageState extends State<PrepareSDCardPage> {
     );
   }
 
-  void _onNewSDCard() {}
+  void _onNewSDCard() async {
+    final res = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (ctx) => FlashSDCardPage()),
+    );
 
-  void _onExistingSDCard() {}
+    if (res != null && res is bool && res) {
+      widget.onStepDone(0);
+    }
+  }
+
+  void _onExistingSDCard() {
+    // TODO: implement me
+    final snackBar = SnackBar(content: Text('TODO :('));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }
