@@ -29,8 +29,8 @@ void main() async {
       await bloc.stream.firstWhere((s) => s is SettingsLoadedState);
 
   var delegate = await LocalizationDelegate.create(
-    fallbackLocale: res.langCode,
-    supportedLocales: ['en', 'de'],
+    fallbackLocale: 'en',
+    supportedLocales: ['en'],
   );
   runApp(LocalizedApp(delegate, MyApp(bloc)));
 }
