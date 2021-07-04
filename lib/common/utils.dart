@@ -5,7 +5,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 /// Translates a string with the given [key] and the [args].
-String tr(String key, [Map<String, dynamic> args]) {
+String tr(String key, [Map<String, dynamic> args = const <String, dynamic>{}]) {
   return translate(key, args: args);
 }
 
@@ -28,7 +28,7 @@ LanguageDisplayData getLanguageCodeDisplayData(String code) {
         Image.asset('assets/flags/no.png'),
       );
     default:
-      return LanguageDisplayData('Unknown', null);
+      throw UnsupportedError('Language "$code" is not yet supported.');
   }
 }
 

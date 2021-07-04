@@ -12,7 +12,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsBaseState> {
   final String _dbName = 'settings';
   final String _keyTheme = 'settings_is_dark';
   final String _keyLanguage = 'settings_language';
-  Box _box;
+  late Box _box;
 
   SettingsBloc() : super(SettingsState(darkTheme: false));
 

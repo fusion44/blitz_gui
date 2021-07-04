@@ -9,33 +9,10 @@ const completeColor = Color(0xff5e6172);
 const inProgressColor = Color(0xff5ec792);
 const todoColor = Color(0xffd1d2d7);
 
-const _steps = [
-  {
-    'name': 'setup.timeline.prepare_sd_card',
-    'icon': Icons.sd_card,
-  },
-  {
-    'name': 'setup.timeline.initial_connect_to_node',
-    'icon': Icons.add_link,
-  },
-  {
-    'name': 'setup.timeline.set_node_name',
-    'icon': Icons.signal_wifi_4_bar_lock_outlined,
-  },
-  {
-    'name': 'setup.timeline.set_passwords_a_b',
-    'icon': Icons.signal_wifi_4_bar_lock_outlined,
-  },
-  {
-    'name': 'setup.timeline.final_steps',
-    'icon': Icons.signal_wifi_4_bar_lock_outlined,
-  },
-];
-
 class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final int _currentStep;
 
-  const NewNodeAppBar(this._currentStep, {Key key}) : super(key: key);
+  const NewNodeAppBar(this._currentStep, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +25,10 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
           connectorTheme: ConnectorThemeData(space: 30.0, thickness: 5.0),
         ),
         builder: TimelineTileBuilder.connected(
-          itemCount: _steps.length,
+          itemCount: _steps,
           connectionDirection: ConnectionDirection.before,
           itemExtentBuilder: (_, __) =>
-              MediaQuery.of(context).size.width / _steps.length,
+              MediaQuery.of(context).size.width / _steps,
           contentsBuilder: _contentsBuilder,
           indicatorBuilder: _indicatorBuilder,
           connectorBuilder: _connectorBuilder,
@@ -73,16 +50,16 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
   }
 
-  Widget _connectorBuilder(_, index, type) {
+  Widget? _connectorBuilder(_, index, type) {
     if (index > 0) {
       if (index == _currentStep) {
         final prevColor = _getColor(index - 1);
         final color = _getColor(index);
         List<Color> gradientColors;
         if (type == ConnectorType.start) {
-          gradientColors = [Color.lerp(prevColor, color, 0.5), color];
+          gradientColors = [Color.lerp(prevColor, color, 0.5)!, color];
         } else {
-          gradientColors = [prevColor, Color.lerp(prevColor, color, 0.5)];
+          gradientColors = [prevColor, Color.lerp(prevColor, color, 0.5)!];
         }
         return DecoratedLineConnector(
           decoration: BoxDecoration(
@@ -97,14 +74,14 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
     }
   }
 
-  Widget _indicatorBuilder(_, index) {
+  Widget? _indicatorBuilder(_, index) {
     var color;
     var child;
     if (index == _currentStep) {
       color = inProgressColor;
       child = Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Icon(_steps[index]['icon'], size: 15),
+        child: Icon(_getIcon(index), size: 15),
       );
     } else if (index < _currentStep) {
       color = completeColor;
@@ -138,7 +115,7 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
             size: Size(15.0, 15.0),
             painter: _BezierPainter(
               color: color,
-              drawEnd: index < _steps.length - 1,
+              drawEnd: index < _steps - 1,
             ),
           ),
           OutlinedDotIndicator(
@@ -154,7 +131,7 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 15.0),
       child: TrText(
-        _steps[index]['name'],
+        _getName(index),
         style: TextStyle(
           fontWeight: FontWeight.bold,
           color: _getColor(index),
@@ -162,11 +139,46 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
+
+  static const _steps = 5;
+  String _getName(int index) {
+    switch (index) {
+      case 0:
+        return 'setup.timeline.prepare_sd_card';
+      case 1:
+        return 'setup.timeline.initial_connect_to_node';
+      case 2:
+        return 'setup.timeline.set_node_name';
+      case 3:
+        return 'setup.timeline.set_passwords_a_b';
+      case 4:
+        return 'setup.timeline.final_steps';
+      default:
+        throw RangeError.index(index, []);
+    }
+  }
+
+  IconData _getIcon(int index) {
+    switch (index) {
+      case 0:
+        return Icons.sd_card;
+      case 1:
+        return Icons.add_link;
+      case 2:
+        return Icons.signal_wifi_4_bar_lock_outlined;
+      case 3:
+        return Icons.signal_wifi_4_bar_lock_outlined;
+      case 4:
+        return Icons.signal_wifi_4_bar_lock_outlined;
+      default:
+        throw RangeError.index(index, []);
+    }
+  }
 }
 
 class _BezierPainter extends CustomPainter {
   const _BezierPainter({
-    @required this.color,
+    required this.color,
     this.drawStart = true,
     this.drawEnd = true,
   });

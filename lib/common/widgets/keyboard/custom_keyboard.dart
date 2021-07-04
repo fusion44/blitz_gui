@@ -6,12 +6,12 @@ import 'text_key.dart';
 // Basis for this code: https://medium.com/flutter-community/custom-in-app-keyboard-in-flutter-b925d56c8465
 
 class CustomKeyboard extends StatefulWidget {
-  final ValueSetter<String> onTextInput;
-  final VoidCallback onBackspace;
-  final VoidCallback onEnter;
+  final ValueSetter<String>? onTextInput;
+  final VoidCallback? onBackspace;
+  final VoidCallback? onEnter;
 
   CustomKeyboard({
-    Key key,
+    Key? key,
     this.onTextInput,
     this.onBackspace,
     this.onEnter,

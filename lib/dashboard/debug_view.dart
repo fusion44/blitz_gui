@@ -24,7 +24,6 @@ class _DebugViewState extends State<DebugView> {
         ),
       ),
     );
-    ;
   }
 }
 

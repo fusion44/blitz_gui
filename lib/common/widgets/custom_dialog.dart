@@ -32,8 +32,8 @@ class Dialog extends StatelessWidget {
   ///
   /// Typically used in conjunction with [showDialog].
   const Dialog({
-    Key key,
-    this.child,
+    Key? key,
+    required this.child,
     this.insetAnimationDuration = const Duration(milliseconds: 100),
     this.insetAnimationCurve = Curves.decelerate,
   }) : super(key: key);
@@ -157,15 +157,14 @@ class CustomAlertDialog extends StatelessWidget {
   /// null, which implies a default that depends on the values of the other
   /// properties. See the documentation of [titlePadding] for details.
   const CustomAlertDialog({
-    Key key,
-    this.title,
-    this.titlePadding,
-    this.content,
+    Key? key,
+    required this.title,
+    this.titlePadding = const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0.0),
+    required this.content,
     this.contentPadding = const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
-    this.actions,
-    this.semanticLabel,
-  })  : assert(contentPadding != null),
-        super(key: key);
+    this.actions = const [],
+    this.semanticLabel = '',
+  }) : super(key: key);
 
   /// The (optional) title of the dialog is displayed in a large font at the top
   /// of the dialog.
@@ -232,51 +231,31 @@ class CustomAlertDialog extends StatelessWidget {
     var children = <Widget>[];
     var label = semanticLabel;
 
-    if (title != null) {
-      children.add(Padding(
-        padding: titlePadding ??
-            EdgeInsets.fromLTRB(24.0, 24.0, 24.0, content == null ? 20.0 : 0.0),
-        child: DefaultTextStyle(
-          style: Theme.of(context).textTheme.headline6,
-          child: Semantics(namesRoute: true, child: title),
-        ),
-      ));
-    } else {
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.iOS:
-          label = semanticLabel;
-          break;
-        case TargetPlatform.android:
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.linux:
-        case TargetPlatform.windows:
-        case TargetPlatform.macOS:
-          label = semanticLabel ??
-              MaterialLocalizations.of(context)?.alertDialogLabel;
-      }
-    }
+    children.add(Padding(
+      padding: titlePadding,
+      child: DefaultTextStyle(
+        style: Theme.of(context).textTheme.headline6!,
+        child: Semantics(namesRoute: true, child: title),
+      ),
+    ));
 
-    if (content != null) {
-      children.add(
-        Flexible(
-          child: Padding(
-            padding: contentPadding,
-            child: DefaultTextStyle(
-              style: Theme.of(context).textTheme.subtitle1,
-              child: content,
-            ),
+    children.add(
+      Flexible(
+        child: Padding(
+          padding: contentPadding,
+          child: DefaultTextStyle(
+            style: Theme.of(context).textTheme.subtitle1!,
+            child: content,
           ),
         ),
-      );
-    }
+      ),
+    );
 
-    if (actions != null) {
+    if (actions.isNotEmpty) {
       children.add(
         ButtonBarTheme(
           data: ButtonBarThemeData(),
-          child: ButtonBar(
-            children: actions,
-          ),
+          child: ButtonBar(children: actions),
         ),
       );
     }
@@ -289,10 +268,7 @@ class CustomAlertDialog extends StatelessWidget {
       ),
     );
 
-    if (label != null) {
-      dialogChild =
-          Semantics(namesRoute: true, label: label, child: dialogChild);
-    }
+    dialogChild = Semantics(namesRoute: true, label: label, child: dialogChild);
 
     return Dialog(child: dialogChild);
   }
@@ -330,9 +306,9 @@ class CustomAlertDialog extends StatelessWidget {
 class SimpleDialogOption extends StatelessWidget {
   /// Creates an option for a [SimpleDialog].
   const SimpleDialogOption({
-    Key key,
-    this.onPressed,
-    this.child,
+    Key? key,
+    required this.onPressed,
+    required this.child,
   }) : super(key: key);
 
   /// The callback that is called when this option is selected.
@@ -432,15 +408,13 @@ class SimpleDialog extends StatelessWidget {
   ///
   /// The [titlePadding] and [contentPadding] arguments must not be null.
   const SimpleDialog({
-    Key key,
-    this.title,
+    Key? key,
+    required this.title,
     this.titlePadding = const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 0.0),
-    this.children,
+    required this.children,
     this.contentPadding = const EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 16.0),
-    this.semanticLabel,
-  })  : assert(titlePadding != null),
-        assert(contentPadding != null),
-        super(key: key);
+    this.semanticLabel = '',
+  }) : super(key: key);
 
   /// The (optional) title of the dialog is displayed in a large font at the top
   /// of the dialog.
@@ -497,38 +471,24 @@ class SimpleDialog extends StatelessWidget {
     final body = <Widget>[];
     var label = semanticLabel;
 
-    if (title != null) {
-      body.add(
-        Padding(
-          padding: titlePadding,
-          child: DefaultTextStyle(
-            style: Theme.of(context).textTheme.headline6,
-            child: Semantics(namesRoute: true, child: title),
-          ),
+    body.add(
+      Padding(
+        padding: titlePadding,
+        child: DefaultTextStyle(
+          style: Theme.of(context).textTheme.headline6!,
+          child: Semantics(namesRoute: true, child: title),
         ),
-      );
-    } else {
-      switch (defaultTargetPlatform) {
-        case TargetPlatform.iOS:
-          label = semanticLabel;
-          break;
-        case TargetPlatform.android:
-        case TargetPlatform.fuchsia:
-        case TargetPlatform.linux:
-        case TargetPlatform.macOS:
-        case TargetPlatform.windows:
-          label =
-              semanticLabel ?? MaterialLocalizations.of(context)?.dialogLabel;
-      }
-    }
+      ),
+    );
 
-    if (children != null) {
-      body.add(Flexible(
-          child: SingleChildScrollView(
-        padding: contentPadding,
-        child: ListBody(children: children),
-      )));
-    }
+    body.add(
+      Flexible(
+        child: SingleChildScrollView(
+          padding: contentPadding,
+          child: ListBody(children: children),
+        ),
+      ),
+    );
 
     Widget dialogChild = IntrinsicWidth(
       stepWidth: 56.0,
@@ -542,26 +502,23 @@ class SimpleDialog extends StatelessWidget {
       ),
     );
 
-    if (label != null) {
-      dialogChild = Semantics(
-        namesRoute: true,
-        label: label,
-        child: dialogChild,
-      );
-    }
+    dialogChild = Semantics(
+      namesRoute: true,
+      label: label,
+      child: dialogChild,
+    );
     return Dialog(child: dialogChild);
   }
 }
 
 class _DialogRoute<T> extends PopupRoute<T> {
   _DialogRoute({
-    @required this.theme,
+    required this.theme,
     bool barrierDismissible = true,
-    this.barrierLabel,
-    @required this.child,
-    RouteSettings settings,
-  })  : assert(barrierDismissible != null),
-        _barrierDismissible = barrierDismissible,
+    this.barrierLabel = '',
+    required this.child,
+    RouteSettings? settings,
+  })  : _barrierDismissible = barrierDismissible,
         super(settings: settings);
 
   final Widget child;
@@ -590,9 +547,7 @@ class _DialogRoute<T> extends PopupRoute<T> {
           explicitChildNodes: true,
           child: child,
         );
-        return theme != null
-            ? Theme(data: theme, child: annotatedChild)
-            : annotatedChild;
+        return Theme(data: theme, child: annotatedChild);
       }),
     );
   }
@@ -634,20 +589,13 @@ class _DialogRoute<T> extends PopupRoute<T> {
 ///    not show buttons below its body.
 ///  * [Dialog], on which [SimpleDialog] and [AlertDialog] are based.
 ///  * <https://material.google.com/components/dialogs.html>
-Future<T> customShowDialog<T>({
-  @required
-      BuildContext context,
+Future<T?> customShowDialog<T>({
+  required BuildContext context,
   bool barrierDismissible = true,
-  @Deprecated(
-      'Instead of using the "child" argument, return the child from a closure '
-      'provided to the "builder" argument. This will ensure that the BuildContext '
-      'is appropriate for widgets built in the dialog.')
-      Widget child,
-  WidgetBuilder builder,
+  required WidgetBuilder builder,
 }) {
-  assert(child == null || builder == null);
   return Navigator.of(context, rootNavigator: true).push(_DialogRoute<T>(
-    child: child ?? Builder(builder: builder),
+    child: Builder(builder: builder),
     theme: Theme.of(context),
     barrierDismissible: barrierDismissible,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,

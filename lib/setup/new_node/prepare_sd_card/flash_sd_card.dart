@@ -11,7 +11,7 @@ import 'blocs/download_image/download_image_bloc.dart';
 import 'blocs/fetch_release_data/fetch_release_data_bloc.dart';
 
 class FlashSDCardPage extends StatefulWidget {
-  const FlashSDCardPage({Key key}) : super(key: key);
+  const FlashSDCardPage({Key? key}) : super(key: key);
 
   @override
   _FlashSDCardPageState createState() => _FlashSDCardPageState();
@@ -54,7 +54,10 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
             bloc: _dlBloc,
             builder: (context, state) {
               if (state is DlFilesInitial) {
-                return _buildShowReleases(theme, releaseState.data.tagName);
+                return _buildShowReleases(
+                  theme,
+                  releaseState.data.tagName ?? '',
+                );
               } else if (state is DlFileStartState) {
                 return _buildDlUI(state, _dlBloc, theme);
               } else if (state is DlFilesErrorFileExistsState) {
@@ -87,7 +90,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
             SizedBox(height: 8.0),
             TrText(
               'Available Releases',
-              style: theme.textTheme.headline5,
+              style: theme.textTheme.headline5!,
             ),
             SizedBox(height: 8.0),
             Text('Release $release'),
@@ -115,7 +118,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
             SizedBox(height: 8.0),
             TrText(
               'setup.sd_card_is_ready_header',
-              style: theme.textTheme.headline5,
+              style: theme.textTheme.headline5!,
             ),
             SizedBox(height: 8.0),
             Row(
@@ -194,7 +197,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             tr('setup.downloading_file', {'file': file}),
-            style: theme.textTheme.headline5,
+            style: theme.textTheme.headline5!,
           ),
         ),
         Container(
@@ -253,7 +256,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
 
   void _showFileExistsAlert(
       DlFilesErrorFileExistsState state, DlImageBloc dlBloc) async {
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
+    SchedulerBinding.instance?.addPostFrameCallback((_) async {
       var result = await showDialog<bool>(
         context: context,
         builder: (BuildContext c) {
@@ -307,7 +310,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
             SizedBox(height: 8.0),
             TrText(
               'setup.sd_card_ready_to_flash_header',
-              style: theme.textTheme.headline5,
+              style: theme.textTheme.headline5!,
             ),
             TrText('setup.sd_card_ready_to_flash_explanation'),
             SizedBox(height: 16.0),
@@ -339,14 +342,14 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
     await Process.run('chmod', ['+x', state.etcherPath]);
 
     // Execute Etcher
-    final res = await Process.run(state.etcherPath, [state.imagePath]);
+    await Process.run(state.etcherPath, [state.imagePath]);
     // TODO: Check return code
 
     _showSDCardFlashAlert();
   }
 
-  void _showSDCardFlashAlert() async {
-    SchedulerBinding.instance.addPostFrameCallback((_) async {
+  void _showSDCardFlashAlert() {
+    SchedulerBinding.instance!.addPostFrameCallback((_) async {
       var result = await showDialog<bool>(
         context: context,
         builder: (BuildContext c) {
@@ -373,7 +376,6 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
           _finished = true;
         });
       }
-      return false;
     });
   }
 }

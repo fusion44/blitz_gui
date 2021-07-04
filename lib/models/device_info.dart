@@ -1,14 +1,14 @@
 class DeviceInfo {
-  String version;
-  int setupStep;
-  String baseImage;
-  String cpu;
-  bool isDocker;
-  String state;
-  String chain;
-  String network;
-  String message;
-  String hostName;
+  String? version;
+  int? setupStep;
+  String? baseImage;
+  String? cpu;
+  bool? isDocker;
+  String? state;
+  String? chain;
+  String? network;
+  String? message;
+  String? hostName;
 
   DeviceInfo({
     this.version,

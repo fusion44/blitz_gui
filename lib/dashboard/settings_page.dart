@@ -7,9 +7,7 @@ import '../common/widgets/translated_text.dart';
 import 'debug_view.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({
-    Key key,
-  }) : super(key: key);
+  const SettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +22,9 @@ class SettingsPage extends StatelessWidget {
                 title: TrText('settings.language_label'),
                 trailing: DropdownButton(
                   value: state.langCode,
-                  onChanged: (value) {
+                  onChanged: (String? value) {
                     BlocProvider.of<SettingsBloc>(context).add(
-                      ChangeLanguageEvent(value),
+                      ChangeLanguageEvent(value!),
                     );
                   },
                   items: _buildLanguageItems(),

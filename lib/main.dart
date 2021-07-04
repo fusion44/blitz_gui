@@ -16,17 +16,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
     var appDir = await getApplicationSupportDirectory();
-    if (appDir != null) {
-      Hive.init(appDir.path);
-    } else {
-      NullThrownError();
-    }
+    Hive.init(appDir.path);
   }
 
   final bloc = SettingsBloc();
   bloc.add(AppStartEvent());
-  final SettingsLoadedState res =
-      await bloc.stream.firstWhere((s) => s is SettingsLoadedState);
 
   var delegate = await LocalizationDelegate.create(
     fallbackLocale: 'en',
@@ -45,7 +39,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _setupType;
+  String _setupType = '';
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +67,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _buildHome(BuildContext context) {
-    if (_setupType == null || _setupType.isEmpty) {
+    if (_setupType.isEmpty) {
       return SetupHome((type) {
         setState(() {
           _setupType = type;

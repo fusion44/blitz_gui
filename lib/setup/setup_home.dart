@@ -5,7 +5,7 @@ import 'setup_type_switch.dart';
 class SetupHome extends StatelessWidget {
   final Function(String) onDone;
 
-  const SetupHome(this.onDone, {Key key}) : super(key: key);
+  const SetupHome(this.onDone, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

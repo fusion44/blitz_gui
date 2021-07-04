@@ -32,7 +32,7 @@ class _InfoPageState extends State<InfoPage> {
                 Text('Raspiblitz v1.7'),
                 Text(
                   'RecklessBlitz',
-                  style: theme.textTheme.bodyText1.copyWith(
+                  style: theme.textTheme.bodyText1!.copyWith(
                     color: Colors.green[600],
                   ),
                 )
@@ -134,12 +134,13 @@ class _InfoPageState extends State<InfoPage> {
     );
   }
 
-  TextFragment _buildTextFragment(String text, ThemeData theme, [Color color]) {
+  TextFragment _buildTextFragment(String text, ThemeData theme,
+      [Color? color]) {
     return TextFragment(
       text,
       color == null
-          ? theme.textTheme.bodyText1
-          : theme.textTheme.bodyText1.copyWith(color: color),
+          ? theme.textTheme.bodyText1!
+          : theme.textTheme.bodyText1!.copyWith(color: color),
     );
   }
 

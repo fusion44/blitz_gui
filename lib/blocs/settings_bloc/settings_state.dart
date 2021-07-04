@@ -11,9 +11,9 @@ abstract class SettingsBaseState {
   });
 
   SettingsBaseState copyWith({
-    bool darkTheme,
-    String langCode,
-    bool currSymbolIsLeft,
+    bool? darkTheme,
+    String? langCode,
+    bool? currSymbolIsLeft,
   }) {
     final newState = SettingsState(
       darkTheme: darkTheme ?? this.darkTheme,

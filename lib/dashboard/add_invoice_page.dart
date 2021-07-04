@@ -59,7 +59,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
   Widget _buildQR() {
     return Center(
       child: QrImage(
-        backgroundColor: Colors.grey[300],
+        backgroundColor: Colors.grey[300]!,
         data: _qrData,
         version: QrVersions.auto,
         size: 180.0,
@@ -141,7 +141,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
           _memoNode.unfocus();
           // _memoNode.unfocus() triggers the listener on the node
           // which will set _showKeyboard  to true again
-          // => set _showKeybaord to false slightly delayed
+          // => set _showKeyboard to false slightly delayed
           _clearKeyboard();
         }
       },
@@ -171,7 +171,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
               SizedBox(width: 8),
               TrText(
                 'wallet.lightning.add_invoice',
-                style: theme.textTheme.headline5,
+                style: theme.textTheme.headline5!,
                 textAlign: TextAlign.center,
               ),
             ],
@@ -188,7 +188,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
     });
   }
 
-  TextEditingController _getCurrentController() {
+  TextEditingController? _getCurrentController() {
     if (_amtNode.hasFocus) {
       return _amtController;
     } else if (_memoNode.hasFocus) {

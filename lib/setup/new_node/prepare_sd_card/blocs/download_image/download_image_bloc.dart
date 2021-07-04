@@ -16,12 +16,11 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
   static const _dlRoot = 'https://raspiblitz.fulmo.org/images';
   final _dlFolder = io.Directory.systemTemp.path;
 
-  CancelToken _imageCancelToken;
-  CancelToken _etcherCancelToken;
+  CancelToken? _imageCancelToken;
+  CancelToken? _etcherCancelToken;
 
-  String _dlImgPath;
-
-  String _dlEtcherPath;
+  String _dlImgPath = '';
+  String _dlEtcherPath = '';
 
   DlImageBloc() : super(DlFilesInitial());
 
@@ -53,12 +52,12 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
         yield DlFileStartState(DlFile.image);
 
         // Download the image
-        if (_imageCancelToken != null) _imageCancelToken.cancel();
+        _imageCancelToken?.cancel();
         try {
           _imageCancelToken = CancelToken();
           _doDownloadImageFile(imgUrl, _dlImgPath);
         } catch (e) {
-          _imageCancelToken.cancel();
+          _imageCancelToken?.cancel();
           _imageCancelToken = null;
           yield DlFileErrorState(e.toString());
           print(e);
@@ -78,12 +77,12 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
         yield DlFileStartState(DlFile.etcher);
 
         // Download the image
-        if (_etcherCancelToken != null) _etcherCancelToken.cancel();
+        _etcherCancelToken?.cancel();
         try {
           _etcherCancelToken = CancelToken();
           _doDownloadEtcher(dlEtcherUrl, _dlEtcherPath);
         } catch (e) {
-          _etcherCancelToken.cancel();
+          _etcherCancelToken?.cancel();
           _etcherCancelToken = null;
           yield DlFileErrorState(e.toString());
           print(e);

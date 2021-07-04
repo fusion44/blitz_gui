@@ -1,20 +1,20 @@
 class ReleaseData {
-  final String url;
-  final String assetsUrl;
-  final String uploadUrl;
-  final String htmlUrl;
-  final int id;
-  final String nodeId;
-  final String tagName;
-  final String targetCommitish;
-  final String name;
-  final bool draft;
-  final bool prerelease;
-  final String createdAt;
-  final String publishedAt;
-  final String tarballUrl;
-  final String zipballUrl;
-  final String body;
+  final String? url;
+  final String? assetsUrl;
+  final String? uploadUrl;
+  final String? htmlUrl;
+  final int? id;
+  final String? nodeId;
+  final String? tagName;
+  final String? targetCommitish;
+  final String? name;
+  final bool? draft;
+  final bool? prerelease;
+  final String? createdAt;
+  final String? publishedAt;
+  final String? tarballUrl;
+  final String? zipballUrl;
+  final String? body;
 
   ReleaseData({
     this.url,

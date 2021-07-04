@@ -36,7 +36,7 @@ class _ReceivePageState extends State<ReceivePage> {
                     },
                     child: TrText(
                       'wallet.lightning.short',
-                      style: theme.textTheme.headline5,
+                      style: theme.textTheme.headline5!,
                       isButton: true,
                     ),
                   ),
@@ -48,7 +48,7 @@ class _ReceivePageState extends State<ReceivePage> {
                     onPressed: () {},
                     child: TrText(
                       'wallet.onchain.short',
-                      style: theme.textTheme.headline5,
+                      style: theme.textTheme.headline5!,
                       isButton: true,
                     ),
                   ),
@@ -82,7 +82,7 @@ class _ReceivePageState extends State<ReceivePage> {
             SizedBox(width: 8),
             Text(
               'Receive Funds',
-              style: theme.textTheme.headline5,
+              style: theme.textTheme.headline5!,
               textAlign: TextAlign.center,
             ),
           ],

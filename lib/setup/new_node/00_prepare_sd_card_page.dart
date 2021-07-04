@@ -6,7 +6,7 @@ import 'prepare_sd_card/flash_sd_card.dart';
 class PrepareSDCardPage extends StatefulWidget {
   final Function(int) onStepDone;
 
-  const PrepareSDCardPage(this.onStepDone, {Key key}) : super(key: key);
+  const PrepareSDCardPage(this.onStepDone, {Key? key}) : super(key: key);
 
   @override
   _PrepareSDCardPageState createState() => _PrepareSDCardPageState();
@@ -22,7 +22,7 @@ class _PrepareSDCardPageState extends State<PrepareSDCardPage> {
         child: Column(
           children: [
             SizedBox(height: 8.0),
-            TrText('setup.flash_sd_header', style: theme.textTheme.headline4),
+            TrText('setup.flash_sd_header', style: theme.textTheme.headline4!),
             SizedBox(height: 8.0),
             TrText(
               'setup.question.existing_sd_or_flash_new',

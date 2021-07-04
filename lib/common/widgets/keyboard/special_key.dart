@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 enum SpecialKeyType { backspace, enter, shift }
 
 class SpecialKey extends StatelessWidget {
-  final SpecialKeyType _keyType;
-  final VoidCallback onPressed;
-  final VoidCallback onLongPressed;
+  final SpecialKeyType? _keyType;
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPressed;
   final int flex;
 
   const SpecialKey(
     this._keyType, {
-    Key key,
+    Key? key,
     this.onPressed,
     this.onLongPressed,
     this.flex = 1,

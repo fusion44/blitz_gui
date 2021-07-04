@@ -10,14 +10,14 @@ class SetupTypeSwitch extends StatelessWidget {
 
   final Function(String) onPressed;
 
-  const SetupTypeSwitch({Key key, this.onPressed}) : super(key: key);
+  const SetupTypeSwitch({Key? key, required this.onPressed}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Column(
       children: [
-        TrText('setup.choose_setup_type', style: theme.textTheme.headline5),
+        TrText('setup.choose_setup_type', style: theme.textTheme.headline5!),
         SizedBox(height: 8),
         Wrap(
           spacing: 25,
@@ -60,12 +60,12 @@ class SetupTypeSwitch extends StatelessWidget {
   }
 
   Widget _buildButton({
-    ThemeData theme,
-    Widget btnLabel,
-    IconData icon,
-    Widget description,
+    required ThemeData theme,
+    required Widget btnLabel,
+    required IconData icon,
+    Widget? description,
     double size = 200,
-    Function onPressed,
+    required Function onPressed,
   }) {
     final btn = Container(
       width: size,
@@ -76,7 +76,7 @@ class SetupTypeSwitch extends StatelessWidget {
             (Set<MaterialState> states) => theme.highlightColor,
           ),
         ),
-        onPressed: onPressed,
+        onPressed: () => onPressed(),
         icon: Icon(icon),
         label: btnLabel,
       ),
@@ -84,8 +84,13 @@ class SetupTypeSwitch extends StatelessWidget {
 
     if (description != null) {
       return Container(
-          width: size,
-          child: Column(children: [btn, SizedBox(height: 8.0), description]));
+        width: size,
+        child: Column(children: [
+          btn,
+          SizedBox(height: 8.0),
+          description,
+        ]),
+      );
     } else {
       return btn;
     }

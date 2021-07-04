@@ -111,7 +111,7 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState.validate()) {}
+                      if (_formKey.currentState!.validate()) {}
                     },
                     child: Text('NEXT'),
                   ),

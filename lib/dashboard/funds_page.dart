@@ -17,7 +17,7 @@ class FundsPage extends StatefulWidget {
 }
 
 class _FundsPageState extends State<FundsPage> {
-  ScrollController _hideFABController;
+  late ScrollController _hideFABController;
   var _fabVisible;
 
   @override
@@ -94,7 +94,7 @@ class _FundsPageState extends State<FundsPage> {
             padding: const EdgeInsets.only(left: 8.0, right: 4.0),
             child: Image.asset('assets/icons/satoshi-v2.png', color: color),
           ),
-        Text(f.format(onchain), style: theme.textTheme.headline6),
+        Text(f.format(onchain), style: theme.textTheme.headline6!),
         if (!left)
           Padding(
             padding: const EdgeInsets.only(left: 4.0),
@@ -108,7 +108,7 @@ class _FundsPageState extends State<FundsPage> {
             padding: const EdgeInsets.only(left: 8.0, right: 4.0),
             child: Image.asset('assets/icons/satoshi-v2.png', color: color),
           ),
-        Text(f.format(ln), style: theme.textTheme.headline6),
+        Text(f.format(ln), style: theme.textTheme.headline6!),
         if (!left)
           Padding(
             padding: const EdgeInsets.only(left: 4.0),

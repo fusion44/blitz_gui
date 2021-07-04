@@ -21,7 +21,7 @@ class BlitzDashboard extends StatefulWidget {
 class _BlitzDashboardState extends State<BlitzDashboard> {
   int state = 0;
 
-  StreamSubscription<SettingsBaseState> _sub;
+  StreamSubscription<SettingsBaseState>? _sub;
 
   bool _fabVisible = false;
 
@@ -42,7 +42,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
 
   @override
   void dispose() {
-    _sub.cancel();
+    _sub?.cancel();
     super.dispose();
   }
 
@@ -70,7 +70,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
           children: [
             _buildSideBar(),
             Expanded(
-              child: _buildBody(theme.textTheme.headline4),
+              child: _buildBody(theme.textTheme.headline4!),
             )
           ],
         ),
@@ -174,7 +174,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
             SizedBox(width: 8),
             Text(
               'Raspiblitz V1.7',
-              style: theme.textTheme.headline5,
+              style: theme.textTheme.headline5!,
               textAlign: TextAlign.center,
             ),
           ],
@@ -183,26 +183,21 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     );
   }
 
-  Widget _buildBody(TextStyle styl) {
-    final theme = Theme.of(context);
+  Widget _buildBody(TextStyle style) {
     switch (state) {
       case 0:
         return InfoPage();
-        break;
       case 1:
         return QrImage(
-          backgroundColor: Colors.grey[300],
-          data: "1234567890",
+          backgroundColor: Colors.grey[300]!,
+          data: '1234567890',
           version: QrVersions.auto,
           size: 180.0,
         );
-        break;
       case 2:
         return FundsPage(_setFABVisible);
-        break;
       case 3:
         return SettingsPage();
-        break;
       default:
         return Text('Other State');
     }

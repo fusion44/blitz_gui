@@ -11,17 +11,14 @@ part 'setup_state.dart';
 
 class NewNodeSetupBloc extends Bloc<SetupEvent, SetupState> {
   final _client = http.Client();
-  StreamSubscription<http.StreamedResponse> _sub;
+  late StreamSubscription<http.StreamedResponse>? _sub;
 
-  String url;
+  String url = '';
 
   NewNodeSetupBloc() : super(SetupInitial());
 
   Future<void> dispose() async {
-    if (_sub != null) {
-      await _sub.cancel();
-      _sub = null;
-    }
+    await _sub?.cancel();
   }
 
   @override
@@ -41,8 +38,8 @@ class NewNodeSetupBloc extends Bloc<SetupEvent, SetupState> {
         } else {
           yield ConnectingNodeError(
             event.url,
-            response.statusCode,
-            response.statusMessage,
+            response.statusCode ?? 0,
+            response.statusMessage ?? '',
           );
           url = '';
         }

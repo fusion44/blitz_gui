@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 class TextKey extends StatelessWidget {
   final String _text;
-  final ValueSetter<String> onTextInput;
+  final ValueSetter<String>? onTextInput;
   final int flex;
   final bool shifted;
 
   const TextKey(
     this._text, {
-    Key key,
+    Key? key,
     this.onTextInput,
     this.flex = 1,
     this.shifted = false,

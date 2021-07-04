@@ -6,14 +6,14 @@ import '../../blocs/settings_bloc/settings_bloc.dart';
 
 class MoneyValueView extends StatelessWidget {
   final int amount;
-  final int fee;
+  final int? fee;
   final bool hero;
   final bool settled;
   final TextAlign textAlign;
 
   const MoneyValueView({
-    Key key,
-    this.amount,
+    Key? key,
+    required this.amount,
     this.hero = false,
     this.settled = true,
     this.textAlign = TextAlign.start,
@@ -36,7 +36,7 @@ class MoneyValueView extends StatelessWidget {
         final left = state.currSymbolIsLeft;
 
         var style = hero ? textTheme.headline5 : textTheme.bodyText2;
-        if (!settled) style = style.copyWith(color: Colors.grey);
+        if (!settled) style = style!.copyWith(color: Colors.grey);
 
         if (fee != null) {
           final dark = state.darkTheme;
@@ -65,7 +65,7 @@ class MoneyValueView extends StatelessWidget {
                       if (left) _buildSatIcon(isLeft: left, darkMode: dark),
                       Text(
                         '${numberFormat.format(fee)}',
-                        style: style.copyWith(fontSize: 11),
+                        style: style!.copyWith(fontSize: 11),
                         textAlign: textAlign,
                       ),
                       if (!left) _buildSatIcon(isLeft: left, darkMode: dark),

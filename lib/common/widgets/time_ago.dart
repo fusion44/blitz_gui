@@ -7,13 +7,13 @@ import '../../blocs/settings_bloc/settings_bloc.dart';
 class TimeAgoText extends StatelessWidget {
   final bool allowFromNow;
   final DateTime date;
-  final TextStyle style;
-  final TextOverflow overflow;
-  final bool softWrap;
+  final TextStyle? style;
+  final TextOverflow? overflow;
+  final bool? softWrap;
 
   const TimeAgoText(
     this.date, {
-    Key key,
+    Key? key,
     this.allowFromNow = true,
     this.style,
     this.overflow,

@@ -19,7 +19,7 @@ class _ConnectPageState extends State<ConnectPage> {
   final TextEditingController _controller =
       TextEditingController(text: 'http://127.0.0.1:8000/');
 
-  StreamSubscription<SetupState> _sub;
+  late StreamSubscription<SetupState>? _sub;
 
   @override
   void dispose() async {
@@ -60,14 +60,12 @@ class _ConnectPageState extends State<ConnectPage> {
     String successText = '',
     bool working = false,
   }) {
-    error ??= '';
-
     return Column(
       children: [
         SizedBox(height: 8),
         TrText(
           'setup.header_establish_connection',
-          style: theme.textTheme.headline6,
+          style: theme.textTheme.headline6!,
         ),
         SizedBox(height: 8),
         TextField(
