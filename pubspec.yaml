@@ -70,16 +70,57 @@ flutter:
     - assets/icons/lightning.png
     - assets/icons/satoshi-v2.png
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  fonts:
+    - family: RobotoMono
+      fonts:
+        - asset: assets/fonts/RobotoMono/RobotoMono-Thin.ttf
+          weight: 100
+        - asset: assets/fonts/RobotoMono/RobotoMono-ThinItalic.ttf
+          weight: 100
+          style: italic
+        - asset: assets/fonts/RobotoMono/RobotoMono-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/RobotoMono/RobotoMono-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: assets/fonts/RobotoMono/RobotoMono-Light.ttf
+          weight: 300
+        - asset: assets/fonts/RobotoMono/RobotoMono-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/fonts/RobotoMono/RobotoMono-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/RobotoMono/RobotoMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/RobotoMono/RobotoMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/RobotoMono/RobotoMono-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/RobotoMono/RobotoMono-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/RobotoMono/RobotoMono-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/RobotoMono/RobotoMono-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/RobotoMono/RobotoMono-BoldItalic.ttf
+          weight: 700
+          style: italic
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
+    - family: Eczar
+      fonts:
+        - asset: assets/fonts/eczar/Eczar-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/eczar/Eczar-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/eczar/Eczar-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/eczar/Eczar-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/eczar/Eczar-SemiBold.ttf
+          weight: 600
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
