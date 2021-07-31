@@ -6,6 +6,7 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../blocs/settings_bloc/settings_bloc.dart';
+import '../common/subscription_repository.dart';
 import '../common/utils.dart';
 import '../common/widgets/translated_text.dart';
 import 'funds_page.dart';
@@ -24,6 +25,8 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   StreamSubscription<SettingsBaseState>? _sub;
 
   bool _fabVisible = false;
+
+  final _repo = SubscriptionRepository();
 
   @override
   void initState() {
@@ -70,7 +73,10 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
           children: [
             _buildSideBar(),
             Expanded(
-              child: _buildBody(theme.textTheme.headline4!),
+              child: RepositoryProvider.value(
+                value: _repo,
+                child: _buildBody(theme.textTheme.headline4!),
+              ),
             )
           ],
         ),

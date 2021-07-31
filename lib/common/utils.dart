@@ -49,3 +49,13 @@ void updateTimeAgoLib(String lang) {
     timeago.setLocaleMessages(lang, timeago.EnMessages());
   }
 }
+
+int? forceInt(dynamic source) {
+  if (source is int) {
+    return source;
+  } else if (source is double) {
+    return source.floor();
+  } else if (source is String) {
+    return int.tryParse(source);
+  }
+}

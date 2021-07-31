@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-class TextFragment {
-  final String text;
-  final TextStyle style;
-
-  TextFragment(this.text, this.style);
-
-  Widget toTextWidget() => Text(text, style: style);
-}
+import '../common/subscription_repository.dart';
+import 'blocs/system_info/system_info_bloc.dart';
+import 'blocs/system_info/system_info_widget.dart';
+import 'text_fragment.dart';
 
 class InfoPage extends StatefulWidget {
   @override
@@ -16,6 +14,25 @@ class InfoPage extends StatefulWidget {
 
 class _InfoPageState extends State<InfoPage> {
   final double spacing = 4.0;
+
+  late SystemInfoBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _bloc = SystemInfoBloc(
+      RepositoryProvider.of<SubscriptionRepository>(context),
+    );
+    _bloc.add(StartListenSystemInfo());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _bloc.add(StopListenSystemInfo());
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -42,38 +59,19 @@ class _InfoPageState extends State<InfoPage> {
             Text('Bitcoin Fullnode + Lightning Network + TOR'),
             Divider(),
             SizedBox(height: spacing),
-            _buildRow(
-              [
-                _buildTextFragment('CPU load: ', theme),
-                _buildTextFragment('0.59/0.71/0.38', theme, Colors.green),
-              ],
-              [
-                _buildTextFragment('temp: ', theme),
-                _buildTextFragment('44°C / 111°F', theme, Colors.green),
-              ],
-            ),
-            _buildRow(
-              [
-                _buildTextFragment('Free Mem: ', theme),
-                _buildTextFragment('3363M / 1906M', theme, Colors.green),
-              ],
-              [
-                _buildTextFragment('HDDuse: ', theme),
-                _buildTextFragment('286G (66%)', theme, Colors.green),
-              ],
-            ),
-            _buildRow(
-              [
-                _buildTextFragment('ssh admin@', theme),
-                _buildTextFragment('192.168.178.114', theme, Colors.green),
-              ],
-              [
-                _buildTextFragment('d', theme),
-                _buildTextFragment('3.3MiB', theme, Colors.green),
-                _buildTextFragment('u', theme),
-                _buildTextFragment('3.0MiB', theme, Colors.green),
-              ],
-            ),
+            BlocBuilder<SystemInfoBloc, SystemInfoBaseState>(
+                bloc: _bloc,
+                builder: (context, state) {
+                  if (state is SystemInfoState) {
+                    return SystemInfoWidget(
+                      state.info,
+                      state.downloadRate,
+                      state.uploadRate,
+                    );
+                  } else {
+                    return Center(child: SpinKitChasingDots(color: Colors.red));
+                  }
+                }),
             Divider(),
             _buildRow(
               [

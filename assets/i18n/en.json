@@ -66,6 +66,13 @@
       "set_passwords_a_b": "Passwords"
     }
   },
+  "system": {
+    "cpu_load": "CPU load",
+    "hdd_use_short": "HDD use",
+    "network_not_found": "network not found",
+    "temperature": "Temperature",
+    "temperature_short": "Temp"
+  },
   "wallet": {
     "lightning": {
       "add_invoice": "Add Invoice",
