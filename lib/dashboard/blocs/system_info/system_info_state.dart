@@ -11,8 +11,12 @@ class SystemInfoInitial extends SystemInfoBaseState {}
 
 class SystemInfoState extends SystemInfoBaseState {
   final SystemInfo info;
+  // in Kb/s
+  final double uploadRate;
+  // in Kb/s
+  final double downloadRate;
 
-  SystemInfoState(this.info);
+  SystemInfoState(this.info, this.uploadRate, this.downloadRate);
   @override
-  List<Object> get props => [info];
+  List<Object> get props => [info, uploadRate, downloadRate];
 }

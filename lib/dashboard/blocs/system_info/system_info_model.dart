@@ -16,6 +16,7 @@ class SystemInfo {
   final int? diskIoWriteCount;
   final int? diskIoReadBytes;
   final int? diskIoWriteBytes;
+  final List<Disk> disks;
   final List<Network> networks;
   final int? networksBytesSent;
   final int? networksBytesReceived;
@@ -36,6 +37,7 @@ class SystemInfo {
     this.diskIoWriteCount,
     this.diskIoReadBytes,
     this.diskIoWriteBytes,
+    this.disks = const [],
     this.networks = const [],
     this.networksBytesSent,
     this.networksBytesReceived,
@@ -51,6 +53,14 @@ class SystemInfo {
         });
       }
     }
+
+    final disks = <Disk>[];
+    if (json['disks'] != null) {
+      json['disks'].forEach((d) {
+        disks.add(Disk.fromJson(d));
+      });
+    }
+
     final networks = <Network>[];
     if (json['networks'] != null) {
       json['networks'].forEach((v) {
@@ -73,6 +83,7 @@ class SystemInfo {
       diskIoWriteCount: json['disk_io_write_count'],
       diskIoReadBytes: json['disk_io_read_bytes'],
       diskIoWriteBytes: json['disk_io_write_bytes'],
+      disks: disks,
       networks: networks,
       networksBytesSent: json['networks_bytes_sent'],
       networksBytesReceived: json['networks_bytes_received'],
@@ -90,6 +101,36 @@ class Temperature {
 
   static Temperature fromJson(List values) =>
       Temperature(values[0], values[1], values[2], values[3]);
+}
+
+class Disk {
+  final String? device;
+  final String? mountpoint;
+  final String? filesystemType;
+  final int? partitionTotalBytes;
+  final int? partitionUsedBytes;
+  final int? partitionFreeBytes;
+  final double? partitionPercent;
+
+  Disk({
+    this.device,
+    this.mountpoint,
+    this.filesystemType,
+    this.partitionTotalBytes,
+    this.partitionUsedBytes,
+    this.partitionFreeBytes,
+    this.partitionPercent,
+  });
+
+  static Disk fromJson(Map<String, dynamic> json) => Disk(
+        device: json['device'],
+        mountpoint: json['mountpoint'],
+        filesystemType: json['filesystem_type'],
+        partitionTotalBytes: json['partition_total_bytes'],
+        partitionUsedBytes: json['partition_used_bytes'],
+        partitionFreeBytes: json['partition_free_bytes'],
+        partitionPercent: json['partition_percent'],
+      );
 }
 
 class Network {
