@@ -6,8 +6,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'blocs/settings_bloc/settings_bloc.dart';
 import 'common/utils.dart';
+import 'dashboard/blocs/settings_bloc/settings_bloc.dart';
 import 'setup/new_node/new_node_setup_page.dart';
 import 'setup/setup_home.dart';
 import 'setup/setup_type_switch.dart';

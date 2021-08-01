@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../../blocs/settings_bloc/settings_bloc.dart';
+import '../../dashboard/blocs/settings_bloc/settings_bloc.dart';
 
 class MoneyValueView extends StatelessWidget {
   final int amount;

@@ -5,10 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import '../blocs/settings_bloc/settings_bloc.dart';
 import '../common/subscription_repository.dart';
 import '../common/utils.dart';
 import '../common/widgets/translated_text.dart';
+import 'blocs/settings_bloc/settings_bloc.dart';
 import 'funds_page.dart';
 import 'info_page.dart';
 import 'receive_page.dart';

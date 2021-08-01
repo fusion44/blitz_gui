@@ -3,9 +3,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-import '../blocs/settings_bloc/settings_bloc.dart';
 import '../common/widgets/money_value_view.dart';
 import '../common/widgets/time_ago.dart';
+import 'blocs/settings_bloc/settings_bloc.dart';
 
 class FundsPage extends StatefulWidget {
   final Function(bool) _setFABVisible;

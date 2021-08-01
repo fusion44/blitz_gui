@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:timeago/timeago.dart';
 
-import '../../blocs/settings_bloc/settings_bloc.dart';
+import '../../dashboard/blocs/settings_bloc/settings_bloc.dart';
 
 class TimeAgoText extends StatelessWidget {
   final bool allowFromNow;
