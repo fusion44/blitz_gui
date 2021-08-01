@@ -9,6 +9,11 @@ String tr(String key, [Map<String, dynamic> args = const <String, dynamic>{}]) {
   return translate(key, args: args);
 }
 
+/// Plurally translates a string with the given [key] and the [value].
+String trp(String key, dynamic value) {
+  return translatePlural(key, value);
+}
+
 /// Returns the full language name of the provided language code
 LanguageDisplayData getLanguageCodeDisplayData(String code) {
   switch (code) {
@@ -57,5 +62,15 @@ int? forceInt(dynamic source) {
     return source.floor();
   } else if (source is String) {
     return int.tryParse(source);
+  }
+}
+
+double? forceDouble(dynamic source) {
+  if (source is double) {
+    return source;
+  } else if (source is int) {
+    return source.toDouble();
+  } else if (source is String) {
+    return double.tryParse(source);
   }
 }
