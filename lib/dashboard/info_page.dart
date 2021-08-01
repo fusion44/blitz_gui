@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../common/subscription_repository.dart';
+import 'blocs/bitcoin_info/bitcoin_info_bloc.dart';
+import 'blocs/bitcoin_info/bitcoin_info_widget.dart';
 import 'blocs/system_info/system_info_bloc.dart';
 import 'blocs/system_info/system_info_widget.dart';
 import 'text_fragment.dart';
@@ -16,21 +18,24 @@ class _InfoPageState extends State<InfoPage> {
   final double spacing = 4.0;
 
   late SystemInfoBloc _bloc;
+  late BitcoinInfoBloc _btcInfoBloc;
 
   @override
   void initState() {
     super.initState();
 
-    _bloc = SystemInfoBloc(
-      RepositoryProvider.of<SubscriptionRepository>(context),
-    );
+    final repo = RepositoryProvider.of<SubscriptionRepository>(context);
+    _bloc = SystemInfoBloc(repo);
     _bloc.add(StartListenSystemInfo());
+    _btcInfoBloc = BitcoinInfoBloc(repo);
+    _btcInfoBloc.add(StartListenBitcoinInfo());
   }
 
   @override
   void dispose() {
     super.dispose();
     _bloc.add(StopListenSystemInfo());
+    _btcInfoBloc.add(StopListenBitcoinInfo());
   }
 
   @override
@@ -73,29 +78,15 @@ class _InfoPageState extends State<InfoPage> {
                   }
                 }),
             Divider(),
-            _buildRow(
-              [
-                _buildTextFragment('Bitcoin ', theme),
-                _buildTextFragment('v0.21.1', theme, Colors.green),
-              ],
-              [
-                _buildTextFragment('Sync: ', theme),
-                _buildTextFragment('OK 100.0%', theme, Colors.green),
-              ],
-            ),
-            _buildRow(
-              [
-                _buildTextFragment('Public ', theme),
-                _buildTextFragment(
-                  '91.64.156.143:8333',
-                  theme,
-                  Colors.red[400],
-                ),
-              ],
-              [
-                _buildTextFragment('11 ', theme, Colors.purple[200]),
-                _buildTextFragment('connections', theme),
-              ],
+            BlocBuilder<BitcoinInfoBloc, BitcoinInfoBaseState>(
+              bloc: _btcInfoBloc,
+              builder: (context, state) {
+                if (state is BitcoinInfoState) {
+                  return BitcoinInfoWidget(state.info);
+                } else {
+                  return Center(child: SpinKitChasingDots(color: Colors.red));
+                }
+              },
             ),
             Divider(),
             _buildRow(

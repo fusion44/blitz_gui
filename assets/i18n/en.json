@@ -10,6 +10,17 @@
   "app": {
     "title": "Blitz GUI"
   },
+  "bitcoin": {
+    "block_height_long": "Block Height",
+    "block_height_short": "Blocks",
+    "connections": {
+      "0": "no connections",
+      "1": "one connection",
+      "else": "{{value}} connections"
+    },
+    "sync_status_long": "Sync Status",
+    "sync_status_short": "Sync"
+  },
   "dashboard": {
     "funds_button": "Funds",
     "info_button": "Info",
