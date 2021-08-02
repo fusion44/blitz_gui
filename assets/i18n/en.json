@@ -27,6 +27,25 @@
     "node_button": "Node",
     "settings_button": "SETTINGS"
   },
+  "lightning": {
+    "channels": {
+      "has_active_and_inactive": "{active} of {total} channels active",
+      "has_no_channel": "No channels, yet.",
+      "has_only_active": {
+        "1": "One of one channel active",
+        "else": "All {{value}} channels active"
+      },
+      "has_only_inactive": {
+        "1": "One of one channel inactive",
+        "else": "All {{value}} channels inactive"
+      },
+      "pending_channels": {
+        "1": ", one pending",
+        "else": ", {{value}} pending"
+      }
+    },
+    "peers": "peers"
+  },
   "settings": {
     "language_label": "Language",
     "reboot_button": "reboot",

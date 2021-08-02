@@ -5,6 +5,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../common/subscription_repository.dart';
 import 'blocs/bitcoin_info/bitcoin_info_bloc.dart';
 import 'blocs/bitcoin_info/bitcoin_info_widget.dart';
+import 'blocs/lightning_info/lightning_info_bloc.dart';
+import 'blocs/lightning_info_widget.dart';
 import 'blocs/system_info/system_info_bloc.dart';
 import 'blocs/system_info/system_info_widget.dart';
 import 'text_fragment.dart';
@@ -19,6 +21,7 @@ class _InfoPageState extends State<InfoPage> {
 
   late SystemInfoBloc _bloc;
   late BitcoinInfoBloc _btcInfoBloc;
+  late LightningInfoBloc _lnInfoBloc;
 
   @override
   void initState() {
@@ -29,6 +32,8 @@ class _InfoPageState extends State<InfoPage> {
     _bloc.add(StartListenSystemInfo());
     _btcInfoBloc = BitcoinInfoBloc(repo);
     _btcInfoBloc.add(StartListenBitcoinInfo());
+    _lnInfoBloc = LightningInfoBloc(repo);
+    _lnInfoBloc.add(StartListenLightningInfo());
   }
 
   @override
@@ -36,6 +41,7 @@ class _InfoPageState extends State<InfoPage> {
     super.dispose();
     _bloc.add(StopListenSystemInfo());
     _btcInfoBloc.add(StopListenBitcoinInfo());
+    _lnInfoBloc.add(StopListenLightningInfo());
   }
 
   @override
@@ -89,33 +95,15 @@ class _InfoPageState extends State<InfoPage> {
               },
             ),
             Divider(),
-            _buildRow(
-              [
-                _buildTextFragment('LND ', theme),
-                _buildTextFragment('v0.12.0-beta', theme, Colors.green),
-              ],
-              [
-                _buildTextFragment('wallet ', theme),
-                _buildTextFragment('68892 sat', theme, Colors.orange),
-              ],
-            ),
-            _buildRow(
-              [
-                _buildTextFragment('4/0 Channels with ', theme),
-                _buildTextFragment('1140252 sat', theme, Colors.orange),
-              ],
-              [
-                _buildTextFragment('6 ', theme, Colors.purple[200]),
-                _buildTextFragment('peers', theme),
-              ],
-            ),
-            _buildRow(
-              [
-                _buildTextFragment('Fee Report in sat: ', theme),
-                _buildTextFragment('11-124-497', theme, Colors.orange),
-                _buildTextFragment(' (Day-Week-Month)', theme),
-              ],
-              [],
+            BlocBuilder<LightningInfoBloc, LightningInfoBaseState>(
+              bloc: _lnInfoBloc,
+              builder: (context, state) {
+                if (state is LightningInfoState) {
+                  return LightningInfoWidget(state.info);
+                } else {
+                  return Center(child: SpinKitChasingDots(color: Colors.red));
+                }
+              },
             ),
           ],
         ),

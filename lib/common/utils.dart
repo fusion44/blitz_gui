@@ -10,8 +10,12 @@ String tr(String key, [Map<String, dynamic> args = const <String, dynamic>{}]) {
 }
 
 /// Plurally translates a string with the given [key] and the [value].
-String trp(String key, dynamic value) {
-  return translatePlural(key, value);
+String trp(
+  String key,
+  dynamic value, [
+  Map<String, dynamic> args = const <String, dynamic>{},
+]) {
+  return translatePlural(key, value, args: args);
 }
 
 /// Returns the full language name of the provided language code
