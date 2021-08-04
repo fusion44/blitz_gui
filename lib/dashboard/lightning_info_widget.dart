@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import '../../common/utils.dart';
-import '../text_fragment.dart';
-import '../../common/models/lightning_info.dart';
+import '../common/models/lightning_info.dart';
+import '../common/models/wallet_balance.dart';
+import '../common/utils.dart';
+import 'text_fragment.dart';
 
 class LightningInfoWidget extends StatelessWidget {
   final LightningInfo info;
+  final WalletBalance wb;
 
-  const LightningInfoWidget(this.info, {Key? key}) : super(key: key);
+  const LightningInfoWidget({
+    this.info = const LightningInfo(),
+    this.wb = const WalletBalance(),
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var f = NumberFormat.simpleCurrency(name: 'sat', decimalDigits: 0);
+
     final theme = Theme.of(context);
     return Container(
       child: Column(
@@ -19,8 +28,11 @@ class LightningInfoWidget extends StatelessWidget {
             _buildTextFragment('LND ', theme),
             _buildTextFragment(info.version!, theme, Colors.green),
             Spacer(),
-            _buildTextFragment('wallet ', theme),
-            _buildTextFragment('68892 sat', theme, Colors.orange),
+            _buildTextFragment('${tr("wallet.wallet")} ', theme),
+            _buildTextFragment(
+                '${f.format(wb.localBalance.sat + wb.onchainConfirmedBalance)}',
+                theme,
+                Colors.orange),
           ]),
           Row(
             children: [
@@ -36,9 +48,10 @@ class LightningInfoWidget extends StatelessWidget {
           ),
           Row(
             children: [
-              _buildTextFragment('Fee Report in sat: ', theme),
-              _buildTextFragment('11-124-497', theme, Colors.orange),
-              _buildTextFragment(' (Day-Week-Month)', theme),
+              _buildTextFragment(
+                  '${tr('lightning.fee_report_in_sats')} ', theme),
+              _buildTextFragment('11-124-494', theme, Colors.orange),
+              _buildTextFragment(' ${tr("lightning.fee_report_desc")}', theme),
             ],
           ),
         ],

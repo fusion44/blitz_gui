@@ -44,6 +44,8 @@
         "else": ", {{value}} pending"
       }
     },
+    "fee_report_desc": "(Day-Week-Month)",
+    "fee_report_in_sats": "Fee Report [sats]",
     "peers": "peers"
   },
   "settings": {
@@ -113,6 +115,7 @@
     "new_invoice_amount": "Amount",
     "onchain": {
       "short": "onchain"
-    }
+    },
+    "wallet": "wallet"
   }
 }

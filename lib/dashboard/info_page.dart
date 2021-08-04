@@ -6,10 +6,9 @@ import '../common/subscription_repository.dart';
 import 'blocs/bitcoin_info/bitcoin_info_bloc.dart';
 import 'blocs/bitcoin_info/bitcoin_info_widget.dart';
 import 'blocs/lightning_info/lightning_info_bloc.dart';
-import 'blocs/lightning_info_widget.dart';
 import 'blocs/system_info/system_info_bloc.dart';
 import 'blocs/system_info/system_info_widget.dart';
-import 'text_fragment.dart';
+import 'lightning_info_widget.dart';
 
 class InfoPage extends StatefulWidget {
   @override
@@ -99,7 +98,10 @@ class _InfoPageState extends State<InfoPage> {
               bloc: _lnInfoBloc,
               builder: (context, state) {
                 if (state is LightningInfoState) {
-                  return LightningInfoWidget(state.info);
+                  return LightningInfoWidget(
+                    info: state.info!,
+                    wb: state.walletBalance!,
+                  );
                 } else {
                   return Center(child: SpinKitChasingDots(color: Colors.red));
                 }
@@ -108,26 +110,6 @@ class _InfoPageState extends State<InfoPage> {
           ],
         ),
       ),
-    );
-  }
-
-  TextFragment _buildTextFragment(String text, ThemeData theme,
-      [Color? color]) {
-    return TextFragment(
-      text,
-      color == null
-          ? theme.textTheme.bodyText1!
-          : theme.textTheme.bodyText1!.copyWith(color: color),
-    );
-  }
-
-  Widget _buildRow(List<TextFragment> left, List<TextFragment> right) {
-    return Row(
-      children: [
-        for (var i in left) i.toTextWidget(),
-        Spacer(),
-        for (var i in right) i.toTextWidget(),
-      ],
     );
   }
 }

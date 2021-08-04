@@ -12,7 +12,8 @@ class StartListenLightningInfo extends LightningInfoEvent {}
 class StopListenLightningInfo extends LightningInfoEvent {}
 
 class _LightningInfoUpdate extends LightningInfoEvent {
-  final LightningInfo info;
+  final WalletBalance? walletBalance;
+  final LightningInfo? lnInfo;
 
-  _LightningInfoUpdate(this.info);
+  _LightningInfoUpdate({this.lnInfo, this.walletBalance});
 }
