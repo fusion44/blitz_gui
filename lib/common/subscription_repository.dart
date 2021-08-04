@@ -10,6 +10,7 @@ enum SseEventTypes {
   btcNetworkStatus,
   btcMempoolStatus,
   lnInfo,
+  walletBalance,
   unknown
 }
 
@@ -54,6 +55,8 @@ class SubscriptionRepository {
       return SseEventTypes.btcMempoolStatus;
     } else if (eventId == 'ln_info') {
       return SseEventTypes.lnInfo;
+    } else if (eventId == 'wallet_balance') {
+      return SseEventTypes.walletBalance;
     } else {
       return SseEventTypes.unknown;
     }
