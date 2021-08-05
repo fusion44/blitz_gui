@@ -1,7 +1,9 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../common/subscription_repository.dart';
 import '../common/widgets/translated_text.dart';
 import 'add_invoice_page.dart';
 
@@ -30,7 +32,11 @@ class _ReceivePageState extends State<ReceivePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (BuildContext context) => AddInvoicePage(),
+                          builder: (BuildContext c) =>
+                              RepositoryProvider<SubscriptionRepository>.value(
+                            value: RepositoryProvider.of(context),
+                            child: AddInvoicePage(),
+                          ),
                         ),
                       );
                     },

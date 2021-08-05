@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../common/models/invoices/invoices.dart';
 import '../common/utils.dart';
 import '../common/widgets/keyboard/keyboard.dart';
 import '../common/widgets/translated_text.dart';
+import 'blocs/add_invoice/bloc/add_invoice_bloc.dart';
+import 'blocs/watch_invoice/bloc/watch_invoice_bloc.dart';
 
 class AddInvoicePage extends StatefulWidget {
   @override
@@ -16,9 +20,9 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
   final _memoController = TextEditingController();
   final _memoNode = FocusNode();
   bool _showKeyboard = true;
-  bool _showQR = false;
-  String _qrData = '';
 
+  final _invoiceBloc = AddInvoiceBloc();
+  late final WatchInvoiceBloc _watchInvoiceBloc;
   @override
   void initState() {
     super.initState();
@@ -36,6 +40,8 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
         });
       }
     });
+
+    _watchInvoiceBloc = WatchInvoiceBloc(RepositoryProvider.of(context));
   }
 
   @override
@@ -45,25 +51,49 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
     _amtNode.dispose();
     _memoController.dispose();
     _memoNode.dispose();
+    _watchInvoiceBloc.add(CancelAll());
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: _buildHeaderBar(theme),
-      body: _showQR ? _buildQR() : _buildGetDataWidget(),
-    );
+        appBar: _buildHeaderBar(theme),
+        body: BlocBuilder<AddInvoiceBloc, AddInvoiceBaseState>(
+          bloc: _invoiceBloc,
+          builder: (context, state) {
+            if (state is AddInvoiceInitial) {
+              return _buildGetDataWidget();
+            } else if (state is InvoiceAddedState) {
+              _watchInvoiceBloc.add(WatchInvoice(state.payReq));
+              return _buildQR(state.payReq);
+            } else if (state is AddInvoiceErrorState) {
+              return Center(child: Text('Error state ${state.errorMessage}.'));
+            } else {
+              return Center(child: Text('Unknown state $state'));
+            }
+          },
+        ));
   }
 
-  Widget _buildQR() {
-    return Center(
-      child: QrImage(
-        backgroundColor: Colors.grey[300]!,
-        data: _qrData,
-        version: QrVersions.auto,
-        size: 180.0,
-      ),
+  Widget _buildQR(String payReq) {
+    return BlocBuilder<WatchInvoiceBloc, WatchInvoiceBaseState>(
+      bloc: _watchInvoiceBloc,
+      builder: (context, state) {
+        if (state is InvoiceUpdateState &&
+            state.invoice.state == InvoiceState.settled) {
+          // TODO: improve me
+          return Center(child: Text('Yay! Paid!!'));
+        }
+        return Center(
+          child: QrImage(
+            backgroundColor: Colors.grey[300]!,
+            data: payReq,
+            version: QrVersions.auto,
+            size: 180.0,
+          ),
+        );
+      },
     );
   }
 
@@ -98,11 +128,15 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
               padding: const EdgeInsets.only(top: 8.0),
               child: ElevatedButton(
                 onPressed: () {
-                  setState(() {
-                    _showQR = true;
-                    _qrData =
-                        'lnbc1u1pstve8wpp50u23d4zl7h73mlus8wgwv8p76dxvzkawfgjzx8xwadyynmphy2cqdq52fshxurfvfkxjar69v4scqzpgxq9pyagqsp5xxlrxj74y8e2ydn0e77n6p5syf82u4k9tnaawydkpn6htpf4knds9qyyssqhctd6plty5j5f2g9zfrehpa4flvjk9r4wc452laqr3ng89xf9ucq35t58d034tl7qpuxcxglf7vu262mlwjshw938ajvta2qv4z44wcqjm98ha';
-                  });
+                  final amt = int.tryParse(_amtController.text);
+                  if (amt == null) {
+                    final snackBar =
+                        SnackBar(content: Text('Amount $amt invalid'));
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    return;
+                  }
+                  final memo = _memoController.text;
+                  _invoiceBloc.add(AddInvoiceEvent(amt, memo));
                 },
                 child: TrText('wallet.lightning.get_invoice'),
               ),
