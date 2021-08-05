@@ -75,14 +75,14 @@ class LightningInfo {
 }
 
 class Chain {
-  final String chain;
-  final String network;
+  final String? chain;
+  final String? network;
 
   Chain(this.chain, this.network);
 
-  static Chain fromJson(Map<String, dynamic> json) {
-    return Chain(json['chain'] ?? "", json['network'] ?? "");
-  }
+  Chain.fromJson(Map<String, dynamic> json)
+      : chain = json['chain'],
+        network = json['network'];
 }
 
 class Feature {
@@ -91,10 +91,9 @@ class Feature {
 
   Feature(this.key, this.value);
 
-  static Feature fromJson(Map<String, dynamic> json) {
-    return Feature(json['key'],
-        json['value'] != null ? Value.fromJson(json['value']) : null);
-  }
+  Feature.fromJson(dynamic json)
+      : key = json['key'],
+        value = Value.fromJson(json['value']);
 }
 
 class Value {
@@ -104,7 +103,8 @@ class Value {
 
   Value(this.name, this.isRequired, this.isKnown);
 
-  static Value fromJson(Map<String, dynamic> json) {
-    return Value(json['name'], json['is_required'], json['is_known']);
-  }
+  Value.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        isRequired = json['is_required'],
+        isKnown = json['is_known'];
 }
