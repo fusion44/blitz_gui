@@ -12,7 +12,7 @@ class SetupHome extends StatelessWidget {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
           child: SingleChildScrollView(
             child: SetupTypeSwitch(
@@ -20,7 +20,7 @@ class SetupHome extends StatelessWidget {
                 if (choice == SetupTypeSwitch.newNode) {
                   onDone(SetupTypeSwitch.newNode);
                 } else {
-                  final snackBar =
+                  const snackBar =
                       SnackBar(content: Text('Not yet implemented :('));
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 }

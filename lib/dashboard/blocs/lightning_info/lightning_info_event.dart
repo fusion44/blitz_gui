@@ -15,5 +15,5 @@ class _LightningInfoUpdate extends LightningInfoEvent {
   final WalletBalance? walletBalance;
   final LightningInfo? lnInfo;
 
-  _LightningInfoUpdate({this.lnInfo, this.walletBalance});
+  const _LightningInfoUpdate({this.lnInfo, this.walletBalance});
 }

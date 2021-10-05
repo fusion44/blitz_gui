@@ -44,7 +44,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
       bloc: _releaseBloc,
       builder: (context, releaseState) {
         if (releaseState is FetchReleaseDataInitial) {
-          return Center(child: Text('loading'));
+          return const Center(child: Text('loading'));
         } else if (releaseState is ReleaseDataFetched) {
           return BlocBuilder<DlImageBloc, DlFilesState>(
             buildWhen: (oldState, newState) {
@@ -66,7 +66,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
               } else if (state is DlFileErrorState) {
                 return Center(child: Text(state.message));
               } else if (state is DlFileCanceledState) {
-                return Center(child: Text('Canceled'));
+                return const Center(child: Text('Canceled'));
               } else if (state is DlFileAllFinishedState) {
                 return _buildMakeSDCardUI(theme, state);
               } else {
@@ -75,7 +75,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
             },
           );
         } else {
-          return Center(child: Text('Unkown $releaseState'));
+          return Center(child: Text('Unknown $releaseState'));
         }
       },
     );
@@ -83,22 +83,22 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
 
   Widget _buildShowReleases(ThemeData theme, String release) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 500,
         child: Column(
           children: [
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             TrText(
               'Available Releases',
               style: theme.textTheme.headline5!,
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text('Release $release'),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             ElevatedButton.icon(
-              icon: Icon(Icons.download_rounded),
+              icon: const Icon(Icons.download_rounded),
               onPressed: () => _dlBloc.add(StartDlEvent(version: release)),
-              label: TrText(
+              label: const TrText(
                 'setup.btn.start_download_files',
                 isButton: true,
               ),
@@ -111,16 +111,16 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
 
   Widget _buildFinishedUI(ThemeData theme) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 500,
         child: Column(
           children: [
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             TrText(
               'setup.sd_card_is_ready_header',
               style: theme.textTheme.headline5!,
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -129,34 +129,36 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
                   'assets/RaspiBlitz_Logo_Icon_Negative.png',
                   width: 40,
                 ),
-                SizedBox(width: 8.0),
-                Flexible(
+                const SizedBox(width: 8.0),
+                const Flexible(
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
+                    padding: EdgeInsets.only(bottom: 8.0),
                     child: TrText('setup.sd_card_ready_next_steps_message'),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                Icon(Icons.delete_sweep_sharp, size: 90),
+                const Icon(Icons.delete_sweep_sharp, size: 90),
                 Flexible(
                   child: Column(
                     children: [
-                      TrText('setup.sd_card_ready_delete_downloaded_files'),
-                      SizedBox(height: 8.0),
+                      const TrText(
+                        'setup.sd_card_ready_delete_downloaded_files',
+                      ),
+                      const SizedBox(height: 8.0),
                       ElevatedButton(
                         onPressed: () {
-                          final snackBar = SnackBar(content: Text('TODO :('));
+                          const snackBar = SnackBar(content: Text('TODO :('));
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         },
                         style: ElevatedButton.styleFrom(
                           primary: Colors.blueGrey,
                         ),
-                        child: TrText(
+                        child: const TrText(
                           'setup.btn.delete_downloaded_files',
                           isButton: true,
                         ),
@@ -166,10 +168,10 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
-              child: TrText('setup.btn.finish_step', isButton: true),
+              child: const TrText('setup.btn.finish_step', isButton: true),
             ),
           ],
         ),
@@ -179,7 +181,7 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
 
   Widget _buildEmptyDlUI() {
     return Column(
-      children: [
+      children: const [
         ElevatedButton(onPressed: null, child: Text('Cancel')),
         Text('0 / 0 / 0%'),
         LinearProgressIndicator(value: 0),
@@ -200,55 +202,53 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
             style: theme.textTheme.headline5!,
           ),
         ),
-        Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 500,
-                child: Column(
-                  children: [
-                    BlocBuilder<DlImageBloc, DlFilesState>(
-                      bloc: dlBloc,
-                      builder: (context, state) {
-                        if (state is DlFileProgressState) {
-                          return Text(
-                            tr(
-                              'setup.downloading_file_progress_next',
-                              {
-                                'downloadedMiB': state.downloadedMiB,
-                                'totalMiB': state.totalMiB,
-                                'percent': state.percent.toStringAsFixed(2)
-                              },
-                            ),
-                          );
-                        }
-                        return Text('0 / 0 / 0%');
-                      },
-                    ),
-                    SizedBox(height: 8.0),
-                    BlocBuilder<DlImageBloc, DlFilesState>(
-                      bloc: dlBloc,
-                      builder: (context, state) {
-                        if (state is DlFileProgressState) {
-                          final normalized =
-                              (1 / state.totalMiB) * state.downloadedMiB;
-                          return LinearProgressIndicator(value: normalized);
-                        }
-                        return LinearProgressIndicator(value: 0);
-                      },
-                    ),
-                  ],
-                ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 500,
+              child: Column(
+                children: [
+                  BlocBuilder<DlImageBloc, DlFilesState>(
+                    bloc: dlBloc,
+                    builder: (context, state) {
+                      if (state is DlFileProgressState) {
+                        return Text(
+                          tr(
+                            'setup.downloading_file_progress_next',
+                            {
+                              'downloadedMiB': state.downloadedMiB,
+                              'totalMiB': state.totalMiB,
+                              'percent': state.percent.toStringAsFixed(2)
+                            },
+                          ),
+                        );
+                      }
+                      return const Text('0 / 0 / 0%');
+                    },
+                  ),
+                  const SizedBox(height: 8.0),
+                  BlocBuilder<DlImageBloc, DlFilesState>(
+                    bloc: dlBloc,
+                    builder: (context, state) {
+                      if (state is DlFileProgressState) {
+                        final normalized =
+                            (1 / state.totalMiB) * state.downloadedMiB;
+                        return LinearProgressIndicator(value: normalized);
+                      }
+                      return const LinearProgressIndicator(value: 0);
+                    },
+                  ),
+                ],
               ),
-              SizedBox(width: 8.0),
-              ElevatedButton(
-                onPressed: () => dlBloc.add(CancelDlImageEvent()),
-                child: Text('Cancel'),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 8.0),
+            ElevatedButton(
+              onPressed: () => dlBloc.add(CancelDlImageEvent()),
+              child: const Text('Cancel'),
+            ),
+          ],
         ),
       ],
     );
@@ -261,22 +261,22 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
         context: context,
         builder: (BuildContext c) {
           return AlertDialog(
-            title: TrText('alert_dialog.confirm_overwrite_file_title'),
+            title: const TrText('alert_dialog.confirm_overwrite_file_title'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TrText('alert_dialog.confirm_overwrite_file_body'),
-                Text('${state.path}'),
+                const TrText('alert_dialog.confirm_overwrite_file_body'),
+                Text(state.path),
               ],
             ),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: TrText('alert_dialog.cancel'),
+                child: const TrText('alert_dialog.cancel'),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: TrText('alert_dialog.overwrite'),
+                child: const TrText('alert_dialog.overwrite'),
               ),
             ],
           );
@@ -303,26 +303,26 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
 
   Widget _buildMakeSDCardUI(ThemeData theme, DlFileAllFinishedState state) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 500,
         child: Column(
           children: [
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             TrText(
               'setup.sd_card_ready_to_flash_header',
               style: theme.textTheme.headline5!,
             ),
-            TrText('setup.sd_card_ready_to_flash_explanation'),
-            SizedBox(height: 16.0),
+            const TrText('setup.sd_card_ready_to_flash_explanation'),
+            const SizedBox(height: 16.0),
             if (_etcherWorking) ...[
-              TrText('setup.sd_cart_waiting_for_etcher'),
-              SizedBox(height: 16.0),
-              SpinKitFoldingCube(color: Colors.blueAccent)
+              const TrText('setup.sd_cart_waiting_for_etcher'),
+              const SizedBox(height: 16.0),
+              const SpinKitFoldingCube(color: Colors.blueAccent)
             ] else
               ElevatedButton.icon(
-                icon: Icon(Icons.open_in_new),
+                icon: const Icon(Icons.open_in_new),
                 onPressed: () => _launchEtcher(state),
-                label: TrText(
+                label: const TrText(
                   'setup.btn.open_etcher_application',
                   isButton: true,
                 ),
@@ -354,17 +354,17 @@ class _FlashSDCardPageState extends State<FlashSDCardPage> {
         context: context,
         builder: (BuildContext c) {
           return AlertDialog(
-            title: TrText('SD-card OK?'),
-            content: TrText(
+            title: const TrText('SD-card OK?'),
+            content: const TrText(
                 'Was the SD-card flashed correctly? If there was a problem hit retry.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: TrText('alert_dialog.retry', isButton: true),
+                child: const TrText('alert_dialog.retry', isButton: true),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: TrText('alert_dialog.ok', isButton: true),
+                child: const TrText('alert_dialog.ok', isButton: true),
               ),
             ],
           );

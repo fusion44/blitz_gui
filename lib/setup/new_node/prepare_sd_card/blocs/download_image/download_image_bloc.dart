@@ -38,7 +38,7 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
           return;
         }
       } else if (event.dlFile == DlFile.image) {
-        final imgUrl = '$_dlRoot/raspiblitz-v1.7.0-2021-04-25.img.gz';
+        const imgUrl = '$_dlRoot/raspiblitz-v1.7.0-2021-04-25.img.gz';
         _dlImgPath = '$_dlFolder/raspiblitz-v1.7.0-2021-04-25.img.gz';
 
         // Check if file exists
@@ -125,7 +125,7 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
   }
 
   void _doDownloadPubKey() async {
-    final rootzollPubKeyUrl = 'https://keybase.io/rootzoll/pgp_keys.asc';
+    const rootzollPubKeyUrl = 'https://keybase.io/rootzoll/pgp_keys.asc';
     final rootzollPubKeyPath = '$_dlFolder/pgp_keys.asc';
     await Dio().download(rootzollPubKeyUrl, rootzollPubKeyPath);
     add(_DlFinishedEvent(DlFile.pubKey));

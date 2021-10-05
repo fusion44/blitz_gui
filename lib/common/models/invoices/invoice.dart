@@ -174,19 +174,25 @@ class Invoice {
 
 List<Feature> _buildFeaturesList(List features) {
   final list = <Feature>[];
-  features.forEach((f) => list.add(Feature.fromJson(f)));
+  for (var f in features) {
+    list.add(Feature.fromJson(f));
+  }
   return list;
 }
 
 List<InvoiceHTLC> _buildHTLCList(List htlcs) {
   final list = <InvoiceHTLC>[];
-  htlcs.forEach((h) => list.add(InvoiceHTLC.fromJson(h)));
+  for (var h in htlcs) {
+    list.add(InvoiceHTLC.fromJson(h));
+  }
   return list;
 }
 
 List<List<HopHint>> _buildRouteHintList(List hints) {
   final list = <List<HopHint>>[];
-  hints.forEach((h) => list.add(_buildHopHintList(h)));
+  for (var h in hints) {
+    list.add(_buildHopHintList(h));
+  }
   return list;
 }
 

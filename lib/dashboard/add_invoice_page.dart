@@ -10,6 +10,8 @@ import 'blocs/add_invoice/bloc/add_invoice_bloc.dart';
 import 'blocs/watch_invoice/bloc/watch_invoice_bloc.dart';
 
 class AddInvoicePage extends StatefulWidget {
+  const AddInvoicePage({Key? key}) : super(key: key);
+
   @override
   _AddInvoicePageState createState() => _AddInvoicePageState();
 }
@@ -83,7 +85,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
         if (state is InvoiceUpdateState &&
             state.invoice.state == InvoiceState.settled) {
           // TODO: improve me
-          return Center(child: Text('Yay! Paid!!'));
+          return const Center(child: Text('Yay! Paid!!'));
         }
         return Center(
           child: QrImage(
@@ -138,7 +140,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
                   final memo = _memoController.text;
                   _invoiceBloc.add(AddInvoiceEvent(amt, memo));
                 },
-                child: TrText('wallet.lightning.get_invoice'),
+                child: const TrText('wallet.lightning.get_invoice'),
               ),
             )
         ],
@@ -184,7 +186,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
 
   PreferredSize _buildHeaderBar(ThemeData theme) {
     return PreferredSize(
-      preferredSize: Size.fromHeight(100.0), // here the desired height
+      preferredSize: const Size.fromHeight(100.0), // here the desired height
       child: Material(
         elevation: 3.0,
         child: Container(
@@ -194,15 +196,15 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
-                icon: Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context),
               ),
-              SizedBox(width: 8.0),
-              Container(
+              const SizedBox(width: 8.0),
+              SizedBox(
                 height: 20,
                 child: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png'),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               TrText(
                 'wallet.lightning.add_invoice',
                 style: theme.textTheme.headline5!,
@@ -216,7 +218,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
   }
 
   void _clearKeyboard() async {
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future.delayed(const Duration(milliseconds: 10));
     setState(() {
       _showKeyboard = false;
     });

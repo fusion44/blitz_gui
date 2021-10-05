@@ -14,5 +14,5 @@ class StopListenSystemInfo extends SystemInfoEvent {}
 class _SystemInfoUpdate extends SystemInfoEvent {
   final SystemInfo info;
 
-  _SystemInfoUpdate(this.info);
+  const _SystemInfoUpdate(this.info);
 }

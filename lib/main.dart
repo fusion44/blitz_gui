@@ -32,7 +32,7 @@ void main() async {
 class MyApp extends StatefulWidget {
   final SettingsBloc _bloc;
 
-  MyApp(this._bloc);
+  const MyApp(this._bloc, {Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
         });
       });
     } else if (_setupType == SetupTypeSwitch.newNode) {
-      return NewNodeSetupPage();
+      return const NewNodeSetupPage();
     } else {
       return Scaffold(body: Center(child: Text('Unknown: $_setupType')));
     }

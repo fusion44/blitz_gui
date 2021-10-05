@@ -36,13 +36,13 @@ class SpecialKey extends StatelessWidget {
 
   Widget _buildWidget() {
     if (_keyType == SpecialKeyType.backspace) {
-      return Center(child: Icon(Icons.backspace));
+      return const Center(child: Icon(Icons.backspace));
     } else if (_keyType == SpecialKeyType.enter) {
-      return Center(child: Icon(Icons.keyboard_return));
+      return const Center(child: Icon(Icons.keyboard_return));
     } else if (_keyType == SpecialKeyType.shift) {
-      return Center(child: Text('SHIFT'));
+      return const Center(child: Text('SHIFT'));
     } else {
-      return Center(child: Text('UNKNOWN'));
+      return const Center(child: Text('UNKNOWN'));
     }
   }
 }

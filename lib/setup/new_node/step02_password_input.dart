@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:validators/validators.dart' as v;
 
 class PasswordInputPage extends StatefulWidget {
+  const PasswordInputPage({Key? key}) : super(key: key);
+
   @override
   _PasswordInputPageState createState() => _PasswordInputPageState();
 }
@@ -17,24 +19,24 @@ class _PasswordInputPageState extends State<PasswordInputPage>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text('Setting up your new Blitz')),
+      appBar: AppBar(title: const Text('Setting up your new Blitz')),
       body: SafeArea(
         child: Center(
           child: Form(
             key: _formKey,
             child: Container(
-              constraints: BoxConstraints(maxWidth: 600),
+              constraints: const BoxConstraints(maxWidth: 600),
               child: Column(
                 children: [
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     'Please enter the name of your new RaspiBlitz:\none word, keep characters basic & not too long',
                     style: theme.textTheme.subtitle1,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   TextFormField(
                     controller: _nameController,
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: const InputDecoration(labelText: 'Name'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter some text';
@@ -45,14 +47,14 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                       return null;
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     'Master User Password',
                     style: theme.textTheme.subtitle1,
                   ),
                   TextFormField(
                     controller: _passAController,
-                    decoration: InputDecoration(labelText: 'Password A'),
+                    decoration: const InputDecoration(labelText: 'Password A'),
                     obscureText: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -65,8 +67,9 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                     },
                   ),
                   TextFormField(
-                    decoration:
-                        InputDecoration(labelText: 'Password A control'),
+                    decoration: const InputDecoration(
+                      labelText: 'Password A control',
+                    ),
                     obscureText: true,
                     validator: (value) {
                       if (value == null ||
@@ -77,14 +80,14 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                       return null;
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
                     'Blockchain RPC Password',
                     style: theme.textTheme.subtitle1,
                   ),
                   TextFormField(
                     controller: _passBController,
-                    decoration: InputDecoration(labelText: 'Password B'),
+                    decoration: const InputDecoration(labelText: 'Password B'),
                     obscureText: true,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -97,8 +100,9 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                     },
                   ),
                   TextFormField(
-                    decoration:
-                        InputDecoration(labelText: 'Password B control'),
+                    decoration: const InputDecoration(
+                      labelText: 'Password B control',
+                    ),
                     obscureText: true,
                     validator: (value) {
                       if (value == null ||
@@ -113,7 +117,7 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {}
                     },
-                    child: Text('NEXT'),
+                    child: const Text('NEXT'),
                   ),
                 ],
               ),

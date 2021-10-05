@@ -76,7 +76,7 @@ class Dialog extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(minWidth: 280.0),
             child: Material(
-              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+              borderRadius: const BorderRadius.all(Radius.circular(20.0)),
               elevation: 30.0,
               color: _getColor(context),
               type: MaterialType.card,
@@ -254,7 +254,7 @@ class CustomAlertDialog extends StatelessWidget {
     if (actions.isNotEmpty) {
       children.add(
         ButtonBarTheme(
-          data: ButtonBarThemeData(),
+          data: const ButtonBarThemeData(),
           child: ButtonBar(children: actions),
         ),
       );

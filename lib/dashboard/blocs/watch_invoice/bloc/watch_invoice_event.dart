@@ -10,7 +10,7 @@ abstract class WatchInvoiceBaseEvent extends Equatable {
 class WatchInvoice extends WatchInvoiceBaseEvent {
   final String payReq;
 
-  WatchInvoice(this.payReq);
+  const WatchInvoice(this.payReq);
 
   @override
   List<Object> get props => [payReq];
@@ -19,7 +19,7 @@ class WatchInvoice extends WatchInvoiceBaseEvent {
 class StopWatchInvoice extends WatchInvoiceBaseEvent {
   final String payReq;
 
-  StopWatchInvoice(this.payReq);
+  const StopWatchInvoice(this.payReq);
 
   @override
   List<Object> get props => [payReq];
@@ -28,7 +28,7 @@ class StopWatchInvoice extends WatchInvoiceBaseEvent {
 class _InvoiceUpdate extends WatchInvoiceBaseEvent {
   final Invoice invoice;
 
-  _InvoiceUpdate(this.invoice);
+  const _InvoiceUpdate(this.invoice);
 
   @override
   List<Object> get props => [invoice.state!, invoice.settleIndex!];

@@ -14,5 +14,5 @@ class StopListenBitcoinInfo extends BitcoinInfoEvent {}
 class _BitcoinInfoUpdate extends BitcoinInfoEvent {
   final BitcoinInfo info;
 
-  _BitcoinInfoUpdate(this.info);
+  const _BitcoinInfoUpdate(this.info);
 }

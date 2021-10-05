@@ -12,7 +12,8 @@ class BitcoinInfoInitial extends BitcoinInfoBaseState {}
 class BitcoinInfoState extends BitcoinInfoBaseState {
   final BitcoinInfo info;
 
-  BitcoinInfoState(this.info);
+  const BitcoinInfoState(this.info);
+
   @override
   List<Object> get props => [info];
 }

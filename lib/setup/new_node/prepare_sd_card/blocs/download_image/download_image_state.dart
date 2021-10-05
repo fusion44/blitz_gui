@@ -22,7 +22,7 @@ class DlFilesErrorFileExistsState extends DlFilesState {
 
 @immutable
 class DlFileStartState extends DlFilesState {
-  final dlFile;
+  final DlFile dlFile;
 
   DlFileStartState(this.dlFile);
 

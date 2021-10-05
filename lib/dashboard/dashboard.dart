@@ -15,6 +15,8 @@ import 'receive_page.dart';
 import 'settings_page.dart';
 
 class BlitzDashboard extends StatefulWidget {
+  const BlitzDashboard({Key? key}) : super(key: key);
+
   @override
   _BlitzDashboardState createState() => _BlitzDashboardState();
 }
@@ -54,32 +56,28 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     var theme = Theme.of(context);
     return Scaffold(
       floatingActionButton: _buildFAB(context),
-      body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildHeaderBar(theme),
-            _buildBottom(theme),
-          ],
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeaderBar(theme),
+          _buildBottom(theme),
+        ],
       ),
     );
   }
 
   Widget _buildBottom(ThemeData theme) {
     return Expanded(
-      child: Container(
-        child: Row(
-          children: [
-            _buildSideBar(),
-            Expanded(
-              child: RepositoryProvider.value(
-                value: _repo,
-                child: _buildBody(theme.textTheme.headline4!),
-              ),
-            )
-          ],
-        ),
+      child: Row(
+        children: [
+          _buildSideBar(),
+          Expanded(
+            child: RepositoryProvider.value(
+              value: _repo,
+              child: _buildBody(theme.textTheme.headline4!),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -87,13 +85,13 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   Material _buildSideBar() {
     return Material(
       elevation: 4.0,
-      child: Container(
+      child: SizedBox(
         width: 80,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Container(
+            SizedBox(
               height: 50,
               child: TextButton(
                 onPressed: () {
@@ -102,14 +100,14 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                     _fabVisible = false;
                   });
                 },
-                child: TrText(
+                child: const TrText(
                   'dashboard.info_button',
                   overflow: TextOverflow.ellipsis,
                   isButton: true,
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               height: 50,
               child: TextButton(
                 onPressed: () {
@@ -118,14 +116,14 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                     _fabVisible = false;
                   });
                 },
-                child: TrText(
+                child: const TrText(
                   'dashboard.node_button',
                   overflow: TextOverflow.ellipsis,
                   isButton: true,
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               height: 50,
               child: TextButton(
                 onPressed: () {
@@ -134,14 +132,14 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                     _fabVisible = true;
                   });
                 },
-                child: TrText(
+                child: const TrText(
                   'dashboard.funds_button',
                   overflow: TextOverflow.ellipsis,
                   isButton: true,
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               height: 50,
               child: TextButton(
                 onPressed: () {
@@ -150,7 +148,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                     _fabVisible = false;
                   });
                 },
-                child: TrText(
+                child: const TrText(
                   'dashboard.settings_button',
                   overflow: TextOverflow.ellipsis,
                   isButton: true,
@@ -172,12 +170,12 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(width: 16.0),
-            Container(
+            const SizedBox(width: 16.0),
+            SizedBox(
               height: 20,
               child: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png'),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
               'Raspiblitz V1.7',
               style: theme.textTheme.headline5!,
@@ -192,7 +190,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   Widget _buildBody(TextStyle style) {
     switch (state) {
       case 0:
-        return InfoPage();
+        return const InfoPage();
       case 1:
         return QrImage(
           backgroundColor: Colors.grey[300]!,
@@ -203,9 +201,9 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
       case 2:
         return FundsPage(_setFABVisible);
       case 3:
-        return SettingsPage();
+        return const SettingsPage();
       default:
-        return Text('Other State');
+        return const Text('Other State');
     }
   }
 
@@ -224,11 +222,14 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => ReceivePage(),
+              builder: (BuildContext context) => RepositoryProvider.value(
+                value: _repo,
+                child: const ReceivePage(),
+              ),
             ),
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

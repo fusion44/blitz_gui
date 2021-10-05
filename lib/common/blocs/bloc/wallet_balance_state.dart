@@ -12,7 +12,7 @@ class WalletBalanceInitial extends WalletBalanceBaseState {}
 class WalletBalanceUpdated extends WalletBalanceBaseState {
   final WalletBalance balance;
 
-  WalletBalanceUpdated(this.balance);
+  const WalletBalanceUpdated(this.balance);
 
   @override
   List<Object> get props => [balance];

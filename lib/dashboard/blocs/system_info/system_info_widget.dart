@@ -14,38 +14,36 @@ class SystemInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              _buildTextFragment('${tr("system.cpu_load")} [%]: ', theme),
-              _buildTextFragment(_buildCPULoadText(), theme, Colors.green),
-              Spacer(),
-              _buildTextFragment(
-                  '${tr("system.temperature_short")} [°C]: ', theme),
-              _buildTextFragment(_buildTemperatureText(), theme, Colors.green),
-            ],
-          ),
-          Row(
-            children: [
-              ..._buildMemText(theme),
-              Spacer(),
-              _buildTextFragment('${tr('system.hdd_use_short')} [G]: ', theme),
-              _buildTextFragment(_buildHDDText(), theme, Colors.green),
-            ],
-          ),
-          Row(children: [
-            _buildTextFragment('ssh admin@', theme),
-            _buildTextFragment(_getNetworkIP(), theme, Colors.green),
-            Spacer(),
-            _buildTextFragment('dl [MiB]: ', theme),
-            _buildTextFragment(_buildDlText(), theme, Colors.green),
-            _buildTextFragment(' ul [MiB]: ', theme),
-            _buildTextFragment(_buildUlText(), theme, Colors.green),
-          ]),
-        ],
-      ),
+    return Column(
+      children: [
+        Row(
+          children: [
+            _buildTextFragment('${tr("system.cpu_load")} [%]: ', theme),
+            _buildTextFragment(_buildCPULoadText(), theme, Colors.green),
+            const Spacer(),
+            _buildTextFragment(
+                '${tr("system.temperature_short")} [°C]: ', theme),
+            _buildTextFragment(_buildTemperatureText(), theme, Colors.green),
+          ],
+        ),
+        Row(
+          children: [
+            ..._buildMemText(theme),
+            const Spacer(),
+            _buildTextFragment('${tr('system.hdd_use_short')} [G]: ', theme),
+            _buildTextFragment(_buildHDDText(), theme, Colors.green),
+          ],
+        ),
+        Row(children: [
+          _buildTextFragment('ssh admin@', theme),
+          _buildTextFragment(_getNetworkIP(), theme, Colors.green),
+          const Spacer(),
+          _buildTextFragment('dl [MiB]: ', theme),
+          _buildTextFragment(_buildDlText(), theme, Colors.green),
+          _buildTextFragment(' ul [MiB]: ', theme),
+          _buildTextFragment(_buildUlText(), theme, Colors.green),
+        ]),
+      ],
     );
   }
 
@@ -74,6 +72,8 @@ class SystemInfoWidget extends StatelessWidget {
   }
 
   String _buildTemperatureText() {
+    if (info.temperaturesCelsius.isEmpty) return 'error: no data';
+
     final totalTemp = info.temperaturesCelsius.reduce(
       (value, element) => Temperature(
         '',
@@ -126,10 +126,10 @@ class SystemInfoWidget extends StatelessWidget {
   }
 
   String _buildDlText() {
-    return '${(info.networksBytesReceived! / 1000000).toStringAsFixed(1)}';
+    return (info.networksBytesReceived! / 1000000).toStringAsFixed(1);
   }
 
   String _buildUlText() {
-    return '${(info.networksBytesSent! / 1000000).toStringAsFixed(1)}';
+    return (info.networksBytesSent! / 1000000).toStringAsFixed(1);
   }
 }

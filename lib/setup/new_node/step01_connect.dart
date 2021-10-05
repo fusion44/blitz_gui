@@ -9,7 +9,8 @@ import 'bloc/setup_bloc.dart';
 
 class ConnectPage extends StatefulWidget {
   final Function(int) onDone;
-  ConnectPage(this.onDone);
+
+  const ConnectPage(this.onDone, {Key? key}) : super(key: key);
 
   @override
   _ConnectPageState createState() => _ConnectPageState();
@@ -62,12 +63,12 @@ class _ConnectPageState extends State<ConnectPage> {
   }) {
     return Column(
       children: [
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TrText(
           'setup.header_establish_connection',
           style: theme.textTheme.headline6!,
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         TextField(
           controller: _controller,
           enabled: !working,
@@ -75,28 +76,29 @@ class _ConnectPageState extends State<ConnectPage> {
             labelText: tr('setup.input_label.enter_url'),
           ),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         error.isNotEmpty ? Text(error) : Container(),
-        if (successText.isNotEmpty) Text('Response:'),
+        if (successText.isNotEmpty) const Text('Response:'),
         if (successText.isNotEmpty) Text(successText, maxLines: 5),
         if (successText.isNotEmpty)
           ElevatedButton(
             onPressed: () => widget.onDone(1),
-            child: TrText('setup.btn.next_step', isButton: true),
+            child: const TrText('setup.btn.next_step', isButton: true),
           ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         successText.isEmpty
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ElevatedButton(
                     onPressed: working ? null : () => _connect(),
-                    child: TrText('setup.btn.connect_to_api', isButton: true),
+                    child: const TrText('setup.btn.connect_to_api',
+                        isButton: true),
                   ),
-                  SizedBox(width: 8.0),
+                  const SizedBox(width: 8.0),
                   ElevatedButton(
-                    onPressed: working ? null : () => _scan_qr(),
-                    child: TrText(
+                    onPressed: working ? null : () => _scanQr(),
+                    child: const TrText(
                       'setup.btn.scan_qr_with_connection_details',
                       isButton: true,
                     ),
@@ -114,7 +116,7 @@ class _ConnectPageState extends State<ConnectPage> {
     );
   }
 
-  void _scan_qr() {
+  void _scanQr() {
     _controller.text = 'some_address.onion';
   }
 }

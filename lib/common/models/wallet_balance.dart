@@ -30,22 +30,22 @@ class WalletBalance {
       onchainUnconfirmedBalance: json['onchain_unconfirmed_balance'],
       localBalance: json['local_balance'] != null
           ? Amount.fromJson(json['local_balance'])
-          : Amount(),
+          : const Amount(),
       remoteBalance: json['remote_balance'] != null
           ? Amount.fromJson(json['remote_balance'])
-          : Amount(),
+          : const Amount(),
       unsettledLocalBalance: json['unsettled_local_balance'] != null
           ? Amount.fromJson(json['unsettled_local_balance'])
-          : Amount(),
+          : const Amount(),
       unsettledRemoteBalance: json['unsettled_remote_balance'] != null
           ? Amount.fromJson(json['unsettled_remote_balance'])
-          : Amount(),
+          : const Amount(),
       pendingOpenLocalBalance: json['pending_open_local_balance'] != null
           ? Amount.fromJson(json['pending_open_local_balance'])
-          : Amount(),
+          : const Amount(),
       pendingOpenRemoteBalance: json['pending_open_remote_balance'] != null
           ? Amount.fromJson(json['pending_open_remote_balance'])
-          : Amount(),
+          : const Amount(),
     );
   }
 }

@@ -13,7 +13,7 @@ class LightningInfoState extends LightningInfoBaseState {
   final LightningInfo? info;
   final WalletBalance? walletBalance;
 
-  LightningInfoState({this.info, this.walletBalance});
+  const LightningInfoState({this.info, this.walletBalance});
 
   LightningInfoState copyWith({
     LightningInfo? lnInfo,

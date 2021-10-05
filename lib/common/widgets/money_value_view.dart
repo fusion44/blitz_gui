@@ -40,7 +40,7 @@ class MoneyValueView extends StatelessWidget {
 
         if (fee != null) {
           final dark = state.darkTheme;
-          return Container(
+          return SizedBox(
             width: 120,
             child: Column(
               children: [
@@ -51,7 +51,7 @@ class MoneyValueView extends StatelessWidget {
                     children: [
                       if (left) _buildSatIcon(isLeft: left, darkMode: dark),
                       Text(
-                        '${numberFormat.format(amount)}',
+                        numberFormat.format(amount),
                         style: style,
                         textAlign: textAlign,
                       ),
@@ -64,7 +64,7 @@ class MoneyValueView extends StatelessWidget {
                     children: [
                       if (left) _buildSatIcon(isLeft: left, darkMode: dark),
                       Text(
-                        '${numberFormat.format(fee)}',
+                        numberFormat.format(fee),
                         style: style!.copyWith(fontSize: 11),
                         textAlign: textAlign,
                       ),

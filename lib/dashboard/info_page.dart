@@ -11,6 +11,8 @@ import 'blocs/system_info/system_info_widget.dart';
 import 'lightning_info_widget.dart';
 
 class InfoPage extends StatefulWidget {
+  const InfoPage({Key? key}) : super(key: key);
+
   @override
   _InfoPageState createState() => _InfoPageState();
 }
@@ -56,7 +58,7 @@ class _InfoPageState extends State<InfoPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('Raspiblitz v1.7'),
+                const Text('Raspiblitz v1.7'),
                 Text(
                   'RecklessBlitz',
                   style: theme.textTheme.bodyText1!.copyWith(
@@ -66,8 +68,8 @@ class _InfoPageState extends State<InfoPage> {
               ],
             ),
             SizedBox(height: spacing),
-            Text('Bitcoin Fullnode + Lightning Network + TOR'),
-            Divider(),
+            const Text('Bitcoin Fullnode + Lightning Network + TOR'),
+            const Divider(),
             SizedBox(height: spacing),
             BlocBuilder<SystemInfoBloc, SystemInfoBaseState>(
                 bloc: _bloc,
@@ -79,21 +81,25 @@ class _InfoPageState extends State<InfoPage> {
                       state.uploadRate,
                     );
                   } else {
-                    return Center(child: SpinKitChasingDots(color: Colors.red));
+                    return const Center(
+                      child: SpinKitChasingDots(color: Colors.red),
+                    );
                   }
                 }),
-            Divider(),
+            const Divider(),
             BlocBuilder<BitcoinInfoBloc, BitcoinInfoBaseState>(
               bloc: _btcInfoBloc,
               builder: (context, state) {
                 if (state is BitcoinInfoState) {
                   return BitcoinInfoWidget(state.info);
                 } else {
-                  return Center(child: SpinKitChasingDots(color: Colors.red));
+                  return const Center(
+                    child: SpinKitChasingDots(color: Colors.red),
+                  );
                 }
               },
             ),
-            Divider(),
+            const Divider(),
             BlocBuilder<LightningInfoBloc, LightningInfoBaseState>(
               bloc: _lnInfoBloc,
               builder: (context, state) {
@@ -103,7 +109,9 @@ class _InfoPageState extends State<InfoPage> {
                     wb: state.walletBalance!,
                   );
                 } else {
-                  return Center(child: SpinKitChasingDots(color: Colors.red));
+                  return const Center(
+                    child: SpinKitChasingDots(color: Colors.red),
+                  );
                 }
               },
             ),

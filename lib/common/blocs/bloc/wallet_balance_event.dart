@@ -14,5 +14,5 @@ class StopListenWalletBalance extends WalletBalanceBaseEvent {}
 class _WalletBalanceUpdate extends WalletBalanceBaseEvent {
   final WalletBalance balance;
 
-  _WalletBalanceUpdate(this.balance);
+  const _WalletBalanceUpdate(this.balance);
 }

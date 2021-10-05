@@ -17,29 +17,33 @@ class _PrepareSDCardPageState extends State<PrepareSDCardPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 400,
         child: Column(
           children: [
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             TrText('setup.flash_sd_header', style: theme.textTheme.headline4!),
-            SizedBox(height: 8.0),
-            TrText(
+            const SizedBox(height: 8.0),
+            const TrText(
               'setup.question.existing_sd_or_flash_new',
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   onPressed: _onNewSDCard,
-                  child: TrText('setup.btn.flash_sd_card', isButton: true),
+                  child:
+                      const TrText('setup.btn.flash_sd_card', isButton: true),
                 ),
-                SizedBox(width: 16.0),
+                const SizedBox(width: 16.0),
                 ElevatedButton(
                   onPressed: _onExistingSDCard,
-                  child: TrText('setup.btn.skip_to_next_step', isButton: true),
+                  child: const TrText(
+                    'setup.btn.skip_to_next_step',
+                    isButton: true,
+                  ),
                 ),
               ],
             )
@@ -52,7 +56,7 @@ class _PrepareSDCardPageState extends State<PrepareSDCardPage> {
   void _onNewSDCard() async {
     final res = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (ctx) => FlashSDCardPage()),
+      MaterialPageRoute(builder: (ctx) => const FlashSDCardPage()),
     );
 
     if (res != null && res is bool && res) {
@@ -62,7 +66,7 @@ class _PrepareSDCardPageState extends State<PrepareSDCardPage> {
 
   void _onExistingSDCard() {
     // TODO: implement me
-    final snackBar = SnackBar(content: Text('TODO :('));
+    const snackBar = SnackBar(content: Text('TODO :('));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

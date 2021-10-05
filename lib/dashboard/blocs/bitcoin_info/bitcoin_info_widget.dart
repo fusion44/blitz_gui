@@ -12,32 +12,30 @@ class BitcoinInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              _buildTextFragment('Bitcoin ', theme),
-              _buildTextFragment(info.subversion!, theme, Colors.green),
-              Spacer(),
-              _buildTextFragment(
-                trp('bitcoin.connections', info.connections),
-                theme,
-                _getConnectionsColor(),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              _buildTextFragment('${tr('bitcoin.block_height_short')} ', theme),
-              _buildTextFragment(_buildBlocksText(), theme, Colors.green),
-              Spacer(),
-              _buildTextFragment('${tr('bitcoin.sync_status_short')} ', theme),
-              _buildTextFragment(_buildSyncText(), theme, Colors.green),
-            ],
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Row(
+          children: [
+            _buildTextFragment('Bitcoin ', theme),
+            _buildTextFragment(info.subversion!, theme, Colors.green),
+            const Spacer(),
+            _buildTextFragment(
+              trp('bitcoin.connections', info.connections),
+              theme,
+              _getConnectionsColor(),
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            _buildTextFragment('${tr('bitcoin.block_height_short')} ', theme),
+            _buildTextFragment(_buildBlocksText(), theme, Colors.green),
+            const Spacer(),
+            _buildTextFragment('${tr('bitcoin.sync_status_short')} ', theme),
+            _buildTextFragment(_buildSyncText(), theme, Colors.green),
+          ],
+        ),
+      ],
     );
   }
 

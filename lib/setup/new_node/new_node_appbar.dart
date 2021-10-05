@@ -22,7 +22,7 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
         theme: TimelineThemeData(
           nodePosition: 0.15,
           direction: Axis.horizontal,
-          connectorTheme: ConnectorThemeData(space: 30.0, thickness: 5.0),
+          connectorTheme: const ConnectorThemeData(space: 30.0, thickness: 5.0),
         ),
         builder: TimelineTileBuilder.connected(
           itemCount: _steps,
@@ -38,7 +38,7 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(80);
+  Size get preferredSize => const Size.fromHeight(80);
 
   Color _getColor(int index) {
     if (index == _currentStep) {
@@ -75,8 +75,8 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget? _indicatorBuilder(_, index) {
-    var color;
-    var child;
+    Color color;
+    Widget child;
     if (index == _currentStep) {
       color = inProgressColor;
       child = Padding(
@@ -85,16 +85,17 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
       );
     } else if (index < _currentStep) {
       color = completeColor;
-      child = Icon(Icons.check, color: Colors.white, size: 15.0);
+      child = const Icon(Icons.check, color: Colors.white, size: 15.0);
     } else {
       color = todoColor;
+      child = const Icon(Icons.error, color: Colors.red, size: 15.0);
     }
 
     if (index <= _currentStep) {
       return Stack(
         children: [
           CustomPaint(
-            size: Size(30.0, 30.0),
+            size: const Size(30.0, 30.0),
             painter: _BezierPainter(
               color: color,
               drawStart: index > 0,
@@ -112,7 +113,7 @@ class NewNodeAppBar extends StatelessWidget implements PreferredSizeWidget {
       return Stack(
         children: [
           CustomPaint(
-            size: Size(15.0, 15.0),
+            size: const Size(15.0, 15.0),
             painter: _BezierPainter(
               color: color,
               drawEnd: index < _steps - 1,
@@ -202,11 +203,11 @@ class _BezierPainter extends CustomPainter {
 
     final radius = size.width / 2;
 
-    var angle;
-    var offset1;
-    var offset2;
+    double angle;
+    Offset offset1;
+    Offset offset2;
 
-    var path;
+    Path path;
 
     if (drawStart) {
       angle = 3 * pi / 4;

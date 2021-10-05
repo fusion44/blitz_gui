@@ -12,7 +12,7 @@ class AddInvoiceInitial extends AddInvoiceBaseState {}
 class InvoiceAddedState extends AddInvoiceBaseState {
   final String payReq;
 
-  InvoiceAddedState(this.payReq);
+  const InvoiceAddedState(this.payReq);
 
   @override
   List<Object> get props => [payReq];
@@ -21,7 +21,7 @@ class InvoiceAddedState extends AddInvoiceBaseState {
 class AddInvoiceErrorState extends AddInvoiceBaseState {
   final String? errorMessage;
 
-  AddInvoiceErrorState(this.errorMessage);
+  const AddInvoiceErrorState(this.errorMessage);
 
   @override
   List<Object> get props => [errorMessage!];

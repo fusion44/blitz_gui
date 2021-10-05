@@ -61,7 +61,7 @@ class NewNodeSetupBloc extends Bloc<SetupEvent, SetupState> {
     // request.headers['Cookie'] = 'token';
     final response = _client.send(request);
     _sub = response.asStream().listen((event) {
-      event.stream.transform(Utf8Decoder()).listen((event) {
+      event.stream.transform(const Utf8Decoder()).listen((event) {
         print(event);
       });
     });

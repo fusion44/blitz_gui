@@ -11,7 +11,7 @@ class AddInvoiceEvent extends AddInvoiceBaseEvent {
   final int amount;
   final String memo;
 
-  AddInvoiceEvent(this.amount, this.memo);
+  const AddInvoiceEvent(this.amount, this.memo);
 
   @override
   List<Object> get props => [amount, memo];

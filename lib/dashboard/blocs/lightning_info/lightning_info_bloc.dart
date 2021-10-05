@@ -32,7 +32,7 @@ class LightningInfoBloc
       try {
         _curr = state as LightningInfoState;
       } catch (e) {
-        _curr = LightningInfoState();
+        _curr = const LightningInfoState();
       }
 
       yield _curr.copyWith(

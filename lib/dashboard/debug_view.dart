@@ -3,12 +3,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class DebugView extends StatefulWidget {
+  const DebugView({Key? key}) : super(key: key);
+
   @override
   _DebugViewState createState() => _DebugViewState();
 }
 
 class _DebugViewState extends State<DebugView> {
-  Offset _globalPosition = Offset(0, 0);
+  Offset _globalPosition = const Offset(0, 0);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class OpenPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var paint1 = Paint()
-      ..color = Color(0xff63aa65)
+      ..color = const Color(0xff63aa65)
       ..strokeWidth = 10;
     var points = [_pos];
     canvas.drawPoints(PointMode.points, points, paint1);

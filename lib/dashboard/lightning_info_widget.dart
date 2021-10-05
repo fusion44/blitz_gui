@@ -21,41 +21,38 @@ class LightningInfoWidget extends StatelessWidget {
     var f = NumberFormat.simpleCurrency(name: 'sat', decimalDigits: 0);
 
     final theme = Theme.of(context);
-    return Container(
-      child: Column(
-        children: [
-          Row(children: [
-            _buildTextFragment('LND ', theme),
-            _buildTextFragment(info.version!, theme, Colors.green),
-            Spacer(),
-            _buildTextFragment('${tr("wallet.wallet")} ', theme),
+    return Column(
+      children: [
+        Row(children: [
+          _buildTextFragment('LND ', theme),
+          _buildTextFragment(info.version!, theme, Colors.green),
+          const Spacer(),
+          _buildTextFragment('${tr("wallet.wallet")} ', theme),
+          _buildTextFragment(
+              f.format(wb.localBalance.sat + wb.onchainConfirmedBalance),
+              theme,
+              Colors.orange),
+        ]),
+        Row(
+          children: [
+            _buildTextFragment(_getChannelText(), theme),
+            const Spacer(),
             _buildTextFragment(
-                '${f.format(wb.localBalance.sat + wb.onchainConfirmedBalance)}',
-                theme,
-                Colors.orange),
-          ]),
-          Row(
-            children: [
-              _buildTextFragment(_getChannelText(), theme),
-              Spacer(),
-              _buildTextFragment(
-                '${info.numPeers!} ',
-                theme,
-                Colors.purple[200],
-              ),
-              _buildTextFragment(tr('lightning.peers'), theme),
-            ],
-          ),
-          Row(
-            children: [
-              _buildTextFragment(
-                  '${tr('lightning.fee_report_in_sats')} ', theme),
-              _buildTextFragment('11-124-494', theme, Colors.orange),
-              _buildTextFragment(' ${tr("lightning.fee_report_desc")}', theme),
-            ],
-          ),
-        ],
-      ),
+              '${info.numPeers!} ',
+              theme,
+              Colors.purple[200],
+            ),
+            _buildTextFragment(tr('lightning.peers'), theme),
+          ],
+        ),
+        Row(
+          children: [
+            _buildTextFragment('${tr('lightning.fee_report_in_sats')} ', theme),
+            _buildTextFragment('11-124-494', theme, Colors.orange),
+            _buildTextFragment(' ${tr("lightning.fee_report_desc")}', theme),
+          ],
+        ),
+      ],
     );
   }
 

@@ -10,7 +10,7 @@ import 'blocs/settings_bloc/settings_bloc.dart';
 class FundsPage extends StatefulWidget {
   final Function(bool) _setFABVisible;
 
-  FundsPage(this._setFABVisible);
+  const FundsPage(this._setFABVisible, {Key? key}) : super(key: key);
 
   @override
   _FundsPageState createState() => _FundsPageState();
@@ -18,12 +18,11 @@ class FundsPage extends StatefulWidget {
 
 class _FundsPageState extends State<FundsPage> {
   late ScrollController _hideFABController;
-  var _fabVisible;
+  var _fabVisible = true;
 
   @override
   void initState() {
     super.initState();
-    _fabVisible = true;
     _hideFABController = ScrollController();
     _hideFABController.addListener(() {
       if (_hideFABController.position.userScrollDirection ==
@@ -61,7 +60,7 @@ class _FundsPageState extends State<FundsPage> {
             controller: _hideFABController,
             children: [
               _buildFundsRow(state, 2503519, 29193727, theme),
-              Divider(),
+              const Divider(),
               ..._buildList(),
             ],
           ),
@@ -88,7 +87,7 @@ class _FundsPageState extends State<FundsPage> {
     return Row(
       children: [
         Image.asset('assets/icons/link.png', color: Colors.deepOrange[800]),
-        if (!left) SizedBox(width: 8.0),
+        if (!left) const SizedBox(width: 8.0),
         if (left)
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 4.0),
@@ -100,9 +99,9 @@ class _FundsPageState extends State<FundsPage> {
             padding: const EdgeInsets.only(left: 4.0),
             child: Image.asset('assets/icons/satoshi-v2.png', color: color),
           ),
-        Spacer(),
+        const Spacer(),
         Image.asset('assets/icons/lightning.png', color: Colors.yellow[800]),
-        if (!left) SizedBox(width: 8.0),
+        if (!left) const SizedBox(width: 8.0),
         if (left)
           Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 4.0),
@@ -138,17 +137,17 @@ class _FundsPageState extends State<FundsPage> {
 
     var textStyle = theme.textTheme.caption;
 
-    final icon = Icon(Icons.arrow_forward, color: Colors.greenAccent);
+    const icon = Icon(Icons.arrow_forward, color: Colors.greenAccent);
 
     return ListTile(
       leading: icon,
-      title: TimeAgoText(DateTime.now().subtract(Duration(days: 2)),
+      title: TimeAgoText(DateTime.now().subtract(const Duration(days: 2)),
           allowFromNow: false),
       subtitle: Text(
         'Ebay - sold old phone',
         style: textStyle,
       ),
-      trailing: MoneyValueView(
+      trailing: const MoneyValueView(
         amount: 42534,
         textAlign: TextAlign.end,
         settled: true,
@@ -161,17 +160,17 @@ class _FundsPageState extends State<FundsPage> {
   Widget _buildListFakeTile2() {
     var theme = Theme.of(context);
     var textStyle = theme.textTheme.caption;
-    final icon = Icon(Icons.arrow_back, color: Colors.redAccent);
+    const icon = Icon(Icons.arrow_back, color: Colors.redAccent);
 
     return ListTile(
       leading: icon,
-      title: TimeAgoText(DateTime.now().subtract(Duration(days: 2)),
+      title: TimeAgoText(DateTime.now().subtract(const Duration(days: 2)),
           allowFromNow: false),
       subtitle: Text(
         'Dinner at Wendies',
         style: textStyle,
       ),
-      trailing: MoneyValueView(
+      trailing: const MoneyValueView(
         amount: 42534,
         textAlign: TextAlign.end,
         settled: true,
@@ -184,17 +183,17 @@ class _FundsPageState extends State<FundsPage> {
   Widget _buildListFakeTile3() {
     var theme = Theme.of(context);
     var textStyle = theme.textTheme.caption;
-    final icon = Icon(Icons.arrow_back, color: Colors.redAccent);
+    const icon = Icon(Icons.arrow_back, color: Colors.redAccent);
 
     return ListTile(
       leading: icon,
-      title: TimeAgoText(DateTime.now().subtract(Duration(days: 2)),
+      title: TimeAgoText(DateTime.now().subtract(const Duration(days: 2)),
           allowFromNow: false),
       subtitle: Text(
         '8 confirmations',
         style: textStyle,
       ),
-      trailing: MoneyValueView(
+      trailing: const MoneyValueView(
         amount: 1342534,
         textAlign: TextAlign.end,
         settled: true,

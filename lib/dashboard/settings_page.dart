@@ -14,12 +14,12 @@ class SettingsPage extends StatelessWidget {
     return Center(
       child: Column(
         children: [
-          SizedBox(height: 32.0),
+          const SizedBox(height: 32.0),
           BlocBuilder<SettingsBloc, SettingsBaseState>(
             bloc: BlocProvider.of(context),
             builder: (context, state) {
               return ListTile(
-                title: TrText('settings.language_label'),
+                title: const TrText('settings.language_label'),
                 trailing: DropdownButton(
                   value: state.langCode,
                   onChanged: (String? value) {
@@ -36,7 +36,7 @@ class SettingsPage extends StatelessWidget {
             bloc: BlocProvider.of(context),
             builder: (context, state) {
               return ListTile(
-                title: TrText('settings.theme_label'),
+                title: const TrText('settings.theme_label'),
                 trailing: Switch(
                   value: state.darkTheme,
                   onChanged: (value) {
@@ -47,35 +47,35 @@ class SettingsPage extends StatelessWidget {
               );
             },
           ),
-          Divider(),
+          const Divider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 height: 50.0,
                 child: ElevatedButton(
                   onPressed: () {
-                    final snackBar = SnackBar(content: Text('TODO :('));
+                    const snackBar = SnackBar(content: Text('TODO :('));
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
                   style: ElevatedButton.styleFrom(primary: Colors.orange),
-                  child: TrText(
+                  child: const TrText(
                     'settings.reboot_button',
                     overflow: TextOverflow.ellipsis,
                     isButton: true,
                   ),
                 ),
               ),
-              SizedBox(width: 16.0),
-              Container(
+              const SizedBox(width: 16.0),
+              SizedBox(
                 height: 50.0,
                 child: ElevatedButton(
                   onPressed: () {
-                    final snackBar = SnackBar(content: Text('TODO :('));
+                    const snackBar = SnackBar(content: Text('TODO :('));
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
                   style: ElevatedButton.styleFrom(primary: Colors.red),
-                  child: TrText(
+                  child: const TrText(
                     'settings.shutdown_button',
                     overflow: TextOverflow.ellipsis,
                     isButton: true,
@@ -84,17 +84,17 @@ class SettingsPage extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           TextButton(
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => DebugView(),
+                    builder: (BuildContext context) => const DebugView(),
                   ),
                 );
               },
-              child: Text('DebugView'))
+              child: const Text('DebugView'))
         ],
       ),
     );

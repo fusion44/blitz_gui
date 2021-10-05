@@ -8,6 +8,8 @@ import '../common/widgets/translated_text.dart';
 import 'add_invoice_page.dart';
 
 class ReceivePage extends StatefulWidget {
+  const ReceivePage({Key? key}) : super(key: key);
+
   @override
   _ReceivePageState createState() => _ReceivePageState();
 }
@@ -24,7 +26,7 @@ class _ReceivePageState extends State<ReceivePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Container(
+                SizedBox(
                   width: 150,
                   height: 150,
                   child: ElevatedButton(
@@ -35,7 +37,7 @@ class _ReceivePageState extends State<ReceivePage> {
                           builder: (BuildContext c) =>
                               RepositoryProvider<SubscriptionRepository>.value(
                             value: RepositoryProvider.of(context),
-                            child: AddInvoicePage(),
+                            child: const AddInvoicePage(),
                           ),
                         ),
                       );
@@ -47,7 +49,7 @@ class _ReceivePageState extends State<ReceivePage> {
                     ),
                   ),
                 ),
-                Container(
+                SizedBox(
                   width: 150,
                   height: 150,
                   child: ElevatedButton(
@@ -77,15 +79,15 @@ class _ReceivePageState extends State<ReceivePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () => Navigator.pop(context),
             ),
-            SizedBox(width: 8.0),
-            Container(
+            const SizedBox(width: 8.0),
+            SizedBox(
               height: 20,
               child: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png'),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             Text(
               'Receive Funds',
               style: theme.textTheme.headline5!,

@@ -12,7 +12,8 @@ class WatchInvoiceInitial extends WatchInvoiceBaseState {}
 class InvoiceUpdateState extends WatchInvoiceBaseState {
   final Invoice invoice;
 
-  InvoiceUpdateState(this.invoice);
+  const InvoiceUpdateState(this.invoice);
+
   @override
   List<Object> get props => [invoice, invoice.state!, invoice.settleDate!];
 }

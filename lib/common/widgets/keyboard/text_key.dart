@@ -26,9 +26,7 @@ class TextKey extends StatelessWidget {
             onTap: () {
               onTextInput?.call(_text);
             },
-            child: Container(
-              child: Center(child: Text(_text)),
-            ),
+            child: Center(child: Text(_text)),
           ),
         ),
       ),

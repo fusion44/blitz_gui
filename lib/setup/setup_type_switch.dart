@@ -18,7 +18,7 @@ class SetupTypeSwitch extends StatelessWidget {
     return Column(
       children: [
         TrText('setup.choose_setup_type', style: theme.textTheme.headline5!),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 25,
           runSpacing: 25,
@@ -26,8 +26,8 @@ class SetupTypeSwitch extends StatelessWidget {
             _buildButton(
               theme: theme,
               icon: Mdi.bitcoin,
-              btnLabel: TrText('setup.btn.new_node_from_scratch'),
-              description: TrText(
+              btnLabel: const TrText('setup.btn.new_node_from_scratch'),
+              description: const TrText(
                 'setup.btn.new_node_from_scratch_desc',
                 textAlign: TextAlign.center,
               ),
@@ -36,8 +36,8 @@ class SetupTypeSwitch extends StatelessWidget {
             _buildButton(
               theme: theme,
               icon: Mdi.wrench,
-              btnLabel: TrText('setup.btn.migrate'),
-              description: TrText(
+              btnLabel: const TrText('setup.btn.migrate'),
+              description: const TrText(
                 'setup.btn.migrate_desc',
                 textAlign: TextAlign.center,
               ),
@@ -46,8 +46,8 @@ class SetupTypeSwitch extends StatelessWidget {
             _buildButton(
               theme: theme,
               icon: Icons.import_export,
-              btnLabel: TrText('setup.btn.recover'),
-              description: TrText(
+              btnLabel: const TrText('setup.btn.recover'),
+              description: const TrText(
                 'setup.btn.recover_desc',
                 textAlign: TextAlign.center,
               ),
@@ -67,7 +67,7 @@ class SetupTypeSwitch extends StatelessWidget {
     double size = 200,
     required Function onPressed,
   }) {
-    final btn = Container(
+    final btn = SizedBox(
       width: size,
       height: size,
       child: ElevatedButton.icon(
@@ -83,11 +83,11 @@ class SetupTypeSwitch extends StatelessWidget {
     );
 
     if (description != null) {
-      return Container(
+      return SizedBox(
         width: size,
         child: Column(children: [
           btn,
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           description,
         ]),
       );

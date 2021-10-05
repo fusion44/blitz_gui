@@ -10,7 +10,7 @@ class CustomKeyboard extends StatefulWidget {
   final VoidCallback? onBackspace;
   final VoidCallback? onEnter;
 
-  CustomKeyboard({
+  const CustomKeyboard({
     Key? key,
     this.onTextInput,
     this.onBackspace,
@@ -31,7 +31,7 @@ class _CustomKeyboardState extends State<CustomKeyboard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 200,
       child: Column(
         children: [
