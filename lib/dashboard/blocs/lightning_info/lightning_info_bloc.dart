@@ -24,7 +24,7 @@ class LightningInfoBloc
     LightningInfoEvent event,
   ) async* {
     if (event is StartListenLightningInfo) {
-      _warmup();
+      _startListenLnEvents();
     } else if (event is StopListenLightningInfo) {
       await _sub?.cancel();
     } else if (event is _LightningInfoUpdate) {
@@ -47,7 +47,7 @@ class LightningInfoBloc
       SseEventTypes.lnInfo,
       SseEventTypes.walletBalance,
     ])?.listen((event) {
-      if (event['id'] == 'wallet_balance') {
+      if (event['event'] == 'wallet_balance') {
         final wb = WalletBalance.fromJson(event['data']);
         add(_LightningInfoUpdate(walletBalance: wb));
       } else {
@@ -55,14 +55,5 @@ class LightningInfoBloc
         add(_LightningInfoUpdate(lnInfo: i));
       }
     });
-  }
-
-  void _warmup() async {
-    var info = await Dio().get('http://127.0.0.1:8000/lightning/getinfo');
-    var wbr = await Dio().get('http://127.0.0.1:8000/lightning/getbalance');
-    final i = LightningInfo.fromJson(info.data);
-    final wb = WalletBalance.fromJson(wbr.data);
-    add(_LightningInfoUpdate(lnInfo: i, walletBalance: wb));
-    _startListenLnEvents();
   }
 }

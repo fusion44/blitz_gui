@@ -1,4 +1,5 @@
 class LightningInfo {
+  final String? implementation;
   final String? version;
   final String? commitHash;
   final String? identityPubkey;
@@ -18,6 +19,7 @@ class LightningInfo {
   final List<Feature> features;
 
   const LightningInfo({
+    this.implementation = '',
     this.version = '',
     this.commitHash = '',
     this.identityPubkey = '',
@@ -53,6 +55,7 @@ class LightningInfo {
     }
 
     return LightningInfo(
+      implementation: json['implementation'],
       version: json['version'],
       commitHash: json['commit_hash'],
       identityPubkey: json['identity_pubkey'],

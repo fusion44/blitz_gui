@@ -1,36 +1,30 @@
 import '../../../common/utils.dart';
 
 class BitcoinInfo {
-  int? version;
-  String? subversion;
-  bool? networkActive;
-  List<Network>? networks;
-  int? connections;
-  int? connectionsIn;
-  int? connectionsOut;
-  String? chain;
   int? blocks;
   int? headers;
   double? verificationProgress;
-  bool? initialBlockDl;
+  double? difficulty;
   int? sizeOnDisk;
-  bool? pruned;
+  List<Network>? networks;
+  int? version;
+  String? subversion;
+  int? connections;
+  int? connectionsIn;
+  int? connectionsOut;
 
   BitcoinInfo({
     this.version,
     this.subversion,
-    this.networkActive,
     this.networks,
     this.connections,
     this.connectionsIn,
     this.connectionsOut,
-    this.chain,
     this.blocks,
     this.headers,
     this.verificationProgress,
-    this.initialBlockDl,
     this.sizeOnDisk,
-    this.pruned,
+    this.difficulty,
   });
 
   static BitcoinInfo fromJson(Map<String, dynamic> json) {
@@ -44,18 +38,16 @@ class BitcoinInfo {
     return BitcoinInfo(
       version: json['version'],
       subversion: json['subversion'],
-      networkActive: json['networkactive'],
       networks: networks,
-      connections: json['connections'],
+      connections: json['connections'] ??
+          json['connections_in'] + json['connections_out'],
       connectionsIn: json['connections_in'],
       connectionsOut: json['connections_out'],
-      chain: json['chain'],
       blocks: json['blocks'],
       headers: json['headers'],
       verificationProgress: forceDouble(json['verification_progress']),
-      initialBlockDl: json['initialblockdownload'],
       sizeOnDisk: json['size_on_disk'],
-      pruned: json['pruned'],
+      difficulty: forceDouble(json['difficulty']),
     );
   }
 }

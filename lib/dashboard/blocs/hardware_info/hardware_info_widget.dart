@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../../common/utils.dart';
 import '../../text_fragment.dart';
-import 'system_info_model.dart';
+import 'hardware_info_model.dart';
 
-class SystemInfoWidget extends StatelessWidget {
-  final SystemInfo info;
+class HardwareInfoWidget extends StatelessWidget {
+  final HardwareInfo info;
   final double dl;
   final double ul;
-  const SystemInfoWidget(this.info, this.dl, this.ul, {Key? key})
+  const HardwareInfoWidget(this.info, this.dl, this.ul, {Key? key})
       : super(key: key);
 
   @override

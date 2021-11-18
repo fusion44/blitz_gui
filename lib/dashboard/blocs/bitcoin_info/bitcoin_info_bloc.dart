@@ -22,7 +22,7 @@ class BitcoinInfoBloc extends Bloc<BitcoinInfoEvent, BitcoinInfoBaseState> {
     BitcoinInfoEvent event,
   ) async* {
     if (event is StartListenBitcoinInfo) {
-      _warmup();
+      _startListenBitcoinEvents();
     } else if (event is StopListenBitcoinInfo) {
       await _sub?.cancel();
     } else if (event is _BitcoinInfoUpdate) {
@@ -32,23 +32,13 @@ class BitcoinInfoBloc extends Bloc<BitcoinInfoEvent, BitcoinInfoBaseState> {
 
   void _startListenBitcoinEvents() {
     _sub = repo.filteredStream([SseEventTypes.btcInfo])?.listen((event) {
-      if (event['id'] != 'btc_info') {
+      if (event['event'] != 'btc_info') {
         throw StateError(
-          'Invalid state. Requested ${SseEventTypes.btcInfo} but got ${event["id"]} ',
+          'Invalid state. Requested ${SseEventTypes.btcInfo} but got ${event["event"]} ',
         );
       }
       final i = BitcoinInfo.fromJson(event['data']);
       add(_BitcoinInfoUpdate(i));
     });
-  }
-
-  void _warmup() async {
-    // It might take a while until the first bitcoin event arrives.
-    // It is necessary to fetch initial data via get a request.
-    var response =
-        await Dio().get('http://127.0.0.1:8000/bitcoin/getbitcoininfo');
-    final i = BitcoinInfo.fromJson(response.data);
-    add(_BitcoinInfoUpdate(i));
-    _startListenBitcoinEvents();
   }
 }
