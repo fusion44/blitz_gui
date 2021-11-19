@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../models/models.dart';
@@ -15,18 +16,18 @@ class WalletBalanceBloc
 
   StreamSubscription<Map<String, dynamic>>? _sub;
 
-  WalletBalanceBloc(this.repo) : super(WalletBalanceInitial());
+  WalletBalanceBloc(this.repo) : super(WalletBalanceInitial()) {
+    on<WalletBalanceBaseEvent>(_onEvent, transformer: sequential());
+  }
 
-  @override
-  Stream<WalletBalanceBaseState> mapEventToState(
-    WalletBalanceBaseEvent event,
-  ) async* {
+  FutureOr<void> _onEvent(WalletBalanceBaseEvent event,
+      Emitter<WalletBalanceBaseState> emit) async {
     if (event is StartListenWalletBalance) {
       _startListenLnEvents();
     } else if (event is StopListenWalletBalance) {
       await _sub?.cancel();
     } else if (event is _WalletBalanceUpdate) {
-      yield WalletBalanceUpdated(event.balance);
+      emit(WalletBalanceUpdated(event.balance));
     }
   }
 

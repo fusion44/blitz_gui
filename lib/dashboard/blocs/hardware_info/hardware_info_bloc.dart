@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
@@ -19,18 +20,20 @@ class HardwareInfoBloc extends Bloc<HardwareInfoEvent, HardwareInfoBaseState> {
 
   DateTime _lastUpdateTime = DateTime.now();
 
-  HardwareInfoBloc(this.repo) : super(HardwareInfoInitial());
+  HardwareInfoBloc(this.repo) : super(HardwareInfoInitial()) {
+    on<HardwareInfoEvent>(_onEvent, transformer: sequential());
+  }
 
-  @override
-  Stream<HardwareInfoBaseState> mapEventToState(
+  FutureOr<void> _onEvent(
     HardwareInfoEvent event,
-  ) async* {
+    Emitter<HardwareInfoBaseState> emit,
+  ) async {
     if (event is StartListenHardwareInfo) {
       _warmup();
     } else if (event is StopListenHardwareInfo) {
       await _sub?.cancel();
     } else if (event is _HardwareInfoErrorEvent) {
-      yield HardwareInfoErrorState(event.message);
+      emit(HardwareInfoErrorState(event.message));
     } else if (event is _HardwareInfoUpdate) {
       var ul = 0.0;
       var dl = 0.0;
@@ -48,7 +51,7 @@ class HardwareInfoBloc extends Bloc<HardwareInfoEvent, HardwareInfoBaseState> {
       }
 
       _lastInfo = event.info;
-      yield HardwareInfoState(event.info, ul, dl);
+      emit(HardwareInfoState(event.info, ul, dl));
     }
   }
 

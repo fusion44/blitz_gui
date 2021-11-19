@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
@@ -17,12 +18,14 @@ class LightningInfoBloc
 
   StreamSubscription<Map<String, dynamic>>? _sub;
 
-  LightningInfoBloc(this.repo) : super(LightningInfoInitial());
+  LightningInfoBloc(this.repo) : super(LightningInfoInitial()) {
+    on<LightningInfoEvent>(_onEvent, transformer: sequential());
+  }
 
-  @override
-  Stream<LightningInfoBaseState> mapEventToState(
+  FutureOr<void> _onEvent(
     LightningInfoEvent event,
-  ) async* {
+    Emitter<LightningInfoBaseState> emit,
+  ) async {
     if (event is StartListenLightningInfo) {
       _startListenLnEvents();
     } else if (event is StopListenLightningInfo) {
@@ -35,9 +38,11 @@ class LightningInfoBloc
         _curr = const LightningInfoState();
       }
 
-      yield _curr.copyWith(
-        lnInfo: event.lnInfo,
-        walletBalance: event.walletBalance,
+      emit(
+        _curr.copyWith(
+          lnInfo: event.lnInfo,
+          walletBalance: event.walletBalance,
+        ),
       );
     }
   }

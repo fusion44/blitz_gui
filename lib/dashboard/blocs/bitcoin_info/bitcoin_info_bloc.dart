@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../common/subscription_repository.dart';
@@ -15,18 +15,20 @@ class BitcoinInfoBloc extends Bloc<BitcoinInfoEvent, BitcoinInfoBaseState> {
 
   StreamSubscription<Map<String, dynamic>>? _sub;
 
-  BitcoinInfoBloc(this.repo) : super(BitcoinInfoInitial());
+  BitcoinInfoBloc(this.repo) : super(BitcoinInfoInitial()) {
+    on<BitcoinInfoEvent>(_onEvent, transformer: sequential());
+  }
 
-  @override
-  Stream<BitcoinInfoBaseState> mapEventToState(
+  FutureOr<void> _onEvent(
     BitcoinInfoEvent event,
-  ) async* {
+    Emitter<BitcoinInfoBaseState> emit,
+  ) async {
     if (event is StartListenBitcoinInfo) {
       _startListenBitcoinEvents();
     } else if (event is StopListenBitcoinInfo) {
       await _sub?.cancel();
     } else if (event is _BitcoinInfoUpdate) {
-      yield BitcoinInfoState(event.info);
+      emit(BitcoinInfoState(event.info));
     }
   }
 

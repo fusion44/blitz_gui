@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
@@ -14,10 +15,14 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsBaseState> {
   final String _keyLanguage = 'settings_language';
   late Box _box;
 
-  SettingsBloc() : super(SettingsState(darkTheme: false));
+  SettingsBloc() : super(SettingsState(darkTheme: false)) {
+    on<SettingsEvent>(_onEvent, transformer: sequential());
+  }
 
-  @override
-  Stream<SettingsBaseState> mapEventToState(SettingsEvent event) async* {
+  FutureOr<void> _onEvent(
+    SettingsEvent event,
+    Emitter<SettingsBaseState> emit,
+  ) async {
     if (event is AppStartEvent) {
       _box = await Hive.openBox(_dbName);
       if (_box.isEmpty) {
@@ -26,24 +31,28 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsBaseState> {
           _keyLanguage: 'en',
           _keyTheme: false,
         });
-        yield SettingsLoadedState();
+        emit(SettingsLoadedState());
       } else {
         final lang = await _box.get(_keyLanguage);
-        yield SettingsLoadedState(
-          darkTheme: await _box.get(_keyTheme),
-          langCode: lang,
-          currSymbolIsLeft: _getCurrencySymbolPos(lang),
+        emit(
+          SettingsLoadedState(
+            darkTheme: await _box.get(_keyTheme),
+            langCode: lang,
+            currSymbolIsLeft: _getCurrencySymbolPos(lang),
+          ),
         );
       }
     } else if (event is ToggleThemeEvent) {
       await _box.put(_keyTheme, !state.darkTheme);
-      yield state.copyWith(darkTheme: !state.darkTheme);
+      emit(state.copyWith(darkTheme: !state.darkTheme));
     } else if (event is ChangeLanguageEvent) {
       final isLeft = _getCurrencySymbolPos(event.languageCode);
       await _box.put(_keyLanguage, event.languageCode);
-      yield state.copyWith(
-        langCode: event.languageCode,
-        currSymbolIsLeft: isLeft,
+      emit(
+        state.copyWith(
+          langCode: event.languageCode,
+          currSymbolIsLeft: isLeft,
+        ),
       );
     }
   }

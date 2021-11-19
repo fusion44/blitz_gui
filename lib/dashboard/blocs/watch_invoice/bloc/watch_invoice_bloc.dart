@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../common/models/models.dart';
@@ -16,13 +17,15 @@ class WatchInvoiceBloc
 
   StreamSubscription<Map<String, dynamic>>? _sub;
   WatchInvoiceBloc(this._subRepo) : super(WatchInvoiceInitial()) {
+    on<WatchInvoiceBaseEvent>(_onEvent, transformer: sequential());
+
     _listenSystemEvents();
   }
 
-  @override
-  Stream<WatchInvoiceBaseState> mapEventToState(
+  FutureOr<void> _onEvent(
     WatchInvoiceBaseEvent event,
-  ) async* {
+    Emitter<WatchInvoiceBaseState> emit,
+  ) async {
     if (event is WatchInvoice) {
       _events.add(event.payReq);
     } else if (event is StopWatchInvoice) {
@@ -31,7 +34,7 @@ class WatchInvoiceBloc
       _events.clear();
       await _sub?.cancel();
     } else if (event is _InvoiceUpdate) {
-      yield InvoiceUpdateState(event.invoice);
+      emit(InvoiceUpdateState(event.invoice));
     }
   }
 
