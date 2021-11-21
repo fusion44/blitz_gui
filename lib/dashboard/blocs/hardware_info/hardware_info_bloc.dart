@@ -1,18 +1,20 @@
 import 'dart:async';
 
+import '../../../common/blocs/auth/auth_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../common/subscription_repository.dart';
+import '../../../common/utils.dart';
 import 'hardware_info_model.dart';
 
 part 'hardware_info_event.dart';
 part 'hardware_info_state.dart';
 
 class HardwareInfoBloc extends Bloc<HardwareInfoEvent, HardwareInfoBaseState> {
-  SubscriptionRepository repo;
+  final SubscriptionRepository _subRepo;
+  final AuthRepo _authRepo;
 
   StreamSubscription<Map<String, dynamic>>? _sub;
 
@@ -20,7 +22,8 @@ class HardwareInfoBloc extends Bloc<HardwareInfoEvent, HardwareInfoBaseState> {
 
   DateTime _lastUpdateTime = DateTime.now();
 
-  HardwareInfoBloc(this.repo) : super(HardwareInfoInitial()) {
+  HardwareInfoBloc(this._subRepo, this._authRepo)
+      : super(HardwareInfoInitial()) {
     on<HardwareInfoEvent>(_onEvent, transformer: sequential());
   }
 
@@ -56,16 +59,18 @@ class HardwareInfoBloc extends Bloc<HardwareInfoEvent, HardwareInfoBaseState> {
   }
 
   void _listenHardwareEvents() {
-    _sub = repo.filteredStream([SseEventTypes.hardwareInfo])?.listen((event) {
-      final i = HardwareInfo.fromJson(event['data']);
-      add(_HardwareInfoUpdate(i));
-    });
+    _sub = _subRepo.filteredStream([SseEventTypes.hardwareInfo])?.listen(
+      (event) {
+        final i = HardwareInfo.fromJson(event['data']);
+        add(_HardwareInfoUpdate(i));
+      },
+    );
   }
 
   void _warmup() async {
     try {
-      var response =
-          await Dio().get('http://127.0.0.1:8000/v1/system/hardware-info');
+      final url = '${_authRepo.baseUrl()}/latest/system/hardware-info';
+      final response = await getUrl(url, _authRepo.token());
       final b = HardwareInfo.fromJson(response.data);
       add(_HardwareInfoUpdate(b));
     } catch (e) {

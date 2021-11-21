@@ -1,5 +1,6 @@
 library sendmany.utils;
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -77,4 +78,13 @@ double? forceDouble(dynamic source) {
   } else if (source is String) {
     return double.tryParse(source);
   }
+}
+
+Future<Response<dynamic>> getUrl(String url, String token) async {
+  return await Dio().get(
+    url,
+    options: Options(
+      headers: {'Authorization': token},
+    ),
+  );
 }

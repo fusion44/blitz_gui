@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'blocs/auth/auth_repository.dart';
+
 import 'sse_client/sse_client.dart';
 
 enum SseEventTypes {
@@ -21,11 +23,13 @@ enum SseEventTypes {
 
 class SubscriptionRepository {
   Stream<SSEModel>? _stream;
-
-  SubscriptionRepository() {
-    _stream =
-        SSEClient.subscribeToSSE('http://127.0.0.1:8000/sse/subscribe', '')
-            .asBroadcastStream();
+  final AuthRepo _authRepo;
+  SubscriptionRepository(this._authRepo) {
+    final url = '${_authRepo.baseUrl()}/sse/subscribe';
+    _stream = SSEClient.subscribeToSSE(
+      url,
+      _authRepo.token(),
+    ).asBroadcastStream();
   }
 
   Stream<dynamic>? get rawStream => _stream;

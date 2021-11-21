@@ -1,3 +1,5 @@
+import '../common/blocs/auth/auth_repository.dart';
+import 'blocs/system_info/system_info_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -21,7 +23,8 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   final double spacing = 4.0;
 
-  late HardwareInfoBloc _bloc;
+  late SystemInfoBloc _systemBloc;
+  late HardwareInfoBloc _hardwareBloc;
   late BitcoinInfoBloc _btcInfoBloc;
   late LightningInfoBloc _lnInfoBloc;
 
@@ -29,19 +32,23 @@ class _InfoPageState extends State<InfoPage> {
   void initState() {
     super.initState();
 
-    final repo = RepositoryProvider.of<SubscriptionRepository>(context);
-    _bloc = HardwareInfoBloc(repo);
-    _bloc.add(StartListenHardwareInfo());
-    _btcInfoBloc = BitcoinInfoBloc(repo);
+    final subRepo = RepositoryProvider.of<SubscriptionRepository>(context);
+    final authRepo = RepositoryProvider.of<AuthRepo>(context);
+    _hardwareBloc = HardwareInfoBloc(subRepo, authRepo);
+    _hardwareBloc.add(StartListenHardwareInfo());
+    _systemBloc = SystemInfoBloc(subRepo);
+    _systemBloc.add(StartListenSystemInfo());
+    _btcInfoBloc = BitcoinInfoBloc(subRepo);
     _btcInfoBloc.add(StartListenBitcoinInfo());
-    _lnInfoBloc = LightningInfoBloc(repo);
+    _lnInfoBloc = LightningInfoBloc(subRepo);
     _lnInfoBloc.add(StartListenLightningInfo());
   }
 
   @override
   void dispose() {
     super.dispose();
-    _bloc.add(StopListenHardwareInfo());
+    _hardwareBloc.add(StopListenHardwareInfo());
+    _systemBloc.add(StopListenSystemInfo());
     _btcInfoBloc.add(StopListenBitcoinInfo());
     _lnInfoBloc.add(StopListenLightningInfo());
   }
@@ -56,24 +63,42 @@ class _InfoPageState extends State<InfoPage> {
         child: Column(
           children: [
             SizedBox(height: spacing),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Text('Raspiblitz v1.7'),
-                Text(
-                  'RecklessBlitz',
-                  style: theme.textTheme.bodyText1!.copyWith(
-                    color: Colors.green[600],
-                  ),
-                )
-              ],
+            BlocBuilder<SystemInfoBloc, SystemInfoBaseState>(
+              bloc: _systemBloc,
+              builder: (context, state) {
+                if (state is SystemInfoState) {
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('Blitz ${state.info.version}'),
+                          const Spacer(),
+                          const Text('Alias: '),
+                          Text(
+                            state.info.alias,
+                            style: theme.textTheme.bodyText1!.copyWith(
+                              color: Colors.green[600],
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: spacing),
+                      Text(
+                          'Network: ${state.info.chain} + ${state.info.lanApi} + TOR'),
+                    ],
+                  );
+                } else {
+                  return const Center(
+                    child: SpinKitChasingDots(color: Colors.red),
+                  );
+                }
+              },
             ),
-            SizedBox(height: spacing),
-            const Text('Bitcoin Fullnode + Lightning Network + TOR'),
             const Divider(),
             SizedBox(height: spacing),
             BlocBuilder<HardwareInfoBloc, HardwareInfoBaseState>(
-                bloc: _bloc,
+                bloc: _hardwareBloc,
                 builder: (context, state) {
                   if (state is HardwareInfoState) {
                     return HardwareInfoWidget(

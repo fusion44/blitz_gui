@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import '../common/blocs/auth/auth_repository.dart';
+import '../common/blocs/auth/login/view/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
+import '../common/blocs/auth/auth_bloc.dart';
 import '../common/subscription_repository.dart';
 import '../common/utils.dart';
 import '../common/widgets/translated_text.dart';
@@ -24,11 +27,15 @@ class BlitzDashboard extends StatefulWidget {
 class _BlitzDashboardState extends State<BlitzDashboard> {
   int state = 0;
 
-  StreamSubscription<SettingsBaseState>? _sub;
+  StreamSubscription<SettingsBaseState>? _settingsSub;
 
   bool _fabVisible = false;
 
-  final _repo = SubscriptionRepository();
+  SubscriptionRepository? _subRepo;
+
+  late StreamSubscription<AuthStatus> _authSub;
+
+  late AuthRepo _authRepo;
 
   @override
   void initState() {
@@ -36,32 +43,59 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     updateTimeAgoLib('en');
 
     final bloc = BlocProvider.of<SettingsBloc>(context);
-    _sub = bloc.stream.listen((state) {
+    _settingsSub = bloc.stream.listen((state) {
       changeLocale(context, state.langCode);
       updateTimeAgoLib(state.langCode);
       setState(() {});
     });
+
+    _authRepo = RepositoryProvider.of<AuthRepo>(context);
 
     super.initState();
   }
 
   @override
   void dispose() {
-    _sub?.cancel();
+    _authSub.cancel();
+    _settingsSub?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return Scaffold(
-      floatingActionButton: _buildFAB(context),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildHeaderBar(theme),
-          _buildBottom(theme),
-        ],
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.status == AuthStatus.authenticated) {
+          _subRepo = SubscriptionRepository(_authRepo);
+        } else {
+          _subRepo = null;
+        }
+        setState(() {});
+      },
+      child: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          if (state.status == AuthStatus.unauthenticated) {
+            return const LoginPage();
+          } else if (state.status == AuthStatus.authenticated) {
+            return Scaffold(
+              floatingActionButton: _buildFAB(context),
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeaderBar(theme),
+                  _buildBottom(theme),
+                ],
+              ),
+            );
+          } else {
+            return Center(
+              child: Text(
+                'Unknown AuthState ${state.status.toString()}',
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -73,7 +107,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
           _buildSideBar(),
           Expanded(
             child: RepositoryProvider.value(
-              value: _repo,
+              value: _subRepo,
               child: _buildBody(theme.textTheme.headline4!),
             ),
           )
@@ -223,7 +257,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
             context,
             MaterialPageRoute(
               builder: (BuildContext context) => RepositoryProvider.value(
-                value: _repo,
+                value: _subRepo,
                 child: const ReceivePage(),
               ),
             ),

@@ -10,6 +10,14 @@
   "app": {
     "title": "Blitz GUI"
   },
+  "auth": {
+    "authentication_failed": "Authentication Failure",
+    "invalid_password_input_deco": "invalid password",
+    "invalid_url_input_deco": "invalid url",
+    "login_btn": "login",
+    "login_page_header": "login",
+    "password_label": "password"
+  },
   "bitcoin": {
     "block_height_long": "Block Height",
     "block_height_short": "Blocks",
