@@ -5,6 +5,7 @@ library sse_client;
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:common/common.dart';
 import 'package:http/http.dart' as http;
 
 part 'sse_model.dart';
@@ -73,8 +74,7 @@ class SSEClient {
             });
         });
       } catch (e) {
-        print('---ERROR---');
-        print(e);
+        BlitzLog().e(e);
         streamController.add(SSEModel(data: '', id: '', event: ''));
       }
 

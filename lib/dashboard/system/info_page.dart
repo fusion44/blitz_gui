@@ -1,12 +1,12 @@
 import 'package:authentication/authentication.dart';
-import '../wallet/lightning_info/bloc/lightning_info_bloc.dart';
-import '../wallet/wallet_balance/bloc/wallet_balance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
+import '../wallet/lightning_info/bloc/lightning_info_bloc.dart';
 import '../wallet/pages/lightning_info_widget.dart';
+import '../wallet/wallet_balance/bloc/wallet_balance.dart';
 import 'bitcoin_info/bitcoin_info_bloc.dart';
 import 'bitcoin_info/bitcoin_info_widget.dart';
 import 'hardware_info/hardware_info_bloc.dart';

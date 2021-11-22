@@ -1,11 +1,12 @@
-import '../invoices/add_invoice/bloc/add_invoice_bloc.dart';
-import '../invoices/models/invoices.dart';
-import '../watch_invoice/bloc/watch_invoice_bloc.dart';
 import 'package:common/common.dart';
 import 'package:custom_keyboard/custom_keyboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
+import '../invoices/add_invoice/bloc/add_invoice_bloc.dart';
+import '../invoices/models/invoices.dart';
+import '../watch_invoice/bloc/watch_invoice_bloc.dart';
 
 class AddInvoicePage extends StatefulWidget {
   const AddInvoicePage({Key? key}) : super(key: key);
@@ -154,9 +155,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
         if (ctrl != null) {
           handleInsertText(ctrl, input);
         } else {
-          print(
-            'Warning: Receiving input but no text field is active',
-          );
+          BlitzLog().w('Receiving input but no text field is active');
         }
       },
       onBackspace: () {
@@ -164,9 +163,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
         if (ctrl != null) {
           handleBackspace(ctrl);
         } else {
-          print(
-            'Warning: Receiving input but no text field is active',
-          );
+          BlitzLog().w('Receiving input but no text field is active');
         }
       },
       onEnter: () {

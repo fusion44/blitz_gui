@@ -10,9 +10,6 @@ import 'package:path_provider/path_provider.dart';
 
 import 'dashboard/dashboard.dart';
 import 'dashboard/settings/settings_bloc/settings_bloc.dart';
-import 'setup/new_node/new_node_setup_page.dart';
-import 'setup/setup_home.dart';
-import 'setup/setup_type_switch.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,8 +39,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _setupType = '';
-
   @override
   Widget build(BuildContext context) {
     var localizationDelegate = LocalizedApp.of(context).delegate;
@@ -62,34 +57,18 @@ class _MyAppState extends State<MyApp> {
             ],
             supportedLocales: localizationDelegate.supportedLocales,
             locale: localizationDelegate.currentLocale,
-            home: _buildHome(context, 'dashboard'),
+            home: _buildHome(context),
           );
         },
       ),
     );
   }
 
-  Widget _buildHome(BuildContext context, String what) {
-    Widget child;
-
-    if (what == 'dashboard') {
-      child = RepositoryProvider.value(
-        value: widget._authRepo,
-        child: const BlitzDashboard(),
-      );
-    } else {
-      if (_setupType.isEmpty) {
-        child = SetupHome((type) {
-          setState(() {
-            _setupType = type;
-          });
-        });
-      } else if (_setupType == SetupTypeSwitch.newNode) {
-        child = const NewNodeSetupPage();
-      } else {
-        child = Scaffold(body: Center(child: Text('Unknown: $_setupType')));
-      }
-    }
+  Widget _buildHome(BuildContext context) {
+    Widget child = RepositoryProvider.value(
+      value: widget._authRepo,
+      child: const BlitzDashboard(),
+    );
 
     return BlocProvider(
       create: (_) => AuthBloc(authRepository: widget._authRepo),

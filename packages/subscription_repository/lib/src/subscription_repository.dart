@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:common/common.dart';
 import 'package:sse_client/sse_client.dart';
 
 part 'exceptions.dart';
@@ -38,7 +39,7 @@ class SubscriptionRepository {
         };
       } on FormatException catch (e) {
         // Ping message?
-        print(e.message);
+        BlitzLog().e(e);
         return <String, dynamic>{};
       }
     });

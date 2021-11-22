@@ -9,7 +9,9 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.4
-
+ 
+  common:
+    path: ../common
   sse_client:
     path: ../sse_client
 

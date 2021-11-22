@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:common/src/utils.dart' as utils;
+import 'package:common/common.dart' as utils;
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
