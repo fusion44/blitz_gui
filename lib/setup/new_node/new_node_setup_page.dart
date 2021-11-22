@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'step00_prepare_sd_card_page.dart';
-import 'step01_connect.dart';
 import 'bloc/setup_bloc.dart';
 import 'new_node_appbar.dart';
+import 'step00_prepare_sd_card_page.dart';
+import 'step01_connect.dart';
 
 class NewNodeSetupPage extends StatefulWidget {
   const NewNodeSetupPage({Key? key}) : super(key: key);

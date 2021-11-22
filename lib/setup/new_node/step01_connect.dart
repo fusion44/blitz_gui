@@ -1,10 +1,9 @@
 import 'dart:async';
 
+import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../common/utils.dart';
-import '../../common/widgets/translated_text.dart';
 import 'bloc/setup_bloc.dart';
 
 class ConnectPage extends StatefulWidget {

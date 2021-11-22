@@ -1,6 +1,6 @@
+import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 
-import '../../common/widgets/translated_text.dart';
 import 'prepare_sd_card/flash_sd_card.dart';
 
 class PrepareSDCardPage extends StatefulWidget {

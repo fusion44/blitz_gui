@@ -1,5 +1,5 @@
-import 'common/blocs/auth/auth_bloc.dart';
-import 'common/blocs/auth/auth_repository.dart';
+import 'package:authentication/authentication.dart';
+import 'package:common/common.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,9 +8,8 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'common/utils.dart';
-import 'dashboard/blocs/settings_bloc/settings_bloc.dart';
 import 'dashboard/dashboard.dart';
+import 'dashboard/settings/settings_bloc/settings_bloc.dart';
 import 'setup/new_node/new_node_setup_page.dart';
 import 'setup/setup_home.dart';
 import 'setup/setup_type_switch.dart';

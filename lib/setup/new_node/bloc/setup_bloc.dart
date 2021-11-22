@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
@@ -27,26 +26,26 @@ class NewNodeSetupBloc extends Bloc<SetupEvent, SetupState> {
   ) async* {
     if (event is ConnectNodeEvent) {
       yield ConnectingNodeState(event.url);
-      try {
-        url = event.url;
-        if (url.endsWith('/')) url = url.substring(0, url.length - 1);
+      // try {
+      //   url = event.url;
+      //   if (url.endsWith('/')) url = url.substring(0, url.length - 1);
 
-        var response = await Dio().get('$url/setup/status');
-        if (response.statusCode == 200) {
-          yield ConnectingNodeSuccess(url, response.data);
-          _connectStream();
-        } else {
-          yield ConnectingNodeError(
-            event.url,
-            response.statusCode ?? 0,
-            response.statusMessage ?? '',
-          );
-          url = '';
-        }
-      } on DioError catch (e) {
-        url = '';
-        yield ConnectingNodeError(event.url, 0, e.message);
-      }
+      //   var response = await Dio().get('$url/setup/status');
+      //   if (response.statusCode == 200) {
+      //     yield ConnectingNodeSuccess(url, response.data);
+      //     _connectStream();
+      //   } else {
+      //     yield ConnectingNodeError(
+      //       event.url,
+      //       response.statusCode ?? 0,
+      //       response.statusMessage ?? '',
+      //     );
+      //     url = '';
+      //   }
+      // } on DioError catch (e) {
+      //   url = '';
+      //   yield ConnectingNodeError(event.url, 0, e.message);
+      // }
     }
   }
 

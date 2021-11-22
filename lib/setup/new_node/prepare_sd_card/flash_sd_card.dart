@@ -1,12 +1,11 @@
 import 'dart:io';
 
+import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import '../../../common/utils.dart';
-import '../../../common/widgets/translated_text.dart';
 import 'blocs/download_image/download_image_bloc.dart';
 import 'blocs/fetch_release_data/fetch_release_data_bloc.dart';
 

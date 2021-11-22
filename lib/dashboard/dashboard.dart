@@ -1,21 +1,18 @@
 import 'dart:async';
 
-import '../common/blocs/auth/auth_repository.dart';
-import '../common/blocs/auth/login/view/login_page.dart';
+import 'package:authentication/authentication.dart';
+import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:subscription_repository/subscription_repository.dart';
 
-import '../common/blocs/auth/auth_bloc.dart';
-import '../common/subscription_repository.dart';
-import '../common/utils.dart';
-import '../common/widgets/translated_text.dart';
-import 'blocs/settings_bloc/settings_bloc.dart';
-import 'funds_page.dart';
-import 'info_page.dart';
-import 'receive_page.dart';
-import 'settings_page.dart';
+import 'settings/settings_bloc/settings_bloc.dart';
+import 'settings/pages/settings_page.dart';
+import 'system/info_page.dart';
+import 'wallet/pages/funds_page.dart';
+import 'wallet/pages/receive_page.dart';
 
 class BlitzDashboard extends StatefulWidget {
   const BlitzDashboard({Key? key}) : super(key: key);
@@ -67,7 +64,10 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
-          _subRepo = SubscriptionRepository(_authRepo);
+          _subRepo = SubscriptionRepository(
+            _authRepo.baseUrl(),
+            _authRepo.token(),
+          );
         } else {
           _subRepo = null;
         }

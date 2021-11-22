@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:bloc/bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
@@ -16,8 +15,8 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
   static const _dlRoot = 'https://raspiblitz.fulmo.org/images';
   final _dlFolder = io.Directory.systemTemp.path;
 
-  CancelToken? _imageCancelToken;
-  CancelToken? _etcherCancelToken;
+  // CancelToken? _imageCancelToken;
+  // CancelToken? _etcherCancelToken;
 
   String _dlImgPath = '';
   String _dlEtcherPath = '';
@@ -51,17 +50,17 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
         // Tell client to that download is about to state
         yield DlFileStartState(DlFile.image);
 
-        // Download the image
-        _imageCancelToken?.cancel();
-        try {
-          _imageCancelToken = CancelToken();
-          _doDownloadImageFile(imgUrl, _dlImgPath);
-        } catch (e) {
-          _imageCancelToken?.cancel();
-          _imageCancelToken = null;
-          yield DlFileErrorState(e.toString());
-          print(e);
-        }
+        // // Download the image
+        // _imageCancelToken?.cancel();
+        // try {
+        //   _imageCancelToken = CancelToken();
+        //   _doDownloadImageFile(imgUrl, _dlImgPath);
+        // } catch (e) {
+        //   _imageCancelToken?.cancel();
+        //   _imageCancelToken = null;
+        //   yield DlFileErrorState(e.toString());
+        //   print(e);
+        // }
       } else if (event.dlFile == DlFile.etcher) {
         // Check if Etcher file exists
         _dlEtcherPath = '$_dlFolder/balenaEtcher-1.5.120-x64.AppImage';
@@ -76,35 +75,35 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
         // Tell client that the download is about to start
         yield DlFileStartState(DlFile.etcher);
 
-        // Download the image
-        _etcherCancelToken?.cancel();
-        try {
-          _etcherCancelToken = CancelToken();
-          _doDownloadEtcher(dlEtcherUrl, _dlEtcherPath);
-        } catch (e) {
-          _etcherCancelToken?.cancel();
-          _etcherCancelToken = null;
-          yield DlFileErrorState(e.toString());
-          print(e);
-        }
+        // // Download the image
+        // _etcherCancelToken?.cancel();
+        // try {
+        //   _etcherCancelToken = CancelToken();
+        //   _doDownloadEtcher(dlEtcherUrl, _dlEtcherPath);
+        // } catch (e) {
+        //   _etcherCancelToken?.cancel();
+        //   _etcherCancelToken = null;
+        //   yield DlFileErrorState(e.toString());
+        //   print(e);
+        // }
       }
     } else if (event is _VerifyDownloadsEvent) {
       // TODO: verify downloads
       yield DlFileAllFinishedState(_dlImgPath, _dlEtcherPath);
     } else if (event is CancelDlImageEvent) {
-      try {
-        _imageCancelToken?.cancel();
-        _etcherCancelToken?.cancel();
-      } on DioError catch (e) {
-        if (e.type == DioErrorType.cancel) {
-          // ignore
-        } else {
-          yield DlFileErrorState(e.toString());
-          rethrow;
-        }
-      }
-      _imageCancelToken = null;
-      yield DlFileCanceledState();
+      // try {
+      //   _imageCancelToken?.cancel();
+      //   _etcherCancelToken?.cancel();
+      // } on DioError catch (e) {
+      //   if (e.type == DioErrorType.cancel) {
+      //     // ignore
+      //   } else {
+      //     yield DlFileErrorState(e.toString());
+      //     rethrow;
+      //   }
+      // }
+      // _imageCancelToken = null;
+      // yield DlFileCanceledState();
     } else if (event is _UpdateDlProgressEvent) {
       var perc = (100 / event.total) * event.downloaded;
       final a = (event.downloaded / 1024 / 1024).floor();
@@ -127,28 +126,28 @@ class DlImageBloc extends Bloc<DownloadImageBaseEvent, DlFilesState> {
   void _doDownloadPubKey() async {
     const rootzollPubKeyUrl = 'https://keybase.io/rootzoll/pgp_keys.asc';
     final rootzollPubKeyPath = '$_dlFolder/pgp_keys.asc';
-    await Dio().download(rootzollPubKeyUrl, rootzollPubKeyPath);
+    // await Dio().download(rootzollPubKeyUrl, rootzollPubKeyPath);
     add(_DlFinishedEvent(DlFile.pubKey));
   }
 
   void _doDownloadImageFile(String imgUrl, String dlImgPath) async {
-    await Dio().download(
-      imgUrl,
-      dlImgPath,
-      cancelToken: _imageCancelToken,
-      onReceiveProgress: _progressUpdate,
-    );
+    // await Dio().download(
+    //   imgUrl,
+    //   dlImgPath,
+    //   cancelToken: _imageCancelToken,
+    //   onReceiveProgress: _progressUpdate,
+    // );
     add(_DlFinishedEvent(DlFile.image));
   }
 
   void _doDownloadEtcher(String fileUrl, String dlPath) async {
-    await Dio().download(
-      fileUrl,
-      dlPath,
-      cancelToken: _imageCancelToken,
-      onReceiveProgress: _progressUpdate,
-    );
-    add(_DlFinishedEvent(DlFile.etcher));
+    // await Dio().download(
+    //   fileUrl,
+    //   dlPath,
+    //   cancelToken: _imageCancelToken,
+    //   onReceiveProgress: _progressUpdate,
+    // );
+    // add(_DlFinishedEvent(DlFile.etcher));
   }
 
   void _progressUpdate(int current, int total) {

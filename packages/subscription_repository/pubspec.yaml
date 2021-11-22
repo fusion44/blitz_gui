@@ -1,0 +1,20 @@
+name: subscription_repository
+description: A repository to subscribe to a BlitzAPI SSE endpoint.
+publish_to: "none"
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.13.4
+
+  sse_client:
+    path: ../sse_client
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+

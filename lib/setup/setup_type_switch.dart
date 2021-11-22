@@ -1,7 +1,6 @@
+import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:mdi/mdi.dart';
-
-import '../common/widgets/translated_text.dart';
 
 class SetupTypeSwitch extends StatelessWidget {
   static const String newNode = 'newNode';

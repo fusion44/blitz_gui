@@ -32,17 +32,19 @@ dependencies:
   animations: ^2.0.1
   qr_flutter: ^4.0.0
   pinput: ^1.2.0
-  flutter_bloc: ^8.0.0
-  timeago: ^3.1.0
-  flutter_translate: ^3.0.1
   hive_flutter: ^1.1.0
-  dio: ^4.0.0
-  http: ^0.13.4
   timelines: ^0.1.0
-  equatable: ^2.0.3
-  intl: ^0.17.0
+  flutter_bloc: ^8.0.0
   bloc_concurrency: ^0.2.0
-  formz: ^0.4.1
+
+  authentication:
+    path: packages/authentication
+  common:
+    path: packages/common   
+  custom_keyboard:
+    path: packages/custom_keyboard
+  subscription_repository:
+    path: packages/subscription_repository
 
 dev_dependencies:
   flutter_test:

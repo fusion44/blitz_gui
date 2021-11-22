@@ -1,9 +1,8 @@
 import 'dart:math';
 
+import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:timelines/timelines.dart';
-
-import '../../common/widgets/translated_text.dart';
 
 const completeColor = Color(0xff5e6172);
 const inProgressColor = Color(0xff5ec792);
