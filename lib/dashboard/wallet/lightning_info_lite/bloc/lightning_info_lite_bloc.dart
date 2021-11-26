@@ -1,11 +1,12 @@
 import 'dart:async';
 
-import '../models/lightning_info_lite.dart';
-import '../../wallet_balance/bloc/wallet_balance.dart';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:subscription_repository/subscription_repository.dart';
+
+import '../../wallet_balance/bloc/wallet_balance.dart';
+import '../models/lightning_info_lite.dart';
 
 part 'lightning_info_lite_event.dart';
 part 'lightning_info_lite_state.dart';

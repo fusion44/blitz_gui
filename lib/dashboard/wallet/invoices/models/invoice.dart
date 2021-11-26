@@ -1,5 +1,4 @@
 import '../../lightning_info/models/lightning_info.dart';
-
 import 'hop_hint.dart';
 import 'invoice_htlc.dart';
 
