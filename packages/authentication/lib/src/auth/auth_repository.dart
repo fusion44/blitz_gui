@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:common/common.dart' as utils;
 
@@ -44,12 +45,24 @@ class AuthRepo {
     var newUrl = url;
     if (!url.endsWith('/')) newUrl = url + '/';
     newUrl += 'latest/system/login';
-    var res = await utils.post(Uri.parse(newUrl), '', {'password': password});
-    if (res.statusCode == 200) {
-      _url = newUrl.replaceAll('/latest/system/login', '');
-      final jsonBody = jsonDecode(res.body);
-      _token = 'Bearer ${jsonBody["access_token"]}';
+    try {
+      var res = await utils.post(Uri.parse(newUrl), '', {'password': password});
+      if (res.statusCode == 200) {
+        _url = newUrl.replaceAll('/latest/system/login', '');
+        final jsonBody = jsonDecode(res.body);
+        _token = 'Bearer ${jsonBody["access_token"]}';
+        _controller.add(AuthStatus.authenticated);
+      } else if (res.statusCode == 401) {
+        throw AuthStateError('Password is wrong');
+      } else if (res.statusCode == 423) {
+        throw AuthStateError('Node is locked');
+      } else {
+        throw AuthStateError('Unknown error');
+      }
+    } on SocketException catch (e) {
       _controller.add(AuthStatus.authenticated);
+      utils.BlitzLog().e(e.osError?.toString());
+      throw AuthStateError(utils.tr('errors.unable_to_connect_reach_node'));
     }
   }
 

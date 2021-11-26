@@ -12,11 +12,19 @@
   },
   "auth": {
     "authentication_failed": "Authentication Failure",
-    "invalid_password_input_deco": "invalid password",
-    "invalid_url_input_deco": "invalid url",
-    "login_btn": "login",
-    "login_page_header": "login",
-    "password_label": "password"
+    "back_btn": "BACK",
+    "confirm_password_label": "Confirm password",
+    "forgot_password_label": "Forgot password?",
+    "invalid_password_input_deco": "Invalid password",
+    "invalid_url_input_deco": "Invalid url",
+    "login_btn": "LOGIN",
+    "login_page_header": "Login",
+    "password_label": "Password",
+    "recover_password_intro_short": "Reset your password here",
+    "recover_password_long_explainer": "It is only possible to recover your password by flashing your SD card with a fresh Raspiblitz image.",
+    "snackbar_error_title": "Error",
+    "snackbar_success_title": "Success",
+    "url_label": "Url"
   },
   "bitcoin": {
     "block_height_long": "Block Height",
@@ -34,6 +42,9 @@
     "info_button": "Info",
     "node_button": "Node",
     "settings_button": "SETTINGS"
+  },
+  "errors": {
+    "unable_to_connect_reach_node": "Unable to reach the node."
   },
   "lightning": {
     "channels": {

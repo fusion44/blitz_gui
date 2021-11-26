@@ -5,6 +5,7 @@ import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
@@ -15,6 +16,9 @@ import 'wallet/pages/funds_page.dart';
 import 'wallet/pages/receive_page.dart';
 
 class BlitzDashboard extends StatefulWidget {
+  static String path = '/';
+  static String routeName = 'dashboard';
+
   const BlitzDashboard({Key? key}) : super(key: key);
 
   @override
@@ -28,14 +32,15 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
 
   bool _fabVisible = false;
 
-  SubscriptionRepository? _subRepo;
-
-  late StreamSubscription<AuthStatus> _authSub;
-
-  late AuthRepo _authRepo;
+  late final SubscriptionRepository? _subRepo;
 
   @override
   void initState() {
+    final authBloc = BlocProvider.of<AuthBloc>(context);
+    if (authBloc.state.status != AuthStatus.authenticated) {
+      GoRouter.of(context).goNamed(LoginPage.routeName);
+    }
+
     changeLocale(context, 'en');
     updateTimeAgoLib('en');
 
@@ -46,14 +51,16 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
       setState(() {});
     });
 
-    _authRepo = RepositoryProvider.of<AuthRepo>(context);
-
+    final _authRepo = RepositoryProvider.of<AuthRepo>(context);
+    _subRepo = SubscriptionRepository(
+      _authRepo.baseUrl(),
+      _authRepo.token(),
+    );
     super.initState();
   }
 
   @override
   void dispose() {
-    _authSub.cancel();
     _settingsSub?.cancel();
     super.dispose();
   }
@@ -61,41 +68,14 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
-    return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state.status == AuthStatus.authenticated) {
-          _subRepo = SubscriptionRepository(
-            _authRepo.baseUrl(),
-            _authRepo.token(),
-          );
-        } else {
-          _subRepo = null;
-        }
-        setState(() {});
-      },
-      child: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if (state.status == AuthStatus.unauthenticated) {
-            return const LoginPage();
-          } else if (state.status == AuthStatus.authenticated) {
-            return Scaffold(
-              floatingActionButton: _buildFAB(context),
-              body: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildHeaderBar(theme),
-                  _buildBottom(theme),
-                ],
-              ),
-            );
-          } else {
-            return Center(
-              child: Text(
-                'Unknown AuthState ${state.status.toString()}',
-              ),
-            );
-          }
-        },
+    return Scaffold(
+      floatingActionButton: _buildFAB(context),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildHeaderBar(theme),
+          _buildBottom(theme),
+        ],
       ),
     );
   }

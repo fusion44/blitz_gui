@@ -1,35 +1,53 @@
-import 'package:common/common.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_login_lite/flutter_login.dart';
 
 import '../../auth/auth_repository.dart';
 
-import '../bloc/login_bloc.dart';
 import 'package:flutter/material.dart';
 
-import 'login_form.dart';
-
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  static String path = '/login';
+  static String routeName = 'login';
 
-  static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => const LoginPage());
-  }
+  final Function onSubmitAnimationCompleted;
+
+  const LoginPage(this.onSubmitAnimationCompleted, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const TrText('auth.login_page_header')),
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: BlocProvider(
-          create: (context) {
-            return LoginBloc(
-              authRepo: RepositoryProvider.of<AuthRepo>(context),
-            );
-          },
-          child: const LoginForm(),
+        child: FlutterLogin(
+          onRecoverPassword: (String a) {},
+          onLogin: (LoginData data) async => await onLogin(data, context),
+          title: 'Raspiblitz Touch',
+          messages: LoginMessages(),
+          logoTag: 'RaspiBlitz_Logo_Icon_Negative',
+          logo: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png').image,
+          theme: LoginTheme().copyWith(
+            pageColorDark: Colors.transparent,
+            pageColorLight: Colors.transparent,
+          ),
+          savedUrl: 'http://127.0.0.1:8000/',
+          onSubmitAnimationCompleted: onSubmitAnimationCompleted,
         ),
       ),
     );
+  }
+
+  Future<String> onLogin(LoginData data, BuildContext context) async {
+    final _authRepo = RepositoryProvider.of<AuthRepo>(context);
+    try {
+      await _authRepo.logIn(
+        url: data.url,
+        username: 'admin',
+        password: data.password,
+      );
+      return "";
+    } on AuthStateError catch (e) {
+      return e.message;
+    }
   }
 }

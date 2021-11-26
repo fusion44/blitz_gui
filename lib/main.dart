@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:authentication/authentication.dart';
 import 'package:common/common.dart';
 import 'package:flutter/foundation.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -29,50 +32,117 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
-  final SettingsBloc _bloc;
-  final AuthRepo _authRepo;
+  final SettingsBloc bloc;
+  final AuthRepo authRepo;
 
-  const MyApp(this._bloc, this._authRepo, {Key? key}) : super(key: key);
+  const MyApp(this.bloc, this.authRepo, {Key? key}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+  late final GoRouter _router;
+  AuthStatus _authStatus = AuthStatus.unknown;
+  late final AuthBloc _authBloc;
+  late StreamSubscription<AuthState> _authSub;
+
+  @override
+  void initState() {
+    _authBloc = AuthBloc(authRepository: widget.authRepo);
+    _authSub = _authBloc.stream.listen((event) {
+      _authStatus = event.status;
+    });
+
+    _router = GoRouter(
+      redirect: (state) {
+        var isLoggedIn = _authStatus == AuthStatus.authenticated;
+        var isLogging = state.location == LoginPage.path;
+
+        if (!isLoggedIn && !isLogging) return LoginPage.path;
+        if (isLoggedIn && isLogging) return BlitzDashboard.path;
+        return null;
+      },
+      urlPathStrategy: UrlPathStrategy.path,
+      initialLocation: '/',
+      routes: [
+        GoRoute(
+          name: BlitzDashboard.routeName,
+          path: BlitzDashboard.path,
+          pageBuilder: _buildHomePage,
+        ),
+        GoRoute(
+          name: LoginPage.routeName,
+          path: LoginPage.path,
+          pageBuilder: _buildLoginPage,
+        ),
+      ],
+      errorPageBuilder: (context, state) {
+        return MaterialPage(
+          key: state.pageKey,
+          child: Scaffold(body: Center(child: Text(state.error.toString()))),
+        );
+      },
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _authSub.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var localizationDelegate = LocalizedApp.of(context).delegate;
-    return BlocProvider.value(
-      value: widget._bloc,
-      child: BlocBuilder<SettingsBloc, SettingsBaseState>(
-        builder: (context, state) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: tr('app.title'),
-            theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              localizationDelegate
-            ],
-            supportedLocales: localizationDelegate.supportedLocales,
-            locale: localizationDelegate.currentLocale,
-            home: _buildHome(context),
-          );
-        },
+    return RepositoryProvider.value(
+      value: widget.authRepo,
+      child: BlocProvider.value(
+        value: widget.bloc,
+        child: BlocBuilder<SettingsBloc, SettingsBaseState>(
+          builder: (context, state) {
+            return MaterialApp.router(
+              routeInformationParser: _router.routeInformationParser,
+              routerDelegate: _router.routerDelegate,
+              title: tr('app.title'),
+              theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
+              localizationsDelegates: [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                localizationDelegate
+              ],
+              supportedLocales: localizationDelegate.supportedLocales,
+              locale: localizationDelegate.currentLocale,
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildHome(BuildContext context) {
-    Widget child = RepositoryProvider.value(
-      value: widget._authRepo,
-      child: const BlitzDashboard(),
+  Page<dynamic> _buildHomePage(context, state) {
+    return MaterialPage(
+      key: state.pageKey,
+      child: BlocProvider.value(
+        value: _authBloc,
+        child: RepositoryProvider.value(
+          value: widget.authRepo,
+          child: const BlitzDashboard(),
+        ),
+      ),
     );
+  }
 
-    return BlocProvider(
-      create: (_) => AuthBloc(authRepository: widget._authRepo),
-      child: child,
+  Page<dynamic> _buildLoginPage(context, state) {
+    return MaterialPage(
+      key: state.pageKey,
+      child: BlocProvider.value(
+        value: _authBloc,
+        child: LoginPage(
+          () => _router.goNamed(BlitzDashboard.routeName),
+        ),
+      ),
     );
   }
 }
