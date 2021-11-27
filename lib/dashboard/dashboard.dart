@@ -9,9 +9,13 @@ import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
-import 'settings/settings_bloc/settings_bloc.dart';
 import 'settings/pages/settings_page.dart';
+import 'settings/settings_bloc/settings_bloc.dart';
+import 'system/bitcoin_info/bitcoin_info_bloc.dart';
+import 'system/hardware_info/hardware_info_bloc.dart';
 import 'system/info_page.dart';
+import 'system/system_info/system_info_bloc.dart';
+import 'wallet/lightning_info/bloc/lightning_info_bloc.dart';
 import 'wallet/pages/funds_page.dart';
 import 'wallet/pages/receive_page.dart';
 
@@ -32,7 +36,11 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
 
   bool _fabVisible = false;
 
-  late final SubscriptionRepository? _subRepo;
+  late final SubscriptionRepository _subRepo;
+  late final SystemInfoBloc _systemBloc;
+  late final HardwareInfoBloc _hardwareBloc;
+  late final BitcoinInfoBloc _btcInfoBloc;
+  late final LightningInfoBloc _lnInfoBloc;
 
   @override
   void initState() {
@@ -56,12 +64,26 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
       _authRepo.baseUrl(),
       _authRepo.token(),
     );
+
+    _hardwareBloc = HardwareInfoBloc(_subRepo, _authRepo);
+    _systemBloc = SystemInfoBloc(_subRepo);
+    _btcInfoBloc = BitcoinInfoBloc(_subRepo);
+    _lnInfoBloc = LightningInfoBloc(_subRepo);
+
+    _hardwareBloc.add(StartListenHardwareInfo());
+    _systemBloc.add(StartListenSystemInfo());
+    _btcInfoBloc.add(StartListenBitcoinInfo());
+    _lnInfoBloc.add(StartListenLightningInfo());
     super.initState();
   }
 
   @override
   void dispose() {
     _settingsSub?.cancel();
+    _hardwareBloc.add(StopListenHardwareInfo());
+    _systemBloc.add(StopListenSystemInfo());
+    _btcInfoBloc.add(StopListenBitcoinInfo());
+    _lnInfoBloc.add(StopListenLightningInfo());
     super.dispose();
   }
 
@@ -204,7 +226,12 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   Widget _buildBody(TextStyle style) {
     switch (state) {
       case 0:
-        return const InfoPage();
+        return InfoPage(
+          btcInfoBloc: _btcInfoBloc,
+          lnInfoBloc: _lnInfoBloc,
+          hardwareBloc: _hardwareBloc,
+          systemBloc: _systemBloc,
+        );
       case 1:
         return QrImage(
           backgroundColor: Colors.grey[300]!,

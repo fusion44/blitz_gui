@@ -1,8 +1,6 @@
-import 'package:authentication/authentication.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:subscription_repository/subscription_repository.dart';
 
 import '../wallet/lightning_info/bloc/lightning_info_bloc.dart';
 import '../wallet/pages/lightning_info_widget.dart';
@@ -14,7 +12,18 @@ import 'hardware_info/hardware_info_widget.dart';
 import 'system_info/system_info_bloc.dart';
 
 class InfoPage extends StatefulWidget {
-  const InfoPage({Key? key}) : super(key: key);
+  const InfoPage({
+    required this.systemBloc,
+    required this.hardwareBloc,
+    required this.btcInfoBloc,
+    required this.lnInfoBloc,
+    Key? key,
+  }) : super(key: key);
+
+  final SystemInfoBloc systemBloc;
+  final HardwareInfoBloc hardwareBloc;
+  final BitcoinInfoBloc btcInfoBloc;
+  final LightningInfoBloc lnInfoBloc;
 
   @override
   _InfoPageState createState() => _InfoPageState();
@@ -22,36 +31,6 @@ class InfoPage extends StatefulWidget {
 
 class _InfoPageState extends State<InfoPage> {
   final double spacing = 4.0;
-
-  late SystemInfoBloc _systemBloc;
-  late HardwareInfoBloc _hardwareBloc;
-  late BitcoinInfoBloc _btcInfoBloc;
-  late LightningInfoBloc _lnInfoBloc;
-
-  @override
-  void initState() {
-    super.initState();
-
-    final subRepo = RepositoryProvider.of<SubscriptionRepository>(context);
-    final authRepo = RepositoryProvider.of<AuthRepo>(context);
-    _hardwareBloc = HardwareInfoBloc(subRepo, authRepo);
-    _hardwareBloc.add(StartListenHardwareInfo());
-    _systemBloc = SystemInfoBloc(subRepo);
-    _systemBloc.add(StartListenSystemInfo());
-    _btcInfoBloc = BitcoinInfoBloc(subRepo);
-    _btcInfoBloc.add(StartListenBitcoinInfo());
-    _lnInfoBloc = LightningInfoBloc(subRepo);
-    _lnInfoBloc.add(StartListenLightningInfo());
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _hardwareBloc.add(StopListenHardwareInfo());
-    _systemBloc.add(StopListenSystemInfo());
-    _btcInfoBloc.add(StopListenBitcoinInfo());
-    _lnInfoBloc.add(StopListenLightningInfo());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +43,7 @@ class _InfoPageState extends State<InfoPage> {
           children: [
             SizedBox(height: spacing),
             BlocBuilder<SystemInfoBloc, SystemInfoBaseState>(
-              bloc: _systemBloc,
+              bloc: widget.systemBloc,
               builder: (context, state) {
                 if (state is SystemInfoState) {
                   return Column(
@@ -98,7 +77,7 @@ class _InfoPageState extends State<InfoPage> {
             const Divider(),
             SizedBox(height: spacing),
             BlocBuilder<HardwareInfoBloc, HardwareInfoBaseState>(
-                bloc: _hardwareBloc,
+                bloc: widget.hardwareBloc,
                 builder: (context, state) {
                   if (state is HardwareInfoState) {
                     return HardwareInfoWidget(
@@ -118,7 +97,7 @@ class _InfoPageState extends State<InfoPage> {
                 }),
             const Divider(),
             BlocBuilder<BitcoinInfoBloc, BitcoinInfoBaseState>(
-              bloc: _btcInfoBloc,
+              bloc: widget.btcInfoBloc,
               builder: (context, state) {
                 if (state is BitcoinInfoState) {
                   return BitcoinInfoWidget(state.info);
@@ -131,7 +110,7 @@ class _InfoPageState extends State<InfoPage> {
             ),
             const Divider(),
             BlocBuilder<LightningInfoBloc, LightningInfoBaseState>(
-              bloc: _lnInfoBloc,
+              bloc: widget.lnInfoBloc,
               builder: (context, state) {
                 if (state is LightningInfoState) {
                   return LightningInfoWidget(
