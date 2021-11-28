@@ -98,6 +98,14 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
+        },
+        {
+            "name": "Blitz GUI Remote on PI",
+            "request": "attach",
+            "deviceId": "flutter-tester",
+            "observatoryUri": "http://192.168.1.254:41059/WaxjVi4CTFI=/",
+            "type": "dart",
+            "program": "lib/main.dart"
         }
     ]
 }
