@@ -1,6 +1,19 @@
 import 'package:logger/logger.dart';
 
+enum LogLevel {
+  verbose,
+  debug,
+  info,
+  warning,
+  error,
+  wtf,
+  nothing,
+}
+
+Level _translateLogLevel(LogLevel l) => Level.values[l.index];
+
 class BlitzLog {
+  static LogLevel level = LogLevel.verbose;
   static final BlitzLog _singleton = BlitzLog._internal();
   late final Logger _logger;
 
@@ -9,6 +22,7 @@ class BlitzLog {
   }
 
   BlitzLog._internal() {
+    Logger.level = _translateLogLevel(level);
     _logger = Logger(printer: PrettyPrinter());
   }
 

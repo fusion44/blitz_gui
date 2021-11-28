@@ -21,6 +21,8 @@ void main() async {
     Hive.init(appDir.path);
   }
 
+  BlitzLog.level = LogLevel.warning;
+
   final bloc = SettingsBloc();
   bloc.add(AppStartEvent());
 
