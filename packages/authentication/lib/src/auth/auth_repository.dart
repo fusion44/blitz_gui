@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:common/common.dart' as utils;
+import 'package:flutter/foundation.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
@@ -16,6 +17,39 @@ class AuthRepo {
   final _controller = StreamController<AuthStatus>();
   var _url = '';
   var _token = '';
+
+  FutureOr<bool> init() async {
+    if (!kIsWeb) {
+      Map<String, String> envVars = Platform.environment;
+      if (Platform.isLinux || Platform.isMacOS) {
+        String? home = envVars['HOME'];
+
+        if (home != null) {
+          var f = File(home + '/.blitz_api/.cookie');
+          var exists = await f.exists();
+          if (!exists) {
+            // TODO: remove me. This is a hack. Currently flutter-pi
+            // can only be run as root. Check if the file is there
+            // and if not, fail
+            f = File('/home/admin/.blitz_api/.cookie');
+            exists = await f.exists();
+            if (!exists) {
+              // user must log in normally
+              return false;
+            }
+          }
+
+          _token = 'Bearer ${await f.readAsString()}';
+          _url = 'http://0.0.0.0:11111';
+          _controller.add(AuthStatus.authenticated);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  bool get isLoggedIn => _url.isNotEmpty && _token.isNotEmpty;
 
   String token() {
     if (_token.isEmpty) {

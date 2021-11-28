@@ -30,7 +30,11 @@ void main() async {
     fallbackLocale: 'en',
     supportedLocales: ['en'],
   );
-  runApp(LocalizedApp(delegate, MyApp(bloc, AuthRepo())));
+
+  final authRepo = AuthRepo();
+  await authRepo.init();
+
+  runApp(LocalizedApp(delegate, MyApp(bloc, authRepo)));
 }
 
 class MyApp extends StatefulWidget {
@@ -45,20 +49,16 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late final GoRouter _router;
-  AuthStatus _authStatus = AuthStatus.unknown;
   late final AuthBloc _authBloc;
   late StreamSubscription<AuthState> _authSub;
 
   @override
   void initState() {
     _authBloc = AuthBloc(authRepository: widget.authRepo);
-    _authSub = _authBloc.stream.listen((event) {
-      _authStatus = event.status;
-    });
 
     _router = GoRouter(
       redirect: (state) {
-        var isLoggedIn = _authStatus == AuthStatus.authenticated;
+        var isLoggedIn = widget.authRepo.isLoggedIn;
         var isLogging = state.location == LoginPage.path;
 
         if (!isLoggedIn && !isLogging) return LoginPage.path;

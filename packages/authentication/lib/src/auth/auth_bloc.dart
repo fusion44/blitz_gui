@@ -15,6 +15,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         super(const AuthState.unknown()) {
     on<AuthStatusChanged>(_onAuthStatusChanged);
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
+    if (_authRepo.isLoggedIn) {
+      add(const AuthStatusChanged(AuthStatus.authenticated));
+    }
     _authStatusSub = _authRepo.status.listen(
       (status) => add(AuthStatusChanged(status)),
     );
