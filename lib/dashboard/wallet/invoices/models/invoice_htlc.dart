@@ -78,6 +78,6 @@ InvoiceHTLCState? _getState(String state) {
     case 'canceled':
       return InvoiceHTLCState.canceled;
     default:
-      BlitzLog().w('Unknown InvoiceHTLCState $state');
+      BlitzLog().e('Unknown InvoiceHTLCState $state');
   }
 }

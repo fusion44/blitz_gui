@@ -11,7 +11,7 @@ import 'package:http/http.dart' as http;
 part 'sse_model.dart';
 
 class SSEClient {
-  static http.Client _client = http.Client();
+  static final http.Client _client = http.Client();
   static Stream<SSEModel> subscribeToSSE(String url, String token) {
     //Regex to be used
     var lineRegex = RegExp(r'^([^:]*)(?::)?(?: )?(.*)?$');
@@ -21,12 +21,11 @@ class SSEClient {
     StreamController<SSEModel> streamController = StreamController();
     while (true) {
       try {
-        _client = http.Client();
-        var request = http.Request("GET", Uri.parse(url));
+        var request = http.Request('GET', Uri.parse(url));
         //Adding headers to the request
-        request.headers["Cache-Control"] = "no-cache";
-        request.headers["Accept"] = "text/event-stream";
-        request.headers["Authorization"] = token;
+        request.headers['Cache-Control'] = 'no-cache';
+        request.headers['Accept'] = 'text/event-stream';
+        request.headers['Authorization'] = token;
         Future<http.StreamedResponse> response = _client.send(request);
 
         //Listening to the response as a stream

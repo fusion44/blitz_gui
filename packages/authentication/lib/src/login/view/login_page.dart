@@ -45,7 +45,7 @@ class LoginPage extends StatelessWidget {
         username: 'admin',
         password: data.password,
       );
-      return "";
+      return '';
     } on AuthStateError catch (e) {
       return e.message;
     }
