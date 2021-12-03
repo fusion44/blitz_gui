@@ -1,47 +1,44 @@
-import 'package:authentication/authentication.dart';
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
-import 'package:common/common.dart';
 import 'package:meta/meta.dart';
+import 'package:subscription_repository/subscription_repository.dart';
 
 part 'wallet_locked_checker_event.dart';
 part 'wallet_locked_checker_state.dart';
 
 class WalletLockedCheckerBloc
     extends Bloc<WalletLockedCheckerEvent, WalletLockedCheckerState> {
-  final AuthRepo _authRepo;
+  final SubscriptionRepository _subRepo;
 
-  WalletLockedCheckerBloc(this._authRepo)
-      : super(WalletLockedCheckerInitial()) {
-    on<CheckWalletLocked>((event, emit) async {
-      bool locked = true;
-      emit(WalletUnlocked());
-      while (locked) {
-        final stillLocked = await _checkLocked();
-        if (stillLocked) {
-          await Future.delayed(const Duration(seconds: 5));
-          emit(WalletLocked());
-        } else {
-          emit(WalletUnlocked());
-        }
-        locked = stillLocked;
+  StreamSubscription<Map<String, dynamic>>? _sub;
+
+  WalletLockedCheckerBloc(this._subRepo) : super(WalletLockedCheckerInitial()) {
+    on<StartCheckWalletLocked>((event, emit) async {
+      _listenWalletEvents();
+      emit(LoadingWalletStatus());
+    });
+
+    on<WalletLockStateUpdate>((event, emit) async {
+      if (event.isLocked) {
+        emit(WalletLocked());
+      } else {
+        add(StopCheckWalletLocked());
+        emit(WalletUnlocked());
       }
+    });
+
+    on<StopCheckWalletLocked>((event, emit) async {
+      _sub?.cancel();
     });
   }
 
-  Future<bool> _checkLocked() async {
-    final url = '${_authRepo.baseUrl()}/latest/lightning/get-info';
-    try {
-      final response = await fetch(Uri.parse(url), _authRepo.token());
-      if (response.statusCode == 200) {
-        return false;
-      } else if (response.statusCode == 401 || response.statusCode == 423) {
-        return true;
-      } else {
-        BlitzLog().w('Received unexpected status code: ${response.statusCode}');
-      }
-    } catch (e) {
-      BlitzLog().e(e);
-    }
-    return true;
+  void _listenWalletEvents() {
+    _sub = _subRepo.filteredStream([SseEventTypes.walletLockStatus])?.listen(
+      (event) {
+        final locked = event['data']['locked'];
+        add(WalletLockStateUpdate(locked));
+      },
+    );
   }
 }

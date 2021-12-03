@@ -13,5 +13,6 @@ enum SseEventTypes {
   lnInvoiceStatus,
   lnPaymentStatus,
   walletBalance,
+  walletLockStatus,
   unknown
 }

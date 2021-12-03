@@ -14,10 +14,14 @@ class SubscriptionRepository {
 
   SubscriptionRepository(this.baseUrl, this.token) {
     final url = '$baseUrl/sse/subscribe';
-    _stream = SSEClient.subscribeToSSE(
-      url,
-      token,
-    ).asBroadcastStream();
+    try {
+      _stream = SSEClient.subscribeToSSE(
+        url,
+        token,
+      ).asBroadcastStream();
+    } catch (e) {
+      BlitzLog().w('Unable to connect to the SEE endpoint. $e');
+    }
   }
 
   Stream<dynamic>? get rawStream => _stream;
@@ -70,6 +74,8 @@ class SubscriptionRepository {
       return SseEventTypes.lnPaymentStatus;
     } else if (eventId == 'wallet_balance') {
       return SseEventTypes.walletBalance;
+    } else if (eventId == 'wallet_lock_status') {
+      return SseEventTypes.walletLockStatus;
     } else {
       throw UnknownSseTypeException.withDefaultMessage(eventId);
     }

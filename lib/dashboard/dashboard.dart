@@ -18,6 +18,7 @@ import 'system/system_info/system_info_bloc.dart';
 import 'wallet/lightning_info/bloc/lightning_info_bloc.dart';
 import 'wallet/pages/funds_page.dart';
 import 'wallet/pages/receive_page.dart';
+import 'wallet/wallet_locked_checker/wallet_locked_checker_bloc.dart';
 
 class BlitzDashboard extends StatefulWidget {
   static String path = '/';
@@ -36,6 +37,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
 
   bool _fabVisible = false;
 
+  late final WalletLockedCheckerBloc _walletLockedChecker;
   late final SubscriptionRepository _subRepo;
   late final SystemInfoBloc _systemBloc;
   late final HardwareInfoBloc _hardwareBloc;
@@ -65,11 +67,13 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
       _authRepo.token(),
     );
 
+    _walletLockedChecker = WalletLockedCheckerBloc(_subRepo);
     _hardwareBloc = HardwareInfoBloc(_subRepo, _authRepo);
     _systemBloc = SystemInfoBloc(_subRepo);
     _btcInfoBloc = BitcoinInfoBloc(_subRepo);
     _lnInfoBloc = LightningInfoBloc(_subRepo);
 
+    _walletLockedChecker.add(StartCheckWalletLocked());
     _hardwareBloc.add(StartListenHardwareInfo());
     _systemBloc.add(StartListenSystemInfo());
     _btcInfoBloc.add(StartListenBitcoinInfo());
@@ -110,7 +114,10 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
           Expanded(
             child: RepositoryProvider.value(
               value: _subRepo,
-              child: _buildBody(theme.textTheme.headline4!),
+              child: BlocProvider.value(
+                value: _walletLockedChecker,
+                child: _buildBody(theme.textTheme.headline4!),
+              ),
             ),
           )
         ],
