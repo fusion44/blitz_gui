@@ -42,6 +42,22 @@ class SSEClient {
                 currentSSEModel = SSEModel(data: '', id: '', event: '');
                 return;
               }
+
+              if (data.statusCode != 200) {
+                try {
+                  final detail = jsonDecode(dataLine)['detail'];
+                  BlitzLog().w(
+                    'Error while connecting to the SSE endpoint with code ${data.statusCode}:\n$detail',
+                  );
+                } catch (e) {
+                  BlitzLog().w(
+                    'Unable to decode detail message of stream message error with code ${data.statusCode}:\n$dataLine',
+                  );
+                }
+
+                return;
+              }
+
               //Get the match of each line through the regex
               Match match = lineRegex.firstMatch(dataLine)!;
               var field = match.group(1);
