@@ -1,0 +1,23 @@
+name: settings_fragment
+description: A fragment that handles settings for the app
+publish_to: "none"
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.0.0
+  bloc_concurrency: ^0.2.0
+  hive_flutter: ^1.1.0
+  intl: ^0.17.0
+
+  common:
+    path: ../../common
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+
