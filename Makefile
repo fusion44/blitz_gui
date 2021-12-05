@@ -4,6 +4,7 @@ help:
 	@echo "To clean the workspace type 'make clean'"
 	@echo "To run the app on Linux type 'run-linux'"
 	@echo "To run the app on web type 'run-chrome'"
+	@echo "To install dependencies in all packages"
 	@echo "To push the app to an Raspiblitz type 'install-to-pi'. Make sure to adjust all values in the script accordingly."
 	@echo "------------------------------------"
 
@@ -18,6 +19,9 @@ run-chrome:
 # mode before, web won't work without a cleanup
 	flutter clean
 	flutter run -d chrome
+
+install-deps:
+	bash scripts/install_deps.sh
 
 install-to-pi:
 	bash scripts/build_and_push.sh
