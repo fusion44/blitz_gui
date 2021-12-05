@@ -34,10 +34,11 @@ dependencies:
   pinput: ^1.2.0
   hive_flutter: ^1.1.0
   timelines: ^0.1.0
+  equatable: ^2.0.3
   flutter_bloc: ^8.0.0
   bloc_concurrency: ^0.2.0
   logger: ^1.1.0
-  go_router: ^2.3.0
+  go_router: ^2.5.2
 
   authentication:
     path: packages/authentication

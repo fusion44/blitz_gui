@@ -71,20 +71,15 @@ class _MyAppState extends State<MyApp> {
         GoRoute(
           name: BlitzDashboard.routeName,
           path: BlitzDashboard.path,
-          pageBuilder: _buildHomePage,
+          builder: _buildHomePage,
         ),
         GoRoute(
           name: LoginPage.routeName,
           path: LoginPage.path,
-          pageBuilder: _buildLoginPage,
+          builder: _buildLoginPage,
         ),
       ],
-      errorPageBuilder: (context, state) {
-        return MaterialPage(
-          key: state.pageKey,
-          child: Scaffold(body: Center(child: Text(state.error.toString()))),
-        );
-      },
+      errorBuilder: (context, state) => _buildErrorPage(state),
     );
     super.initState();
   }
@@ -94,6 +89,9 @@ class _MyAppState extends State<MyApp> {
     _authSub.cancel();
     super.dispose();
   }
+
+  Widget _buildErrorPage(GoRouterState state) =>
+      Scaffold(body: Center(child: Text(state.error.toString())));
 
   @override
   Widget build(BuildContext context) {
@@ -123,27 +121,21 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Page<dynamic> _buildHomePage(context, state) {
-    return MaterialPage(
-      key: state.pageKey,
-      child: BlocProvider.value(
-        value: _authBloc,
-        child: RepositoryProvider.value(
-          value: widget.authRepo,
-          child: const BlitzDashboard(),
-        ),
+  Widget _buildHomePage(context, state) {
+    return BlocProvider.value(
+      value: _authBloc,
+      child: RepositoryProvider.value(
+        value: widget.authRepo,
+        child: const BlitzDashboard(),
       ),
     );
   }
 
-  Page<dynamic> _buildLoginPage(context, state) {
-    return MaterialPage(
-      key: state.pageKey,
-      child: BlocProvider.value(
-        value: _authBloc,
-        child: LoginPage(
-          () => _router.goNamed(BlitzDashboard.routeName),
-        ),
+  Widget _buildLoginPage(context, state) {
+    return BlocProvider.value(
+      value: _authBloc,
+      child: LoginPage(
+        () => _router.goNamed(BlitzDashboard.routeName),
       ),
     );
   }
