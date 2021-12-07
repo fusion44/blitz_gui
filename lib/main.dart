@@ -10,9 +10,9 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:settings_fragment/settings_fragment.dart';
 
 import 'dashboard/dashboard.dart';
-import 'dashboard/settings/settings_bloc/settings_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -66,18 +66,26 @@ class _MyAppState extends State<MyApp> {
         return null;
       },
       urlPathStrategy: UrlPathStrategy.path,
-      initialLocation: '/',
+      initialLocation: '/dashboard/${BlitzDashboard.defaultPageId}',
       routes: [
-        GoRoute(
-          name: BlitzDashboard.routeName,
-          path: BlitzDashboard.path,
-          builder: _buildHomePage,
-        ),
         GoRoute(
           name: LoginPage.routeName,
           path: LoginPage.path,
           builder: _buildLoginPage,
         ),
+        GoRoute(
+          name: BlitzDashboard.routeName,
+          path: BlitzDashboard.subPath,
+          builder: (context, state) {
+            final pageId = state.params['page_id']!;
+            final tabData = BlitzDashboard.pages.firstWhere(
+              (f) => f.id == pageId,
+              orElse: () => throw Exception('Page not found: $pageId'),
+            );
+
+            return _buildDashboard(tabData, state.pageKey);
+          },
+        )
       ],
       errorBuilder: (context, state) => _buildErrorPage(state),
     );
@@ -121,21 +129,24 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Widget _buildHomePage(context, state) {
-    return BlocProvider.value(
-      value: _authBloc,
-      child: RepositoryProvider.value(
-        value: widget.authRepo,
-        child: const BlitzDashboard(),
-      ),
-    );
-  }
-
   Widget _buildLoginPage(context, state) {
     return BlocProvider.value(
       value: _authBloc,
       child: LoginPage(
-        () => _router.goNamed(BlitzDashboard.routeName),
+        () => _router.goNamed(
+          BlitzDashboard.routeName,
+          params: BlitzDashboard.defaultPageParam,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboard(TabPageData tabData, ValueKey<String> pageKey) {
+    return BlocProvider.value(
+      value: _authBloc,
+      child: RepositoryProvider.value(
+        value: widget.authRepo,
+        child: BlitzDashboard(tabData, key: pageKey),
       ),
     );
   }

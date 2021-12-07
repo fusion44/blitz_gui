@@ -6,36 +6,106 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:settings_fragment/settings_fragment.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
-import 'settings/pages/settings_page.dart';
-import 'settings/settings_bloc/settings_bloc.dart';
 import 'system/bitcoin_info/bitcoin_info_bloc.dart';
 import 'system/hardware_info/hardware_info_bloc.dart';
-import 'system/info_page.dart';
 import 'system/system_info/system_info_bloc.dart';
 import 'wallet/lightning_info/bloc/lightning_info_bloc.dart';
-import 'wallet/pages/funds_page.dart';
-import 'wallet/pages/receive_page.dart';
 import 'wallet/wallet_locked_checker/wallet_locked_checker_bloc.dart';
 
-class BlitzDashboard extends StatefulWidget {
-  static String path = '/';
-  static String routeName = 'dashboard';
+class BlitzDashboardAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  final String title;
+  final Color backgroundColor;
+  final Widget? leading;
+  final double? elevation;
+  final String? flexiText;
 
-  const BlitzDashboard({Key? key}) : super(key: key);
+  const BlitzDashboardAppBar({
+    required this.title,
+    required this.backgroundColor,
+    this.leading,
+    this.elevation,
+    this.flexiText,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Size get preferredSize => const Size.fromHeight(40);
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
+    return AppBar(
+      primary: true,
+      automaticallyImplyLeading: false,
+      backgroundColor: backgroundColor,
+      titleSpacing: 10,
+      title: Text(title),
+      centerTitle: false,
+      elevation: elevation,
+      leadingWidth: 35,
+      leading: leading,
+      flexibleSpace: flexiText != null
+          ? Center(child: Text(flexiText!, style: theme.textTheme.headline6))
+          : null,
+    );
+  }
+}
+
+class TabPageData {
+  final String id;
+  final String label;
+  final IconData icon;
+
+  TabPageData(this.id, this.label, this.icon);
+}
+
+class BlitzDashboard extends StatefulWidget {
+  static String path = '/dashboard';
+  static String subPath = '/dashboard/:page_id';
+  static String routeName = 'dashboard';
+  static String defaultPageId = pages[0].id;
+  static Map<String, String> defaultPageParam = {
+    'page_id': BlitzDashboard.defaultPageId
+  };
+
+  static final pages = [
+    TabPageData(
+      'system',
+      'System',
+      Icons.info_outline_rounded,
+    ),
+    TabPageData(
+      'connect',
+      'Connect',
+      Icons.insert_link_rounded,
+    ),
+    TabPageData(
+      'transactions',
+      'Transactions',
+      Icons.account_balance_wallet,
+    ),
+    TabPageData(
+      'settings',
+      'Settings',
+      Icons.settings,
+    ),
+  ];
+
+  final TabPageData currentTabData;
+
+  const BlitzDashboard(this.currentTabData, {Key? key}) : super(key: key);
 
   @override
   _BlitzDashboardState createState() => _BlitzDashboardState();
 }
 
 class _BlitzDashboardState extends State<BlitzDashboard> {
-  int state = 0;
-
   StreamSubscription<SettingsBaseState>? _settingsSub;
-
-  bool _fabVisible = false;
 
   late final WalletLockedCheckerBloc _walletLockedChecker;
   late final SubscriptionRepository _subRepo;
@@ -43,6 +113,8 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   late final HardwareInfoBloc _hardwareBloc;
   late final BitcoinInfoBloc _btcInfoBloc;
   late final LightningInfoBloc _lnInfoBloc;
+
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -93,192 +165,59 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    ThemeData theme = Theme.of(context);
     return Scaffold(
-      floatingActionButton: _buildFAB(context),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      appBar: BlitzDashboardAppBar(
+        title: 'Raspiblitz',
+        backgroundColor: Colors.green,
+        elevation: 3,
+        flexiText: widget.currentTabData.label,
+        leading: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png'),
+        ),
+      ),
+      body: Row(
         children: [
-          _buildHeaderBar(theme),
-          _buildBottom(theme),
+          _buildNavRail(context, theme),
+          _buildBody(theme),
         ],
       ),
     );
   }
 
-  Widget _buildBottom(ThemeData theme) {
-    return Expanded(
-      child: Row(
-        children: [
-          _buildSideBar(),
-          Expanded(
-            child: RepositoryProvider.value(
-              value: _subRepo,
-              child: BlocProvider.value(
-                value: _walletLockedChecker,
-                child: _buildBody(theme.textTheme.headline4!),
-              ),
-            ),
+  NavigationRail _buildNavRail(BuildContext context, ThemeData theme) {
+    return NavigationRail(
+      selectedIndex: _selectedIndex,
+      elevation: 5,
+      onDestinationSelected: (i) {
+        if (i == _selectedIndex) return;
+        context.goNamed(
+          BlitzDashboard.routeName,
+          params: {'page_id': BlitzDashboard.pages[i].id},
+        );
+        setState(() {
+          _selectedIndex = i;
+        });
+      },
+      destinations: [
+        for (final p in BlitzDashboard.pages)
+          NavigationRailDestination(
+            icon: Icon(p.icon, size: 55),
+            label: Text(p.label),
+            padding: const EdgeInsets.all(8),
           )
-        ],
-      ),
+      ],
     );
   }
 
-  Material _buildSideBar() {
-    return Material(
-      elevation: 4.0,
-      child: SizedBox(
-        width: 80,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(
-              height: 50,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    state = 0;
-                    _fabVisible = false;
-                  });
-                },
-                child: const TrText(
-                  'dashboard.info_button',
-                  overflow: TextOverflow.ellipsis,
-                  isButton: true,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 50,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    state = 1;
-                    _fabVisible = false;
-                  });
-                },
-                child: const TrText(
-                  'dashboard.node_button',
-                  overflow: TextOverflow.ellipsis,
-                  isButton: true,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 50,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    state = 2;
-                    _fabVisible = true;
-                  });
-                },
-                child: const TrText(
-                  'dashboard.funds_button',
-                  overflow: TextOverflow.ellipsis,
-                  isButton: true,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 50,
-              child: TextButton(
-                onPressed: () {
-                  setState(() {
-                    state = 3;
-                    _fabVisible = false;
-                  });
-                },
-                child: const TrText(
-                  'dashboard.settings_button',
-                  overflow: TextOverflow.ellipsis,
-                  isButton: true,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Material _buildHeaderBar(ThemeData theme) {
-    return Material(
-      elevation: 3.0,
-      child: Container(
-        color: Colors.transparent,
-        height: 35,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            const SizedBox(width: 16.0),
-            SizedBox(
-              height: 20,
-              child: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png'),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              'Raspiblitz V1.7',
-              style: theme.textTheme.headline5!,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBody(TextStyle style) {
-    switch (state) {
-      case 0:
-        return InfoPage(
-          btcInfoBloc: _btcInfoBloc,
-          lnInfoBloc: _lnInfoBloc,
-          hardwareBloc: _hardwareBloc,
-          systemBloc: _systemBloc,
-        );
-      case 1:
-        return QrImage(
-          backgroundColor: Colors.grey[300]!,
-          data: '1234567890',
-          version: QrVersions.auto,
-          size: 180.0,
-        );
-      case 2:
-        return FundsPage(_setFABVisible);
-      case 3:
-        return const SettingsPage();
-      default:
-        return const Text('Other State');
+  Widget _buildBody(ThemeData theme) {
+    if (widget.currentTabData.id == BlitzDashboard.pages[3].id) {
+      return const Expanded(child: SettingsView());
+    } else {
+      return Expanded(
+        child: Center(child: Text(widget.currentTabData.label)),
+      );
     }
-  }
-
-  void _setFABVisible(bool visible) {
-    setState(() {
-      _fabVisible = visible;
-    });
-  }
-
-  Visibility _buildFAB(BuildContext context) {
-    return Visibility(
-      visible: _fabVisible,
-      child: FloatingActionButton(
-        mini: true,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => RepositoryProvider.value(
-                value: _subRepo,
-                child: const ReceivePage(),
-              ),
-            ),
-          );
-        },
-        child: const Icon(Icons.add),
-      ),
-    );
   }
 }
