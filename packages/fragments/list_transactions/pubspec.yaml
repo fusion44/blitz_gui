@@ -1,0 +1,28 @@
+name: list_transactions_fragment
+description: A fragment that lists transactions
+publish_to: "none"
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^0.13.4
+  equatable: ^2.0.3
+  flutter_bloc: ^8.0.0
+  bloc_concurrency: ^0.2.0
+
+
+  authentication:
+    path: ../../authentication
+  common:
+    path: ../../common
+  subscription_repository:
+    path: ../../subscription_repository
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+
