@@ -48,6 +48,8 @@ dependencies:
     path: packages/custom_keyboard
   flutter_login_lite:
     path: packages/flutter_login_lite
+  list_transactions_fragment:
+    path: packages/fragments/list_transactions
   settings_fragment:
     path: packages/fragments/settings
   subscription_repository:

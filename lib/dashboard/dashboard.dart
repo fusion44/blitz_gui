@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:list_transactions_fragment/list_transactions.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
@@ -113,6 +114,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   late final HardwareInfoBloc _hardwareBloc;
   late final BitcoinInfoBloc _btcInfoBloc;
   late final LightningInfoBloc _lnInfoBloc;
+  late final ListTxBloc _listTxBloc;
 
   int _selectedIndex = 0;
 
@@ -144,12 +146,15 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     _systemBloc = SystemInfoBloc(_subRepo);
     _btcInfoBloc = BitcoinInfoBloc(_subRepo);
     _lnInfoBloc = LightningInfoBloc(_subRepo);
+    _listTxBloc = ListTxBloc(_authRepo, _subRepo);
 
     _walletLockedChecker.add(StartCheckWalletLocked());
     _hardwareBloc.add(StartListenHardwareInfo());
     _systemBloc.add(StartListenSystemInfo());
     _btcInfoBloc.add(StartListenBitcoinInfo());
     _lnInfoBloc.add(StartListenLightningInfo());
+    _listTxBloc.add(LoadMoreTx());
+
     super.initState();
   }
 
@@ -212,12 +217,25 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   }
 
   Widget _buildBody(ThemeData theme) {
-    if (widget.currentTabData.id == BlitzDashboard.pages[3].id) {
+    if (widget.currentTabData.id == BlitzDashboard.pages[2].id) {
+      return BlocProvider.value(
+        value: _listTxBloc,
+        child: Expanded(
+          child: Column(
+            children: [
+              Text(
+                'Overview Widget goes here',
+                style: theme.textTheme.headline3,
+              ),
+              Expanded(child: FundsPage((visible) => print(visible))),
+            ],
+          ),
+        ),
+      );
+    } else if (widget.currentTabData.id == BlitzDashboard.pages[3].id) {
       return const Expanded(child: SettingsView());
     } else {
-      return Expanded(
-        child: Center(child: Text(widget.currentTabData.label)),
-      );
+      return Center(child: Text(widget.currentTabData.label));
     }
   }
 }
