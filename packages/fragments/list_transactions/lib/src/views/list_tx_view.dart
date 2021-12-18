@@ -63,7 +63,8 @@ class _FundsPageState extends State<FundsPage> {
               return const Center(child: Text('no transactions'));
             }
 
-            return ListView.builder(
+            return ListView.separated(
+              separatorBuilder: (context, index) => const Divider(thickness: 1),
               itemBuilder: (BuildContext context, int i) {
                 return i >= txState.txs.length
                     ? const BottomLoader()

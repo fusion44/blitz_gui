@@ -1,12 +1,16 @@
+enum TxCategory { onchain, ln }
+enum TxType { incoming, outgoing, unknown }
+enum TxStatus { unknown, inFlight, succeeded, failed }
+
 class Transaction {
   final int index;
   final String id;
-  final String category;
-  final String type;
+  final TxCategory category;
+  final TxType type;
   final int amount;
-  final int timeStamp;
+  final DateTime timeStamp;
   final String comment;
-  final String status;
+  final TxStatus status;
   final int? blockHeight;
   final int? numConfs;
   final int? totalFees;
@@ -26,15 +30,34 @@ class Transaction {
   });
 
   static Transaction fromJson(Map<String, dynamic> json) {
+    final cat = json['category'] == 'ln' ? TxCategory.ln : TxCategory.onchain;
+
+    var type = TxType.unknown;
+    if (json['type'] == 'send') {
+      type = TxType.outgoing;
+    } else if (json['type'] == 'receive') {
+      type = TxType.incoming;
+    }
+
+    var status = TxStatus.unknown;
+    if (json['status'] == 'in_flight') {
+      status = TxStatus.inFlight;
+    } else if (json['status'] == 'succeeded') {
+      status = TxStatus.succeeded;
+    } else if (json['status'] == 'failed') {
+      status = TxStatus.failed;
+    }
+
     return Transaction(
       index: json['index'] ?? -1,
       id: json['id'] ?? '',
-      category: json['category'] ?? 'unknown',
-      type: json['type'] ?? 'unknown',
+      category: cat,
+      type: type,
       amount: json['amount'] ?? 0,
-      timeStamp: json['time_stamp'] ?? 0,
+      timeStamp:
+          DateTime.fromMillisecondsSinceEpoch(json['time_stamp'] * 1000 ?? 0),
       comment: json['comment'] ?? '',
-      status: json['status'] ?? 'unknown',
+      status: status,
       blockHeight: json['block_height'] ?? 0,
       numConfs: json['num_confs'] ?? 0,
       totalFees: json['total_fees'] ?? 0,

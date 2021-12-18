@@ -69,7 +69,7 @@ class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
     var i = state.txs.isEmpty ? 0 : state.txs.last.index + 1;
     try {
       final url =
-          '${_authRepo.baseUrl()}/latest/lightning/list-all-tx?index_offset=$i&max_tx=${event.maxTx}';
+          '${_authRepo.baseUrl()}/latest/lightning/list-all-tx?index_offset=$i&max_tx=${event.maxTx}&reversed=true';
       final response = await fetch(Uri.parse(url), _authRepo.token());
       final js = jsonDecode(response.body);
       final txs = <Transaction>[];
