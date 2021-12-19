@@ -3,7 +3,7 @@ description: A repository to subscribe to a BlitzAPI SSE endpoint.
 publish_to: "none"
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
   flutter:

@@ -82,7 +82,7 @@ class MoneyValueView extends StatelessWidget {
   }
 }
 
-Widget _buildSatIcon({bool isLeft = true, darkMode = false}) {
+Widget _buildSatIcon({bool isLeft = true, bool darkMode = false}) {
   final color = darkMode ? Colors.white : Colors.black;
   if (isLeft) {
     return Padding(

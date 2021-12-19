@@ -69,9 +69,9 @@ class BlitzDashboard extends StatefulWidget {
   static String path = '/dashboard';
   static String subPath = '/dashboard/:page_id';
   static String routeName = 'dashboard';
-  static String defaultPageId = pages[0].id;
+  static String defaultPageId = pages.first.id;
   static Map<String, String> defaultPageParam = {
-    'page_id': BlitzDashboard.defaultPageId
+    'page_id': BlitzDashboard.defaultPageId,
   };
 
   static final pages = [
@@ -171,6 +171,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+
     return Scaffold(
       appBar: BlitzDashboardAppBar(
         title: 'Raspiblitz',
@@ -211,7 +212,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
             icon: Icon(p.icon, size: 55),
             label: Text(p.label),
             padding: const EdgeInsets.all(8),
-          )
+          ),
       ],
     );
   }

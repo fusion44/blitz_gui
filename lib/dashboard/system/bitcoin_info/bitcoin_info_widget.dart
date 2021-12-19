@@ -11,12 +11,13 @@ class BitcoinInfoWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Column(
       children: [
         Row(
           children: [
             _buildTextFragment('Bitcoin ', theme),
-            _buildTextFragment(info.subversion!, theme, Colors.green),
+            _buildTextFragment(info.subversion, theme, Colors.green),
             const Spacer(),
             _buildTextFragment(
               trp('bitcoin.connections', info.connections),
@@ -53,11 +54,13 @@ class BitcoinInfoWidget extends StatelessWidget {
 
   String _buildSyncText() {
     if (info.verificationProgress == 1) return '100%';
-    return '${(100 * info.verificationProgress!).toStringAsFixed(1)}%';
+
+    return '${(100 * info.verificationProgress).toStringAsFixed(1)}%';
   }
 
   String _buildBlocksText() {
     if (info.verificationProgress == 1) return '${info.blocks}';
+
     return '${info.blocks}/${info.headers}';
   }
 

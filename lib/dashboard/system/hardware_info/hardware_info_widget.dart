@@ -117,7 +117,7 @@ class HardwareInfoWidget extends StatelessWidget {
     try {
       final network = info.networks
           .firstWhere((element) => element.interfaceName == interfaceName);
-      return network.address ?? tr('system.network_not_found');
+      return network.address;
     } catch (e) {
       BlitzLog().i(e);
     }

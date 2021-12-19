@@ -8,12 +8,7 @@ import 'package:flutter_login_lite/flutter_login.dart';
 import 'package:flutter_login_lite/src/constants.dart';
 import 'package:flutter_login_lite/src/dart_helper.dart';
 import 'package:flutter_login_lite/src/matrix.dart';
-import 'package:flutter_login_lite/src/models/login_data.dart';
-import 'package:flutter_login_lite/src/models/login_user_type.dart';
 import 'package:flutter_login_lite/src/paddings.dart';
-import 'package:flutter_login_lite/src/providers/auth.dart';
-import 'package:flutter_login_lite/src/providers/login_messages.dart';
-import 'package:flutter_login_lite/src/providers/login_theme.dart';
 import 'package:flutter_login_lite/src/widget_helper.dart';
 import 'package:provider/provider.dart';
 

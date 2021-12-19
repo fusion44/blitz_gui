@@ -15,7 +15,7 @@ String tr(String key, [Map<String, dynamic> args = const <String, dynamic>{}]) {
 /// Plurally translates a string with the given [key] and the [value].
 String trp(
   String key,
-  dynamic value, [
+  num value, [
   Map<String, dynamic> args = const <String, dynamic>{},
 ]) {
   return translatePlural(key, value, args: args);

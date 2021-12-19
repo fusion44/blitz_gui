@@ -67,6 +67,7 @@ class HardwareInfo {
         networks.add(Network.fromJson(v));
       });
     }
+
     return HardwareInfo(
       cpuOverallPercent: json['cpu_overall_percent'],
       cpuPerCpuPercent: json['cpu_per_cpu_percent'].cast<double>(),
@@ -134,11 +135,15 @@ class Disk {
 }
 
 class Network {
-  final String? interfaceName;
-  final String? address;
-  final String? macAddress;
+  final String interfaceName;
+  final String address;
+  final String macAddress;
 
-  Network({this.interfaceName, this.address, this.macAddress});
+  Network({
+    required this.interfaceName,
+    required this.address,
+    required this.macAddress,
+  });
 
   static Network fromJson(Map<String, dynamic> json) => Network(
         interfaceName: json['interface_name'],

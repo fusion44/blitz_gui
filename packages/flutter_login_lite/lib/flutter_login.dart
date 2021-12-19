@@ -321,7 +321,7 @@ class FlutterLogin extends StatefulWidget {
   final ConfirmRecoverCallback? onConfirmRecover;
 
   /// Prefilled (ie. saved from previous session) value at startup for username
-  /// (Auth class calls username email, therefore we use savedEmail here aswell)
+  /// (Auth class calls username email, therefore we use savedEmail here as well)
   final String savedUrl;
 
   /// Prefilled (ie. saved from previous session) value at startup for password (applies both
@@ -604,7 +604,7 @@ class _FlutterLoginState extends State<FlutterLogin>
         highlightElevation: buttonTheme.highlightElevation ?? 2.0,
         shape: buttonTheme.shape ?? const StadiumBorder(),
       ),
-      // put it here because floatingActionButtonTheme doesnt have highlightColor property
+      // put it here because floatingActionButtonTheme doesn't have highlightColor property
       highlightColor:
           loginTheme.buttonTheme.highlightColor ?? theme.highlightColor,
       textTheme: theme.textTheme.copyWith(

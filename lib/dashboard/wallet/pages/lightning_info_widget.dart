@@ -24,7 +24,7 @@ class LightningInfoWidget extends StatelessWidget {
       children: [
         Row(children: [
           _buildTextFragment('LND ', theme),
-          _buildTextFragment(info.version!, theme, Colors.green),
+          _buildTextFragment(info.version, theme, Colors.green),
           const Spacer(),
           _buildTextFragment('${tr("wallet.wallet")} ', theme),
           _buildTextFragment(
@@ -37,7 +37,7 @@ class LightningInfoWidget extends StatelessWidget {
             _buildTextFragment(_getChannelText(), theme),
             const Spacer(),
             _buildTextFragment(
-              '${info.numPeers!} ',
+              '${info.numPeers} ',
               theme,
               Colors.purple[200],
             ),
@@ -69,9 +69,9 @@ class LightningInfoWidget extends StatelessWidget {
   }
 
   String _getChannelText() {
-    final total = info.numActiveChannels! + info.numInactiveChannels!;
+    final total = info.numActiveChannels + info.numInactiveChannels;
     var pendingText = '';
-    if (info.numPendingChannels! > 0) {
+    if (info.numPendingChannels > 0) {
       pendingText = trp(
         'lightning.channels.pending_channels',
         info.numPendingChannels,
@@ -80,14 +80,14 @@ class LightningInfoWidget extends StatelessWidget {
     if (total == 0) {
       // user has no channels at all
       return tr('lightning.channels.has_no_channel') + pendingText;
-    } else if (info.numInactiveChannels == 0 && info.numActiveChannels! > 0) {
+    } else if (info.numInactiveChannels == 0 && info.numActiveChannels> 0) {
       // user has only active channels
       final txt = trp(
         'lightning.channels.has_only_active',
         info.numActiveChannels,
       );
       return txt + pendingText;
-    } else if (info.numInactiveChannels! > 0 && info.numActiveChannels == 0) {
+    } else if (info.numInactiveChannels> 0 && info.numActiveChannels == 0) {
       // user has only inactive channels
       final txt = trp(
         'lightning.channels.has_only_inactive',

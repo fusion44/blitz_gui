@@ -61,7 +61,7 @@ class _URLInputState extends State<_URLInput> {
     var bloc = context.read<LoginBloc>();
     _urlCtrl.text = bloc.state.url.value;
     _sub = bloc.stream.listen((state) {
-      if (state is LoginState && _urlCtrl.text != state.url.value) {
+      if (_urlCtrl.text != state.url.value) {
         _urlCtrl.text = state.url.value;
       }
     });

@@ -35,8 +35,9 @@ class BlitzLog {
   void i(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
       _logger.i(message, error, stackTrace);
 
-  void log(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
-      _logger.log(message, error, stackTrace);
+  void log(Level level, dynamic message,
+          [dynamic error, StackTrace? stackTrace]) =>
+      _logger.log(level, message, error, stackTrace);
 
   void v(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
       _logger.v(message, error, stackTrace);

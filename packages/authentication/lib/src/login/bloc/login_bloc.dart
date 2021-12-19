@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 
 import '../../auth/auth_repository.dart';
-import '../models/blitz_url.dart';
 import '../models/models.dart';
 
 part 'login_event.dart';

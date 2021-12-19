@@ -1,30 +1,30 @@
 import 'package:common/common.dart';
 
 class BitcoinInfo {
-  int? blocks;
-  int? headers;
-  double? verificationProgress;
-  double? difficulty;
-  int? sizeOnDisk;
+  int blocks;
+  int headers;
+  double verificationProgress;
+  double difficulty;
+  int sizeOnDisk;
   List<Network>? networks;
-  int? version;
-  String? subversion;
-  int? connections;
-  int? connectionsIn;
-  int? connectionsOut;
+  int version;
+  String subversion;
+  int connections;
+  int connectionsIn;
+  int connectionsOut;
 
   BitcoinInfo({
-    this.version,
-    this.subversion,
-    this.networks,
-    this.connections,
-    this.connectionsIn,
-    this.connectionsOut,
-    this.blocks,
-    this.headers,
-    this.verificationProgress,
-    this.sizeOnDisk,
-    this.difficulty,
+    required this.version,
+    required this.subversion,
+    required this.networks,
+    required this.connections,
+    required this.connectionsIn,
+    required this.connectionsOut,
+    required this.blocks,
+    required this.headers,
+    required this.verificationProgress,
+    required this.sizeOnDisk,
+    required this.difficulty,
   });
 
   static BitcoinInfo fromJson(Map<String, dynamic> json) {
@@ -45,9 +45,9 @@ class BitcoinInfo {
       connectionsOut: json['connections_out'],
       blocks: json['blocks'],
       headers: json['headers'],
-      verificationProgress: forceDouble(json['verification_progress']),
+      verificationProgress: forceDouble(json['verification_progress']) ?? -1,
       sizeOnDisk: json['size_on_disk'],
-      difficulty: forceDouble(json['difficulty']),
+      difficulty: forceDouble(json['difficulty']) ?? -1,
     );
   }
 }

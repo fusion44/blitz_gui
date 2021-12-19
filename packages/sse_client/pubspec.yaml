@@ -3,7 +3,7 @@ description: An sse client based on https://pub.dev/packages/flutter_client_sse
 publish_to: "none"
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
   flutter:

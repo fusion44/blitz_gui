@@ -6,11 +6,11 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:authentication/authentication.dart';
-import 'package:blitz_gui/dashboard/settings/settings_bloc/settings_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:blitz_gui/main.dart';
+import 'package:settings_fragment/settings_fragment.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
