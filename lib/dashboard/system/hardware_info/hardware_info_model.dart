@@ -1,46 +1,46 @@
 import 'package:common/common.dart';
 
 class HardwareInfo {
-  final double? cpuOverallPercent;
+  final double cpuOverallPercent;
   final List<double> cpuPerCpuPercent;
-  final int? vramTotalBytes;
-  final int? vramAvailableBytes;
-  final int? vramUsedBytes;
-  final double? vramUsagePercent;
-  final int? swapRamTotalBytes;
-  final int? swapUsedBytes;
-  final double? swapUsageBytes;
+  final int vramTotalBytes;
+  final int vramAvailableBytes;
+  final int vramUsedBytes;
+  final double vramUsagePercent;
+  final int swapRamTotalBytes;
+  final int swapUsedBytes;
+  final int swapUsageBytes;
   final List<Temperature> temperaturesCelsius;
-  final int? bootTimeTimestamp;
-  final int? diskIoReadCount;
-  final int? diskIoWriteCount;
-  final int? diskIoReadBytes;
-  final int? diskIoWriteBytes;
+  final int bootTimeTimestamp;
+  final int diskIoReadCount;
+  final int diskIoWriteCount;
+  final int diskIoReadBytes;
+  final int diskIoWriteBytes;
   final List<Disk> disks;
   final List<Network> networks;
-  final int? networksBytesSent;
-  final int? networksBytesReceived;
+  final int networksBytesSent;
+  final int networksBytesReceived;
 
   HardwareInfo({
-    this.cpuOverallPercent,
+    required this.cpuOverallPercent,
     this.cpuPerCpuPercent = const [],
-    this.vramTotalBytes,
-    this.vramAvailableBytes,
-    this.vramUsedBytes,
-    this.vramUsagePercent,
-    this.swapRamTotalBytes,
-    this.swapUsedBytes,
-    this.swapUsageBytes,
+    required this.vramTotalBytes,
+    required this.vramAvailableBytes,
+    required this.vramUsedBytes,
+    required this.vramUsagePercent,
+    required this.swapRamTotalBytes,
+    required this.swapUsedBytes,
+    required this.swapUsageBytes,
     this.temperaturesCelsius = const [],
-    this.bootTimeTimestamp,
-    this.diskIoReadCount,
-    this.diskIoWriteCount,
-    this.diskIoReadBytes,
-    this.diskIoWriteBytes,
+    required this.bootTimeTimestamp,
+    required this.diskIoReadCount,
+    required this.diskIoWriteCount,
+    required this.diskIoReadBytes,
+    required this.diskIoWriteBytes,
     this.disks = const [],
     this.networks = const [],
-    this.networksBytesSent,
-    this.networksBytesReceived,
+    required this.networksBytesSent,
+    required this.networksBytesReceived,
   });
 
   static HardwareInfo fromJson(Map<String, dynamic> json) {
@@ -69,25 +69,25 @@ class HardwareInfo {
     }
 
     return HardwareInfo(
-      cpuOverallPercent: json['cpu_overall_percent'],
+      cpuOverallPercent: forceDouble(json['cpu_overall_percent']),
       cpuPerCpuPercent: json['cpu_per_cpu_percent'].cast<double>(),
-      vramTotalBytes: json['vram_total_bytes'],
-      vramAvailableBytes: json['vram_available_bytes'],
-      vramUsedBytes: json['vram_used_bytes'],
-      vramUsagePercent: json['vram_usage_percent'],
-      swapRamTotalBytes: json['swap_ram_total_bytes'],
-      swapUsedBytes: json['swap_used_bytes'],
-      swapUsageBytes: json['swap_usage_bytes'],
+      vramTotalBytes: forceInt(json['vram_total_bytes']),
+      vramAvailableBytes: forceInt(json['vram_available_bytes']),
+      vramUsedBytes: forceInt(json['vram_used_bytes']),
+      vramUsagePercent: forceDouble(json['vram_usage_percent']),
+      swapRamTotalBytes: forceInt(json['swap_ram_total_bytes']),
+      swapUsedBytes: forceInt(json['swap_used_bytes']),
+      swapUsageBytes: forceInt(json['swap_usage_bytes']),
       temperaturesCelsius: temps,
       bootTimeTimestamp: forceInt(json['boot_time_timestamp']),
-      diskIoReadCount: json['disk_io_read_count'],
-      diskIoWriteCount: json['disk_io_write_count'],
-      diskIoReadBytes: json['disk_io_read_bytes'],
-      diskIoWriteBytes: json['disk_io_write_bytes'],
+      diskIoReadCount: forceInt(json['disk_io_read_count']),
+      diskIoWriteCount: forceInt(json['disk_io_write_count']),
+      diskIoReadBytes: forceInt(json['disk_io_read_bytes']),
+      diskIoWriteBytes: forceInt(json['disk_io_write_bytes']),
       disks: disks,
       networks: networks,
-      networksBytesSent: json['networks_bytes_sent'],
-      networksBytesReceived: json['networks_bytes_received'],
+      networksBytesSent: forceInt(json['networks_bytes_sent']),
+      networksBytesReceived: forceInt(json['networks_bytes_received']),
     );
   }
 }
@@ -100,37 +100,41 @@ class Temperature {
 
   Temperature(this.name, this.currentTemp, this.warnTemp, this.maxTemp);
 
-  static Temperature fromJson(List values) =>
-      Temperature(values[0], values[1], values[2], values[3]);
+  static Temperature fromJson(List values) => Temperature(
+        forceString(values.first),
+        forceDouble(values[1]),
+        forceDouble(values[2]),
+        forceDouble(values[3]),
+      );
 }
 
 class Disk {
-  final String? device;
-  final String? mountpoint;
-  final String? filesystemType;
-  final int? partitionTotalBytes;
-  final int? partitionUsedBytes;
-  final int? partitionFreeBytes;
-  final double? partitionPercent;
+  final String device;
+  final String mountpoint;
+  final String filesystemType;
+  final int partitionTotalBytes;
+  final int partitionUsedBytes;
+  final int partitionFreeBytes;
+  final double partitionPercent;
 
   Disk({
-    this.device,
-    this.mountpoint,
-    this.filesystemType,
-    this.partitionTotalBytes,
-    this.partitionUsedBytes,
-    this.partitionFreeBytes,
-    this.partitionPercent,
+    required this.device,
+    required this.mountpoint,
+    required this.filesystemType,
+    required this.partitionTotalBytes,
+    required this.partitionUsedBytes,
+    required this.partitionFreeBytes,
+    required this.partitionPercent,
   });
 
   static Disk fromJson(Map<String, dynamic> json) => Disk(
-        device: json['device'],
-        mountpoint: json['mountpoint'],
-        filesystemType: json['filesystem_type'],
-        partitionTotalBytes: json['partition_total_bytes'],
-        partitionUsedBytes: json['partition_used_bytes'],
-        partitionFreeBytes: json['partition_free_bytes'],
-        partitionPercent: json['partition_percent'],
+        device: forceString(json['device']),
+        mountpoint: forceString(json['mountpoint']),
+        filesystemType: forceString(json['filesystem_type']),
+        partitionTotalBytes: forceInt(json['partition_total_bytes']),
+        partitionUsedBytes: forceInt(json['partition_used_bytes']),
+        partitionFreeBytes: forceInt(json['partition_free_bytes']),
+        partitionPercent: forceDouble(json['partition_percent']),
       );
 }
 
@@ -146,8 +150,8 @@ class Network {
   });
 
   static Network fromJson(Map<String, dynamic> json) => Network(
-        interfaceName: json['interface_name'],
-        address: json['address'],
-        macAddress: json['mac_address'],
+        interfaceName: forceString(json['interface_name']),
+        address: forceString(json['address']),
+        macAddress: forceString(json['mac_address']),
       );
 }

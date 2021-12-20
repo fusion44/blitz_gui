@@ -62,23 +62,37 @@ void updateTimeAgoLib(String lang) {
   }
 }
 
-int? forceInt(dynamic source) {
+int forceInt(dynamic source, {int defaultValue = 0}) {
   if (source is int) {
     return source;
   } else if (source is double) {
     return source.floor();
   } else if (source is String) {
-    return int.tryParse(source);
+    return int.tryParse(source) ?? defaultValue;
+  } else {
+    return defaultValue;
   }
 }
 
-double? forceDouble(dynamic source) {
+String forceString(dynamic source, {String defaultValue = ''}) {
+  if (source == null) {
+    return defaultValue;
+  } else if (source == String) {
+    return source;
+  } else {
+    return source.toString();
+  }
+}
+
+double forceDouble(dynamic source, {double defaultValue = 0.0}) {
   if (source is double) {
     return source;
   } else if (source is int) {
     return source.toDouble();
   } else if (source is String) {
-    return double.tryParse(source);
+    return double.tryParse(source) ?? defaultValue;
+  } else {
+    return defaultValue;
   }
 }
 
