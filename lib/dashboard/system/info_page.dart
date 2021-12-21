@@ -38,28 +38,23 @@ class _InfoPageState extends State<InfoPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-        child: BlocBuilder<WalletLockedCheckerBloc, WalletLockedCheckerState>(
-          builder: (context, state) {
-            bool walletLocked = state is WalletLocked;
-            return Column(
-              children: [
-                SizedBox(height: spacing),
-                _buildSystemInfo(walletLocked, theme),
-                const Divider(),
-                SizedBox(height: spacing),
-                _buildHardwareInfo(),
-                if (!walletLocked) const Divider(),
-                _buildBitcoinInfo(walletLocked),
-                if (!walletLocked) const Divider(),
-                _buildLightningInfo(walletLocked),
-              ],
-            );
-          },
-        ),
-      ),
+    return BlocBuilder<WalletLockedCheckerBloc, WalletLockedCheckerState>(
+      builder: (context, state) {
+        bool walletLocked = state is WalletLocked;
+        return Column(
+          children: [
+            SizedBox(height: spacing),
+            _buildSystemInfo(walletLocked, theme),
+            const Divider(),
+            SizedBox(height: spacing),
+            _buildHardwareInfo(),
+            if (!walletLocked) const Divider(),
+            _buildBitcoinInfo(walletLocked),
+            if (!walletLocked) const Divider(),
+            _buildLightningInfo(walletLocked),
+          ],
+        );
+      },
     );
   }
 

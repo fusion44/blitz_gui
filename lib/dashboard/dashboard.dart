@@ -12,6 +12,7 @@ import 'package:subscription_repository/subscription_repository.dart';
 
 import 'system/bitcoin_info/bitcoin_info_bloc.dart';
 import 'system/hardware_info/hardware_info_bloc.dart';
+import 'system/info_page.dart';
 import 'system/system_info/system_info_bloc.dart';
 import 'wallet/lightning_info/bloc/lightning_info_bloc.dart';
 import 'wallet/wallet_locked_checker/wallet_locked_checker_bloc.dart';
@@ -218,7 +219,22 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   }
 
   Widget _buildBody(ThemeData theme) {
-    if (widget.currentTabData.id == BlitzDashboard.pages[2].id) {
+    if (widget.currentTabData.id == BlitzDashboard.pages.first.id) {
+      return BlocProvider.value(
+        value: _walletLockedChecker,
+        child: Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: InfoPage(
+              systemBloc: _systemBloc,
+              btcInfoBloc: _btcInfoBloc,
+              hardwareBloc: _hardwareBloc,
+              lnInfoBloc: _lnInfoBloc,
+            ),
+          ),
+        ),
+      );
+    } else if (widget.currentTabData.id == BlitzDashboard.pages[2].id) {
       return BlocProvider.value(
         value: _listTxBloc,
         child: Expanded(
