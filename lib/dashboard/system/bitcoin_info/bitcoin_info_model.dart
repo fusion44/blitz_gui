@@ -1,17 +1,17 @@
 import 'package:common/common.dart';
 
 class BitcoinInfo {
-  int blocks;
-  int headers;
-  double verificationProgress;
-  double difficulty;
-  int sizeOnDisk;
-  List<Network>? networks;
-  int version;
-  String subversion;
-  int connections;
-  int connectionsIn;
-  int connectionsOut;
+  final int blocks;
+  final int headers;
+  final double verificationProgress;
+  final double difficulty;
+  final int sizeOnDisk;
+  final List<Network>? networks;
+  final int version;
+  final String subversion;
+  final int connections;
+  final int connectionsIn;
+  final int connectionsOut;
 
   BitcoinInfo({
     required this.version,
@@ -35,45 +35,52 @@ class BitcoinInfo {
       });
     }
 
+    int connectionsIn = forceInt(json['connections_in']);
+    int connectionsOut = forceInt(json['connections_out']);
+
+    int connections = forceInt(json['connections'], defaultValue: -1);
+    if (connections == -1) {
+      connections = connectionsIn + connectionsOut;
+    }
+
     return BitcoinInfo(
-      version: json['version'],
-      subversion: json['subversion'],
+      version: forceInt(json['version']),
+      subversion: forceString(json['subversion']),
       networks: networks,
-      connections: json['connections'] ??
-          json['connections_in'] + json['connections_out'],
-      connectionsIn: json['connections_in'],
-      connectionsOut: json['connections_out'],
-      blocks: json['blocks'],
-      headers: json['headers'],
-      verificationProgress: forceDouble(json['verification_progress']) ?? -1,
-      sizeOnDisk: json['size_on_disk'],
-      difficulty: forceDouble(json['difficulty']) ?? -1,
+      connections: connections,
+      connectionsIn: connectionsIn,
+      connectionsOut: connectionsOut,
+      blocks: forceInt(json['blocks']),
+      headers: forceInt(json['headers']),
+      verificationProgress: forceDouble(json['verification_progress']),
+      sizeOnDisk: forceInt(json['size_on_disk']),
+      difficulty: forceDouble(json['difficulty']),
     );
   }
 }
 
 class Network {
-  final String? name;
-  final bool? limited;
-  final bool? reachable;
-  final String? proxy;
-  final bool? proxyRandomizeCreds;
+  final String name;
+  final bool limited;
+  final bool reachable;
+  final String proxy;
+  final bool proxyRandomizeCreds;
 
   Network({
-    this.name,
-    this.limited,
-    this.reachable,
-    this.proxy,
-    this.proxyRandomizeCreds,
+    required this.name,
+    required this.limited,
+    required this.reachable,
+    required this.proxy,
+    required this.proxyRandomizeCreds,
   });
 
   static Network fromJson(Map<String, dynamic> json) {
     return Network(
-      name: json['name'],
-      limited: json['limited'],
-      reachable: json['reachable'],
-      proxy: json['proxy'],
-      proxyRandomizeCreds: json['proxy_randomize_credentials'],
+      name: forceString(json['name']),
+      limited: forceBool(json['limited']),
+      reachable: forceBool(json['reachable']),
+      proxy: forceString(json['proxy']),
+      proxyRandomizeCreds: forceBool(json['proxy_randomize_credentials']),
     );
   }
 }

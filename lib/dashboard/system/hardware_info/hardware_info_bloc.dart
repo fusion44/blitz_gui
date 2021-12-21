@@ -47,8 +47,8 @@ class HardwareInfoBloc extends Bloc<HardwareInfoEvent, HardwareInfoBaseState> {
         final deltaT = t.difference(_lastUpdateTime).inMilliseconds;
         final bytesSent = _lastInfo?.networksBytesSent ?? 0.0;
         final bytesRecv = _lastInfo?.networksBytesReceived ?? 0.0;
-        ul = ((event.info.networksBytesSent! - bytesSent) / 1024);
-        dl = ((event.info.networksBytesReceived! - bytesRecv) / 1024);
+        ul = ((event.info.networksBytesSent - bytesSent) / 1024);
+        dl = ((event.info.networksBytesReceived - bytesRecv) / 1024);
         ul /= deltaT;
         dl /= deltaT;
         _lastUpdateTime = t;

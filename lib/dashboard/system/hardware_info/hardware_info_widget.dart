@@ -86,8 +86,8 @@ class HardwareInfoWidget extends StatelessWidget {
   }
 
   List<Widget> _buildMemText(ThemeData theme) {
-    var used = info.vramUsedBytes! / 1000000;
-    var total = info.vramTotalBytes! / 1000000;
+    var used = info.vramUsedBytes / 1000000;
+    var total = info.vramTotalBytes / 1000000;
     var headerText = 'M';
 
     if (total > 10000) {
@@ -108,8 +108,8 @@ class HardwareInfoWidget extends StatelessWidget {
 
   String _buildHDDText() {
     final d = info.disks.firstWhere((d) => d.mountpoint == '/');
-    final used = (d.partitionUsedBytes! / 1000000000).toStringAsFixed(1);
-    final total = (d.partitionTotalBytes! / 1000000000).toStringAsFixed(1);
+    final used = (d.partitionUsedBytes / 1000000000).toStringAsFixed(1);
+    final total = (d.partitionTotalBytes / 1000000000).toStringAsFixed(1);
     return '$used / $total (${d.partitionPercent})%';
   }
 
@@ -125,10 +125,10 @@ class HardwareInfoWidget extends StatelessWidget {
   }
 
   String _buildDlText() {
-    return (info.networksBytesReceived! / 1000000).toStringAsFixed(1);
+    return (info.networksBytesReceived / 1000000).toStringAsFixed(1);
   }
 
   String _buildUlText() {
-    return (info.networksBytesSent! / 1000000).toStringAsFixed(1);
+    return (info.networksBytesSent / 1000000).toStringAsFixed(1);
   }
 }
