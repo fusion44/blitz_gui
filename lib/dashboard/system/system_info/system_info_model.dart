@@ -12,10 +12,17 @@ class HealthMessages {
       );
 }
 
+enum APIPlatform {
+  raspiblitz,
+  native,
+}
+
 class SystemInfo {
   final String alias;
   final String color;
-  final String version;
+  final APIPlatform platform;
+  final String platformVersion;
+  final String apiVersion;
   final String health;
   final List<HealthMessages> healthMessages;
   final String torWebUi;
@@ -28,7 +35,9 @@ class SystemInfo {
   SystemInfo(
     this.alias,
     this.color,
-    this.version,
+    this.platform,
+    this.platformVersion,
+    this.apiVersion,
     this.health,
     this.healthMessages,
     this.torWebUi,
@@ -50,7 +59,11 @@ class SystemInfo {
     return SystemInfo(
       json['alias'],
       json['color'],
-      json['version'],
+      json['platform'] == 'raspiblitz'
+          ? APIPlatform.raspiblitz
+          : APIPlatform.native,
+      json['platform_version'],
+      json['api_version'],
       json['health'],
       messages,
       json['tor_web_ui'],

@@ -70,7 +70,7 @@ class _InfoPageState extends State<InfoPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Blitz ${state.info.version}'),
+                  Text('Blitz ${state.info.platformVersion}'),
                   const Spacer(),
                   const Text('Alias: '),
                   Text(

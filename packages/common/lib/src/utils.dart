@@ -65,9 +65,11 @@ void updateTimeAgoLib(String lang) {
 bool forceBool(dynamic source, {int defaultValue = 0}) {
   if (source is bool) {
     return source;
-  } else if (source is int && source == 0) {
+  } else if (source is int && source == 0 ||
+      source is String && source == '0') {
     return false;
-  } else if (source is int && source == 1) {
+  } else if (source is int && source == 1 ||
+      source is String && source == '1') {
     return true;
   } else {
     final val = source ?? 'Source null';

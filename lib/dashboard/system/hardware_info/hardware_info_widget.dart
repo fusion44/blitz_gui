@@ -71,6 +71,9 @@ class HardwareInfoWidget extends StatelessWidget {
   }
 
   String _buildTemperatureText() {
+    if (info.systemTemp > 0) {
+      return '${info.systemTemp}';
+    }
     if (info.temperaturesCelsius.isEmpty) return 'error: no data';
 
     final totalTemp = info.temperaturesCelsius.reduce(
@@ -115,6 +118,10 @@ class HardwareInfoWidget extends StatelessWidget {
 
   String _getNetworkIP([String interfaceName = 'enp4s0']) {
     try {
+      if (info.blitzNetworkInfo != null) {
+        return info.blitzNetworkInfo!.internetLocalIP;
+      }
+
       final network = info.networks
           .firstWhere((element) => element.interfaceName == interfaceName);
       return network.address;
