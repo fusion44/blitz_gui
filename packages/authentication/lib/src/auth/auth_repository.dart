@@ -39,7 +39,7 @@ class AuthRepo {
             }
           }
 
-          _token = 'Bearer ${await f.readAsString()}';
+          _token = 'Bearer ${(await f.readAsString()).trim()}';
           _url = 'http://0.0.0.0:11111';
           _controller.add(AuthStatus.authenticated);
           return true;
