@@ -1,0 +1,1 @@
+sshpass -p $1 ssh $2@$3 "bash /home/$2/dev/blitz_gui/restart_ui.sh"

@@ -24,4 +24,4 @@ install-deps:
 	bash scripts/install_deps.sh
 
 install-to-pi:
-	bash scripts/build_and_push.sh
+	dart scripts/build_and_push.dart
