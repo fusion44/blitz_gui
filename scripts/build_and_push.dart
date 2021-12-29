@@ -101,7 +101,7 @@ void copyRestartShellFile() {
     '${Directory.current.path}/build/flutter_assets/restart_ui.sh',
   );
   newFile.writeAsStringSync(
-    "kill -9 \$(pidof flutter-pi)${console.newLine}sleep 1${console.newLine}flutter-pi -d '173.44, 148.96' ~/dev/blitz_gui/",
+    "kill -9 \$(pidof flutter-pi)${console.newLine}sleep 1${console.newLine}flutter-pi -d '173.44, 148.96' ~/dev/blitz_gui/ --observatory-host=0.0.0.0",
   );
 }
 

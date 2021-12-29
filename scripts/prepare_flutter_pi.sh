@@ -37,8 +37,15 @@ cmake ..
 make
 sudo cp fbcp /usr/bin
 sudo chmod +x /usr/bin/fbcp
-echo "insert /usr/bin/fbcp & after exit 0 into /etc/rc.local"
-
+echo "------------------------------"
+echo " For SPI (non-HDMI) screens only:"
+echo "------------------------------"
+echo "Insert the following lines before exit 0 into /etc/rc.local:"
+echo "/usr/bin/fbcp &"
+echo ""
+echo "Edit or create the file /etc/udev/rules.d/99-userdev-input.rules and add this:"
+echo "KERNEL==\"event*\", SUBSYSTEM==\"input\", RUN+=\"/usr/bin/setfacl -m u:admin:rw \$env{DEVNAME}"
+echo ""
 echo "Add the following to /boot/config.txt"
 echo "dtoverlay=vc4-fkms-v3d"
 echo "hdmi_force_hotplug=1"
