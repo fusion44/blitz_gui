@@ -1,0 +1,28 @@
+name: classic_info_screen
+description: A Widget to mimic the aesthetic of the classic RaspiBlitz command line overview screen.
+publish_to: 'none' 
+
+environment:
+  sdk: ">=2.15.1 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_spinkit: ^5.1.0
+
+  authentication:
+    path: ../../authentication
+  common:
+    path: ../../common
+  common_blocs:
+    path: ../../common_blocs
+  subscription_repository:
+    path: ../../subscription_repository
+    
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:authentication/authentication.dart';
+import 'package:classic_info_screen/info_page.dart';
 import 'package:common/common.dart';
+import 'package:common_blocs/common_blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -9,13 +11,6 @@ import 'package:go_router/go_router.dart';
 import 'package:list_transactions_fragment/list_transactions.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 import 'package:subscription_repository/subscription_repository.dart';
-
-import 'system/bitcoin_info/bitcoin_info_bloc.dart';
-import 'system/hardware_info/hardware_info_bloc.dart';
-import 'system/info_page.dart';
-import 'system/system_info/system_info_bloc.dart';
-import 'wallet/lightning_info/bloc/lightning_info_bloc.dart';
-import 'wallet/wallet_locked_checker/wallet_locked_checker_bloc.dart';
 
 class BlitzDashboardAppBar extends StatelessWidget
     implements PreferredSizeWidget {
@@ -225,7 +220,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
         child: Expanded(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: InfoPage(
+            child: ClassicInfoScreen(
               systemBloc: _systemBloc,
               btcInfoBloc: _btcInfoBloc,
               hardwareBloc: _hardwareBloc,
