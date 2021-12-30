@@ -1,33 +1,31 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'transaction.freezed.dart';
+
 enum TxCategory { onchain, ln }
 enum TxType { incoming, outgoing, unknown }
 enum TxStatus { unknown, inFlight, succeeded, failed }
 
-class Transaction {
-  final int index;
-  final String id;
-  final TxCategory category;
-  final TxType type;
-  final int amount;
-  final DateTime timeStamp;
-  final String comment;
-  final TxStatus status;
-  final int? blockHeight;
-  final int? numConfs;
-  final int? totalFees;
+@Freezed()
+class Transaction with _$Transaction {
+  // ignore: unused_element
+  const Transaction._(); // Added constructor
+  const factory Transaction({
+    required int index,
+    required String id,
+    required TxCategory category,
+    required TxType type,
+    required int amount,
+    required DateTime timeStamp,
+    required String comment,
+    required TxStatus status,
+    @Default(0) int blockHeight,
+    @Default(0) int numConfs,
+    @Default(0) int totalFees,
+  }) = _Transaction;
 
-  Transaction({
-    required this.index,
-    required this.id,
-    required this.category,
-    required this.type,
-    required this.amount,
-    required this.timeStamp,
-    required this.comment,
-    required this.status,
-    required this.blockHeight,
-    required this.numConfs,
-    required this.totalFees,
-  });
+  Transaction withIncreasedBlockHeight() =>
+      copyWith(blockHeight: blockHeight + 1, numConfs: numConfs + 1);
 
   static Transaction fromJson(Map<String, dynamic> json) {
     final cat = json['category'] == 'ln' ? TxCategory.ln : TxCategory.onchain;

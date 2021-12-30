@@ -12,3 +12,5 @@ class LoadMoreTx extends ListTxEvent {
   /// available transactions at once.
   LoadMoreTx([this.maxTx = 25]);
 }
+
+class _NewBlocAppended extends ListTxEvent {}

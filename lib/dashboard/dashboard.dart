@@ -137,12 +137,13 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   }
 
   @override
-  void dispose() {
-    _settingsSub?.cancel();
+  void dispose() async {
+    await _settingsSub?.cancel();
     _hardwareBloc.add(StopListenHardwareInfo());
     _systemBloc.add(StopListenSystemInfo());
     _btcInfoBloc.add(StopListenBitcoinInfo());
     _lnInfoBloc.add(StopListenLightningInfo());
+    await _listTxBloc.dispose();
     super.dispose();
   }
 

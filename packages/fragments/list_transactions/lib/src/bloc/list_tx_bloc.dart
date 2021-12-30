@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:authentication/authentication.dart';
 import 'package:bloc/bloc.dart';
 import 'package:common/common.dart';
+import 'package:common_blocs/common_blocs.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:subscription_repository/subscription_repository.dart';
@@ -16,13 +17,34 @@ part 'list_tx_state.dart';
 class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
   final AuthRepo _authRepo;
   final SubscriptionRepository _subRepo;
-  late final StreamSubscription<Map<String, dynamic>>? _sub;
+  late final NewBlockWatcherCubit _blockWatcherCubit;
+  late final StreamSubscription<NewBlockWatcherState> _blockWatcherSub;
+  late final StreamSubscription<Map<String, dynamic>>? _lnSub;
 
   bool _isLoading = false;
 
   ListTxBloc(this._authRepo, this._subRepo) : super(const ListTxState()) {
     on<LoadMoreTx>(_onLoadMoreTx);
-    _sub = _subRepo.filteredStream([
+    on<_NewBlocAppended>((event, emit) async {
+      final txs = <Transaction>[];
+      for (final tx in state.txs) {
+        if (tx.category == TxCategory.onchain) {
+          txs.add(tx.withIncreasedBlockHeight());
+          continue;
+        }
+        txs.add(tx);
+      }
+      emit(state.copyWith(txs: txs));
+    });
+
+    _blockWatcherCubit = NewBlockWatcherCubit(_subRepo);
+    _blockWatcherSub = _blockWatcherCubit.stream.listen((event) {
+      if (event is NewBlockAppended) {
+        add(_NewBlocAppended());
+      }
+    });
+
+    _lnSub = _subRepo.filteredStream([
       SseEventTypes.lnPaymentStatus,
       SseEventTypes.lnInvoiceStatus,
     ])?.listen(
@@ -32,8 +54,10 @@ class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
     );
   }
 
-  void dispose() async {
-    await _sub?.cancel();
+  Future<void> dispose() async {
+    await _blockWatcherSub.cancel();
+    await _blockWatcherCubit.dispose();
+    await _lnSub?.cancel();
   }
 
   Future<void> _onLoadMoreTx(event, emit) async {

@@ -2,6 +2,7 @@
 help:
 	@echo "---------------HELP-----------------"
 	@echo "To clean the workspace type 'make clean'"
+	@echo "To regenerate all generated code type 'make generate'"
 	@echo "To run the app on Linux type 'run-linux'"
 	@echo "To run the app on web type 'run-chrome'"
 	@echo "To install dependencies in all packages"
@@ -10,6 +11,9 @@ help:
 
 clean:
 	flutter clean
+
+generate:
+	bash scripts/generate.sh
 
 run-linux:
 	flutter run -d linux
