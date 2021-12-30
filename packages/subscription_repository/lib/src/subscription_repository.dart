@@ -12,13 +12,12 @@ class SubscriptionRepository {
   final String token;
   Stream<SSEModel>? _stream;
 
-  SubscriptionRepository(this.baseUrl, this.token) {
+  SubscriptionRepository(this.baseUrl, this.token);
+
+  Future<void> init() async {
     final url = '$baseUrl/sse/subscribe';
     try {
-      _stream = SSEClient.subscribeToSSE(
-        url,
-        token,
-      ).asBroadcastStream();
+      _stream = await SSEClient.subscribeToSSE(url, token);
     } catch (e) {
       BlitzLog().w('Unable to connect to the SEE endpoint. $e');
     }

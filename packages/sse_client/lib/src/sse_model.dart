@@ -1,7 +1,5 @@
 // From: https://pub.dev/packages/flutter_client_sse
 
-part of sse_client;
-
 class SSEModel {
   //Id of the event
   String? id = '';

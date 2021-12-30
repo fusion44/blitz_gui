@@ -113,7 +113,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   late final ListTxBloc _listTxBloc;
 
   int _selectedIndex = 0;
-
+  bool _ready = false;
   @override
   void initState() {
     final authBloc = BlocProvider.of<AuthBloc>(context);
@@ -131,11 +131,28 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
       setState(() {});
     });
 
+    _initBlocs();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _settingsSub?.cancel();
+    _hardwareBloc.add(StopListenHardwareInfo());
+    _systemBloc.add(StopListenSystemInfo());
+    _btcInfoBloc.add(StopListenBitcoinInfo());
+    _lnInfoBloc.add(StopListenLightningInfo());
+    super.dispose();
+  }
+
+  void _initBlocs() async {
     final _authRepo = RepositoryProvider.of<AuthRepo>(context);
     _subRepo = SubscriptionRepository(
       _authRepo.baseUrl(),
       _authRepo.token(),
     );
+    await _subRepo.init();
 
     _walletLockedChecker = WalletLockedCheckerBloc(_subRepo);
     _hardwareBloc = HardwareInfoBloc(_subRepo, _authRepo);
@@ -151,23 +168,14 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     _lnInfoBloc.add(StartListenLightningInfo());
     _listTxBloc.add(LoadMoreTx());
 
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _settingsSub?.cancel();
-    _hardwareBloc.add(StopListenHardwareInfo());
-    _systemBloc.add(StopListenSystemInfo());
-    _btcInfoBloc.add(StopListenBitcoinInfo());
-    _lnInfoBloc.add(StopListenLightningInfo());
-    super.dispose();
+    setState(() {
+      _ready = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
-
     return Scaffold(
       appBar: BlitzDashboardAppBar(
         title: 'Raspiblitz',
@@ -179,12 +187,14 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
           child: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png'),
         ),
       ),
-      body: Row(
-        children: [
-          _buildNavRail(context, theme),
-          _buildBody(theme),
-        ],
-      ),
+      body: _ready
+          ? Row(
+              children: [
+                _buildNavRail(context, theme),
+                _buildBody(theme),
+              ],
+            )
+          : const Center(child: Text('Loading ...')),
     );
   }
 

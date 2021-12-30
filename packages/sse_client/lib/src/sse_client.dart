@@ -3,90 +3,58 @@
 library sse_client;
 
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:common/common.dart';
 import 'package:http/http.dart' as http;
-
-part 'sse_model.dart';
+import 'sse_model.dart';
+import 'html.dart' if (dart.library.io) 'io.dart';
 
 class SSEClient {
   static final http.Client _client = http.Client();
-  static Stream<SSEModel> subscribeToSSE(String url, String token) {
-    //Regex to be used
-    var lineRegex = RegExp(r'^([^:]*)(?::)?(?: )?(.*)?$');
+  static Future<Stream<SSEModel>> subscribeToSSE(
+    String url,
+    String token,
+  ) async {
     //Creating a instance of the SSEModel
     var currentSSEModel = SSEModel(data: '', id: '', event: '');
     // ignore: close_sinks
     StreamController<SSEModel> streamController = StreamController();
     while (true) {
       try {
-        var request = http.Request('GET', Uri.parse(url));
-        //Adding headers to the request
-        request.headers['Cache-Control'] = 'no-cache';
-        request.headers['Accept'] = 'text/event-stream';
-        request.headers['Authorization'] = token;
-        Future<http.StreamedResponse> response = _client.send(request);
+        final stream = await establishSSEConnection(url, token);
+        stream.listen((dataLine) {
+          if (dataLine.isEmpty) {
+            //This means that the complete event set has been read.
+            //We then add the event to the stream
+            streamController.add(currentSSEModel);
+            currentSSEModel = SSEModel(data: '', id: '', event: '');
+            return;
+          }
 
-        //Listening to the response as a stream
-        response.asStream().listen((data) {
-          //Applying transforms and listening to it
-          var _ = data.stream
-            ..transform(const Utf8Decoder())
-                .transform(const LineSplitter())
-                .listen((dataLine) {
-              if (dataLine.isEmpty) {
-                //This means that the complete event set has been read.
-                //We then add the event to the stream
-                streamController.add(currentSSEModel);
-                currentSSEModel = SSEModel(data: '', id: '', event: '');
-                return;
-              }
-
-              if (data.statusCode != 200) {
-                try {
-                  final detail = jsonDecode(dataLine)['detail'];
-                  BlitzLog().w(
-                    'Error while connecting to the SSE endpoint with code ${data.statusCode}:\n$detail',
-                  );
-                } catch (e) {
-                  BlitzLog().w(
-                    'Unable to decode detail message of stream message error with code ${data.statusCode}:\n$dataLine',
-                  );
-                }
-
-                return;
-              }
-
-              //Get the match of each line through the regex
-              Match match = lineRegex.firstMatch(dataLine)!;
-              var field = match.group(1);
-              if (field!.isEmpty) {
-                return;
-              }
-              var value = '';
-              if (field == 'data') {
-                //If the field is data, we get the data through the substring
-                value = dataLine.substring(
-                  6,
-                );
-              } else {
-                value = match.group(2) ?? '';
-              }
-              switch (field) {
-                case 'event':
-                  currentSSEModel.event = value;
-                  break;
-                case 'data':
-                  currentSSEModel.data = currentSSEModel.data + value + '\n';
-                  break;
-                case 'id':
-                  currentSSEModel.id = value;
-                  break;
-                case 'retry':
-                  break;
-              }
-            });
+          int fistIndex = dataLine.indexOf(':');
+          List spl = [
+            dataLine.substring(0, fistIndex).trim(),
+            dataLine.substring(fistIndex + 1).trim()
+          ];
+          if (spl.length != 2) {
+            BlitzLog().w('Received a malformed SSE message:\n$dataLine');
+            return;
+          }
+          final field = spl.first.replaceAll(':', '').trim();
+          final value = spl.last.trim();
+          switch (field) {
+            case 'event':
+              currentSSEModel.event = value;
+              break;
+            case 'data':
+              currentSSEModel.data = currentSSEModel.data + value + '\n';
+              break;
+            case 'id':
+              currentSSEModel.id = value;
+              break;
+            case 'retry':
+              break;
+          }
         });
       } catch (e) {
         BlitzLog().e(e);
@@ -94,7 +62,7 @@ class SSEClient {
       }
 
       Future.delayed(const Duration(seconds: 1), () {});
-      return streamController.stream;
+      return streamController.stream.asBroadcastStream();
     }
   }
 
