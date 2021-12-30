@@ -45,7 +45,7 @@ class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
           state.copyWith(
             status: ListTxStatus.success,
             txs: txs,
-            hasReachedMax: false,
+            hasReachedMax: event.maxTx > txs.length ? true : false,
           ),
         );
       }
@@ -72,10 +72,7 @@ class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
           '${_authRepo.baseUrl()}/latest/lightning/list-all-tx?index_offset=$i&max_tx=${event.maxTx}&reversed=true';
       final response = await fetch(Uri.parse(url), _authRepo.token());
       final js = jsonDecode(response.body);
-      final txs = <Transaction>[];
-      for (var tx in js) {
-        txs.add(Transaction.fromJson(tx));
-      }
+      final txs = <Transaction>[for (final tx in js) Transaction.fromJson(tx)];
       return txs;
     } catch (e) {
       BlitzLog().e(e.toString());
