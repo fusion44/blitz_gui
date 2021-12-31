@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dart_console/dart_console.dart';
+import 'package:watcher/watcher.dart';
 
 class Remote {
   final String name;
@@ -24,6 +25,9 @@ late final Coordinate printPos;
 
 void main() async {
   console.hideCursor();
+
+  _listenForCommands();
+
   await buildBinaries();
 
   if (console.cursorPosition == null) {
@@ -37,12 +41,73 @@ void main() async {
   copyRestartShellFile();
 
   await startAndWaitForRsyncProcesses();
-
+  final _fsWatchSub = watchFileSystem();
   await restartApps();
 
+  _fsWatchSub.cancel();
   console.cursorPosition = Coordinate(console.windowHeight, 0);
+  await Future.delayed(const Duration(seconds: 2));
   console.writeLine('Finish - cool');
   console.showCursor();
+  _inputSub?.cancel();
+  exit(0);
+}
+
+StreamSubscription<WatchEvent> watchFileSystem() {
+  var watcher = DirectoryWatcher('.');
+  return watcher.events.listen((event) {
+    if (event.path.startsWith('./lib') || event.path.startsWith('./packages')) {
+      scheduleRestart();
+    }
+  });
+}
+
+bool restarting = false;
+void scheduleRestart() async {
+  if (!restarting) {
+    restarting = true;
+    await Future.delayed(const Duration(milliseconds: 2000));
+    for (final p in flutterProcesses.values) {
+      p.stdin.add('r'.codeUnits);
+    }
+    restarting = false;
+  }
+}
+
+StreamSubscription<String>? _inputSub;
+void _listenForCommands() async {
+  _inputSub = stdin.transform(const Utf8Decoder()).listen((data) {
+    switch (data.trim()) {
+      case 'exit':
+        console.writeLine(
+          'Closing ${processes.length + flutterProcesses.length} processes',
+        );
+        for (final p in processes) {
+          p.kill();
+        }
+        for (final p in flutterProcesses.values) {
+          p.stdin.add('q'.codeUnits);
+        }
+        break;
+      case 'r':
+        for (final p in flutterProcesses.values) {
+          p.stdin.add('r'.codeUnits);
+        }
+        break;
+      case 'R':
+        for (final p in flutterProcesses.values) {
+          p.stdin.add('R'.codeUnits);
+        }
+        break;
+      case 'd':
+        for (final p in flutterProcesses.values) {
+          p.stdin.add('d'.codeUnits);
+        }
+        break;
+      default:
+        console.writeLine('Unrecognized command: $data');
+    }
+  });
 }
 
 Future<void> restartApps() async {
@@ -55,6 +120,7 @@ Future<void> restartApps() async {
   await Future.wait(processes);
 }
 
+final processes = <Process>[];
 Future<int> executeApp(Remote r) async {
   final p = await Process.start('bash', [
     '${Directory.current.path}/scripts/restart_ui.sh',
@@ -63,13 +129,27 @@ Future<int> executeApp(Remote r) async {
     r.ip,
   ]);
 
+  processes.add(p);
+
   p.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen(
     (event) {
       if (event.startsWith('flutter: Observatory listening on')) {
-        console.writeLine(event.replaceAll('flutter:', r.name));
+        String url = event.replaceAll(
+          'flutter: Observatory listening on ',
+          r.name,
+        );
+        url = url.replaceAll('0.0.0.0', r.ip);
+        console.writeLine('${r.name} Observatory listening on $url');
+        attachFlutterProcess(
+          r,
+          url.replaceAll('flutter: Observatory listening on ', '').trim(),
+        );
       }
     },
-    onDone: () => console.writeLine('${r.name} is done.'),
+    onDone: () {
+      processes.remove(p);
+      console.writeLine('${r.name} is done.');
+    },
     onError: (error) => console.writeErrorLine('${r.name} error: $error'),
   );
 
@@ -78,6 +158,37 @@ Future<int> executeApp(Remote r) async {
       .listen((error) => console.writeErrorLine('${r.name} error: $error'));
 
   return p.exitCode;
+}
+
+final Map<String, Process> flutterProcesses = {};
+Future<void> attachFlutterProcess(
+  Remote remote,
+  String observatoryUrl,
+) async {
+  await Future.delayed(const Duration(seconds: 4));
+  console.writeLine('Attaching to ${remote.name}');
+  // flutter attach --debug-url http://192.168.1.254:45363/fvjF6cnC46g= -d linux
+  final p = await Process.start('flutter', [
+    'attach',
+    '--debug-url',
+    observatoryUrl,
+    '-d',
+    'linux',
+  ]);
+  flutterProcesses[remote.name] = p;
+
+  p.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen(
+        (event) => console.writeLine(event),
+        onDone: () {
+          flutterProcesses.remove(remote.name);
+          console.writeLine('Flutter attachment to ${remote.name} is done.');
+        },
+        onError: (error) => console.writeErrorLine(
+            'Flutter attachment to ${remote.name} error: $error'),
+      );
+
+  p.stderr.transform(utf8.decoder).listen(
+      (error) => console.writeErrorLine('${remote.name} error: $error'));
 }
 
 Future<void> startAndWaitForRsyncProcesses() async {
