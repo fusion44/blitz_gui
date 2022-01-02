@@ -6,6 +6,7 @@ environment:
   sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
+  auto_size_text: ^3.0.0
   flutter:
     sdk: flutter
   flutter_translate: ^3.0.1
