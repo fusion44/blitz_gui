@@ -29,11 +29,19 @@
   "bitcoin": {
     "block_height_long": "Block Height",
     "block_height_short": "Blocks",
+    "blockchain_disk_space_used": "disk space used",
     "connections": {
       "0": "no connections",
       "1": "one connection",
       "else": "{{value}} connections"
     },
+    "connections_in": "connections in",
+    "connections_no_appendix": {
+      "0": "none",
+      "1": "one",
+      "else": "{{value}}"
+    },
+    "connections_out": "connections out",
     "sync_status_long": "Sync Status",
     "sync_status_short": "Sync"
   },
@@ -58,6 +66,7 @@
         "1": "One of one channel inactive",
         "else": "All {{value}} channels inactive"
       },
+      "header_description": "Channels",
       "pending_channels": {
         "1": ", one pending",
         "else": ", {{value}} pending"
@@ -65,8 +74,17 @@
     },
     "fee_report_desc": "(Day-Week-Month)",
     "fee_report_in_sats": "Fee Report [sats]",
-    "peers": "peers"
+    "fee_revenue_daily": "Day",
+    "fee_revenue_monthly": "Month",
+    "fee_revenue_weekly": "Week",
+    "forwarding_fees": "Fees",
+    "next_gen_info_screen_card_header": "Lightning",
+    "peers": "peers",
+    "sync_header_description": "Sync",
+    "synced_to_chain_label": "Chain",
+    "synced_to_graph_label": "Graph"
   },
+  "no": "no",
   "settings": {
     "language_label": "Language",
     "reboot_button": "reboot",
@@ -118,13 +136,24 @@
     }
   },
   "system": {
+    "api_url": "API url",
+    "api_version": "API version",
     "cpu_load": "CPU load",
+    "cpu_temperatures": "CPU temperatures",
+    "cpu_usage_overall": "CPU usage overall",
+    "cpu_usage_per_cpu_short": ".. per CPU",
     "hdd_use_short": "HDD use",
+    "health": "health",
+    "main_chain": "chain",
     "network_not_found": "network not found",
+    "next_gen_info_screen_card_header": "System",
+    "platform": "Platform",
+    "ram_usage": "ram usage",
     "temperature": "Temperature",
     "temperature_short": "Temp"
   },
   "wallet": {
+    "balance": "Balance",
     "lightning": {
       "add_invoice": "Add Invoice",
       "get_invoice": "Generate Invoice",
@@ -135,6 +164,9 @@
     "onchain": {
       "short": "onchain"
     },
-    "wallet": "wallet"
-  }
+    "total_balance": "Total Balance",
+    "wallet": "Wallet"
+  },
+  "wallet_locked_message_two_line": "Wallet is locked.\\nUnlock via SSH menu.",
+  "yes": "yes"
 }
