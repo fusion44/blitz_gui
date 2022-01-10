@@ -142,3 +142,15 @@ Future<http.Response> post(
     rethrow;
   }
 }
+
+TextTheme buildTextThemeWithEczar(TextTheme base) {
+  return base
+      .copyWith(
+        bodyText2: base.bodyText2?.copyWith(
+          fontSize: 32,
+          height: 1.2,
+
+        ),
+      )
+      .apply(fontFamily: 'Eczar');
+}

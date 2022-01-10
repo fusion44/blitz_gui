@@ -30,14 +30,18 @@ class BlitzCard extends StatelessWidget {
 
   Widget _buildChild(BoxConstraints constraints, ThemeData theme) {
     final titleText = Text(title, style: theme.textTheme.headline5);
-    final subtitleText = Text(
-      subtitle,
-      style: theme.textTheme.subtitle2,
-    );
+    final subtitleText = subtitle.isNotEmpty
+        ? Text(
+            subtitle,
+            style: theme.textTheme.subtitle2,
+            textAlign: TextAlign.end,
+          )
+        : Container();
     const divider = Divider(thickness: 2, height: 3);
 
-    if (constraints.maxWidth < 300) {
+    if (constraints.maxWidth < 200) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           titleText,
           subtitleText,
@@ -47,9 +51,11 @@ class BlitzCard extends StatelessWidget {
       );
     } else {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            textBaseline: TextBaseline.alphabetic,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
             children: [titleText, const Spacer(), subtitleText],
           ),
           divider,

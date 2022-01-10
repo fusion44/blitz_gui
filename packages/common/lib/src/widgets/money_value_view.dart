@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 class MoneyValueView extends StatelessWidget {
   final int amount;
   final String langCode;
-  final bool currSymbolIsLeft;
+  final bool? currSymbolIsLeft;
   final int? fee;
   final bool hero;
   final bool settled;
@@ -14,7 +14,7 @@ class MoneyValueView extends StatelessWidget {
     Key? key,
     required this.amount,
     required this.langCode,
-    required this.currSymbolIsLeft,
+    this.currSymbolIsLeft,
     this.hero = false,
     this.settled = true,
     this.textAlign = TextAlign.start,
@@ -34,50 +34,45 @@ class MoneyValueView extends StatelessWidget {
     var style = hero ? textTheme.headline5 : textTheme.bodyText2;
     if (!settled) style = style!.copyWith(color: Colors.grey);
 
-    if (fee != null) {
-      return SizedBox(
-        width: 120,
-        child: Column(
-          children: [
-            Row(
-                mainAxisAlignment: textAlign == TextAlign.start
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.end,
-                children: [
-                  if (currSymbolIsLeft)
-                    _buildSatIcon(isLeft: currSymbolIsLeft, darkMode: true),
-                  Text(
-                    numberFormat.format(amount),
-                    style: style,
-                    textAlign: textAlign,
-                  ),
-                  if (!currSymbolIsLeft)
-                    _buildSatIcon(isLeft: currSymbolIsLeft, darkMode: true),
-                ]),
-            Row(
-                mainAxisAlignment: textAlign == TextAlign.start
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.end,
-                children: [
-                  if (currSymbolIsLeft)
-                    _buildSatIcon(isLeft: currSymbolIsLeft, darkMode: true),
-                  Text(
-                    numberFormat.format(fee),
-                    style: style!.copyWith(fontSize: 11),
-                    textAlign: textAlign,
-                  ),
-                  if (!currSymbolIsLeft)
-                    _buildSatIcon(isLeft: currSymbolIsLeft, darkMode: true),
-                ]),
-          ],
-        ),
-      );
-    }
-
-    return Text(
-      numberFormat.format(amount),
-      style: style,
-      textAlign: textAlign,
+    return Expanded(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: textAlign == TextAlign.start
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end,
+            children: [
+              if (currSymbolIsLeft != null && currSymbolIsLeft == true)
+                _buildSatIcon(isLeft: true, darkMode: true),
+              Text(
+                numberFormat.format(amount),
+                style: style,
+                textAlign: textAlign,
+              ),
+              if (currSymbolIsLeft != null && currSymbolIsLeft == false)
+                _buildSatIcon(isLeft: false, darkMode: true),
+            ],
+          ),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: textAlign == TextAlign.start
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
+              children: [
+                if (currSymbolIsLeft != null && currSymbolIsLeft == true)
+                  _buildSatIcon(isLeft: true, darkMode: true),
+                Text(
+                  numberFormat.format(fee),
+                  style: style!.copyWith(fontSize: 11),
+                  textAlign: textAlign,
+                ),
+                if (currSymbolIsLeft != null && currSymbolIsLeft == false)
+                  _buildSatIcon(isLeft: false, darkMode: true),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
