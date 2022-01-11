@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:authentication/authentication.dart';
-import 'package:classic_info_screen/info_page.dart';
 import 'package:common/common.dart';
 import 'package:common_blocs/common_blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:info_screen_plus_plus/info_screen_plus_plus.dart';
 import 'package:list_transactions_fragment/list_transactions.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 import 'package:subscription_repository/subscription_repository.dart';
@@ -192,7 +192,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
           ? Row(
               children: [
                 _buildNavRail(context, theme),
-                _buildBody(theme),
+                Expanded(child: _buildBody(theme)),
               ],
             )
           : const Center(child: Text('Loading ...')),
@@ -226,18 +226,17 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
 
   Widget _buildBody(ThemeData theme) {
     if (widget.currentTabData.id == BlitzDashboard.pages.first.id) {
-      return BlocProvider.value(
-        value: _walletLockedChecker,
-        child: Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClassicInfoScreen(
-              systemBloc: _systemBloc,
-              btcInfoBloc: _btcInfoBloc,
-              hardwareBloc: _hardwareBloc,
-              lnInfoBloc: _lnInfoBloc,
-            ),
-          ),
+      return MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: _walletLockedChecker),
+          BlocProvider.value(value: _systemBloc),
+          BlocProvider.value(value: _btcInfoBloc),
+          BlocProvider.value(value: _hardwareBloc),
+          BlocProvider.value(value: _lnInfoBloc),
+        ],
+        child: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: InfoScreenPlusPlus(),
         ),
       );
     } else if (widget.currentTabData.id == BlitzDashboard.pages[2].id) {

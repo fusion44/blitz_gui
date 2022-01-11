@@ -165,6 +165,7 @@
       "short": "onchain"
     },
     "total_balance": "Total Balance",
+    "total_balance_subtitle": "Total",
     "wallet": "Wallet"
   },
   "wallet_locked_message_two_line": "Wallet is locked.\\nUnlock via SSH menu.",

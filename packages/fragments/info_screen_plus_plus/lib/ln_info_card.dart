@@ -2,8 +2,9 @@ import 'package:common/common.dart';
 import 'package:common_blocs/common_blocs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:info_screen_plus_plus/widgets/balance_overview.dart';
+import 'package:flutter_layout_grid/flutter_layout_grid.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:intl/intl.dart';
 
 class LnInfoCard extends StatelessWidget {
   const LnInfoCard({Key? key}) : super(key: key);
@@ -22,10 +23,25 @@ class LnInfoCard extends StatelessWidget {
               subtitle: state is LightningInfoState && state.info != null
                   ? state.info!.alias
                   : '',
-              child: Column(
+              child: LayoutGrid(
+                rowGap: 4.0,
+                columnGap: 4.0,
+                gridFit: GridFit.loose,
+                areas: '''
+                      b0 bal bal bal
+                      d1 d1  d1  d1
+                      c0 c1  c2  c3
+                      d2 d2  d2  d2
+                      n0 n1  n2  n3
+                      d3 d3  d3  d3
+                      f0 f1  f2  f3
+                    ''',
+                columnSizes: [auto, auto, auto, 1.fr],
+                rowSizes: const [auto, auto, auto, auto, auto, auto, auto],
                 children: [
-                  _buildWalletLine(theme, dense, state),
-                  _buildLnInfoTable(theme, dense, state),
+                  ..._buildWalletRow(theme, dense, state),
+                  _buildDivider('d1', dense),
+                  ..._buildLnInfoTable(theme, dense, state),
                 ],
               ),
             );
@@ -35,119 +51,161 @@ class LnInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildWalletLine(
+  List<Widget> _buildWalletRow(
     ThemeData theme,
     bool dense,
     LightningInfoBaseState state,
   ) {
+    final l = <Widget>[];
+    l.add(_buildFirstColumn(MdiIcons.wallet, 'wallet.wallet', dense, theme)
+        .inGridArea('b0'));
+
+    Widget w;
     if (state is LightningInfoInitial) {
-      return const Text('loading ...');
+      w = const Text('loading ...');
     } else if (state is LightningInfoState && state.walletBalance != null) {
       final wb = state.walletBalance;
-      if (wb == null) {
-        return const Center(
-          child: Text('Error: walletBalance is null'),
-        );
-      }
-
-      return Row(
-        children: [
-          _buildFirstColumn(true, theme),
-          Expanded(child: _buildBalanceOverview(theme, true, wb)),
-        ],
-      );
+      if (wb == null) w = _buildErrorWidget('Error: walletBalance is null');
+      w = _buildBalanceOverview(theme, dense, wb!);
+    } else {
+      w = _buildErrorWidget('Error: unknown state: $state');
     }
-    return Center(
-      child: Text(
-        'Error: unknown state: $state',
-      ),
-    );
+
+    l.add(w.inGridArea('bal'));
+
+    return l;
   }
 
-  dynamic _buildLnInfoTable(
+  List<Widget> _buildLnInfoTable(
     ThemeData theme,
     bool dense,
     LightningInfoBaseState state,
   ) {
+    final l = <Widget>[];
+
     if (state is LightningInfoInitial) {
-      return const Text('loading ...');
+      l.add(
+        _buildFirstColumn(MdiIcons.loading, 'wallet.wallet', dense, theme)
+            .withGridPlacement(
+          columnStart: 0,
+          columnSpan: 1,
+          rowStart: 1,
+          rowSpan: 2,
+        ),
+      );
+      l.add(
+        const Text('loading ...').withGridPlacement(
+          columnStart: 1,
+          columnSpan: 3,
+          rowStart: 1,
+          rowSpan: 2,
+        ),
+      );
+      return l;
     } else if (state is LightningInfoState) {
       if (state.info == null) {
-        return const Center(
-          child: Text('Error: state.info is null'),
-        );
+        return [
+          _buildErrorWidget('Error: state.info is null').withGridPlacement(
+            columnStart: 1,
+            columnSpan: 3,
+            rowStart: 1,
+            rowSpan: 2,
+          )
+        ];
       }
-      final i = state.info;
 
-      return Table(
-        columnWidths: const <int, TableColumnWidth>{
-          0: IntrinsicColumnWidth(),
-          1: IntrinsicColumnWidth(),
-          2: IntrinsicColumnWidth(),
-          3: IntrinsicColumnWidth(),
-        },
-        children: [
-          _buildChannelsLine(theme, dense, i!),
-          _buildNetworkLine(theme, dense, i),
-        ],
-      );
+      final i = state.info;
+      l.addAll(_buildChannelsLine(theme, dense, i!));
+      l.add(_buildDivider('d2', dense));
+      l.addAll(_buildNetworkLine(theme, dense, i));
+      l.add(_buildDivider('d3', dense));
+      l.addAll(_buildFeeLine(theme, dense, i));
+    } else {
+      return [
+        _buildErrorWidget('Error: unknown state: $state').withGridPlacement(
+          columnStart: 1,
+          columnSpan: 3,
+          rowStart: 1,
+          rowSpan: 2,
+        )
+      ];
     }
-    return Center(
-      child: Text(
-        'Error: unknown state: $state',
-      ),
-    );
+
+    return l;
   }
 
-  TableRow _buildChannelsLine(ThemeData theme, bool dense, LightningInfo i) {
-    return TableRow(children: [
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.fill,
-        child: dense
-            ? const Icon(MdiIcons.graph)
-            : TrText(
-                'lightning.channels.header_description',
-                style: theme.textTheme.headline6,
-              ),
-      ),
+  List<Widget> _buildChannelsLine(
+      ThemeData theme, bool dense, LightningInfo i) {
+    return [
+      _buildFirstColumn(
+        MdiIcons.graph,
+        'lightning.channels.header_description',
+        dense,
+        theme,
+      ).inGridArea('c0'),
       DataItem(
         text: i.numActiveChannels.toString(),
         label: 'Active',
-      ),
+      ).inGridArea('c1'),
       DataItem(
         text: i.numInactiveChannels.toString(),
         label: 'Inactive',
-      ),
+      ).inGridArea('c2'),
       DataItem(
         text: i.numPendingChannels.toString(),
         label: 'Pending',
-      ),
-    ]);
+      ).inGridArea('c3'),
+    ];
   }
 
-  TableRow _buildNetworkLine(ThemeData theme, bool dense, LightningInfo i) {
-    return TableRow(children: [
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.fill,
-        child: dense
-            ? const Icon(Icons.sync)
-            : TrText(
-                'Sync',
-                style: theme.textTheme.headline6,
-              ),
-      ),
-      DataItem(text: i.blockHeight.toString(), label: 'Height'),
+  List<Widget> _buildNetworkLine(ThemeData theme, bool dense, LightningInfo i) {
+    final format = NumberFormat.compact(locale: 'en');
+
+    return [
+      _buildFirstColumn(
+        Icons.sync,
+        'lightning.sync_header_description',
+        dense,
+        theme,
+      ).inGridArea('n0'),
+      DataItem(
+              text: format.format(i.blockHeight),
+              label: 'bitcoin.block_height_short')
+          .inGridArea('n1'),
       DataItem(
         color: i.syncedToChain ? Colors.greenAccent : Colors.red,
-        text: i.syncedToChain ? 'OK' : 'NOK',
-        label: 'Chain',
-      ),
+        text: i.syncedToChain ? 'yes' : 'no',
+        label: 'lightning.synced_to_chain_label',
+      ).inGridArea('n2'),
       DataItem(
         color: i.syncedToChain ? Colors.greenAccent : Colors.red,
-        text: i.syncedToGraph ? 'OK' : 'NOK',
-        label: 'Graph',
-      ),
-    ]);
+        text: i.syncedToGraph ? 'yes' : 'no',
+        label: 'lightning.synced_to_graph_label',
+      ).inGridArea('n3'),
+    ];
+  }
+
+  List<Widget> _buildFeeLine(ThemeData theme, bool dense, LightningInfo i) {
+    final format = NumberFormat.compact(locale: 'en');
+
+    return [
+      _buildFirstColumn(
+        MdiIcons.rayStartArrow,
+        'lightning.forwarding_fees',
+        dense,
+        theme,
+      ).inGridArea('f0'),
+      DataItem(text: format.format(10), label: 'lightning.fee_revenue_daily')
+          .inGridArea('f1'),
+      DataItem(
+        text: format.format(120),
+        label: 'lightning.fee_revenue_weekly',
+      ).inGridArea('f2'),
+      DataItem(
+        text: format.format(5141),
+        label: 'lightning.fee_revenue_monthly',
+      ).inGridArea('f3'),
+    ];
   }
 
   Widget _buildBalanceOverview(ThemeData theme, bool dense, WalletBalance i) {
@@ -156,8 +214,9 @@ class LnInfoCard extends StatelessWidget {
         i.onchainUnconfirmedBalance;
     final t = buildTextThemeWithEczar(theme.textTheme);
 
+    final numberFormat = NumberFormat.decimalPattern('en');
+
     return Column(
-      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
@@ -174,13 +233,13 @@ class LnInfoCard extends StatelessWidget {
             SizedBox(
               height: 32,
               child: Text(
-                total.toString(),
+                numberFormat.format(total),
                 style: t.bodyText2,
                 textAlign: TextAlign.center,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 2.0, bottom: 5),
+              padding: const EdgeInsets.only(left: 4.0, bottom: 5.0),
               child: Image.asset(
                 'assets/icons/satoshi-v2.png',
                 color: t.bodyText2?.color,
@@ -193,9 +252,27 @@ class LnInfoCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFirstColumn(bool dense, ThemeData theme) {
-    if (dense) return const Icon(MdiIcons.wallet);
-
-    return TrText('wallet.wallet', style: theme.textTheme.headline6);
+  Widget _buildFirstColumn(
+    IconData iconData,
+    String text,
+    bool dense,
+    ThemeData theme,
+  ) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: dense
+          ? Icon(iconData, size: 30)
+          : TrText(
+              text,
+              style: theme.textTheme.headline6,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.start,
+            ),
+    );
   }
+
+  Widget _buildDivider(String area, bool dense) =>
+      Divider(height: dense ? 2 : 8).inGridArea(area);
+
+  Widget _buildErrorWidget(String text) => Center(child: Text(text));
 }

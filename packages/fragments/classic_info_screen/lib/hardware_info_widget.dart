@@ -62,7 +62,7 @@ class HardwareInfoWidget extends StatelessWidget {
     var txt = '';
     final l = info.cpuPerCpuPercent.length;
     for (var i = 0; i < l; i++) {
-      final v = info.cpuPerCpuPercent[i].floor();
+      final v = info.cpuPerCpuPercent[i];
       if (v < 10) txt += ' ';
       txt += '$v ';
     }

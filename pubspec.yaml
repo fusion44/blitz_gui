@@ -38,6 +38,8 @@ dependencies:
     path: packages/custom_keyboard
   classic_info_screen:
     path: packages/fragments/classic_info_screen
+  info_screen_plus_plus:
+    path: packages/fragments/info_screen_plus_plus
   flutter_login_lite:
     path: packages/flutter_login_lite
   list_transactions_fragment:
