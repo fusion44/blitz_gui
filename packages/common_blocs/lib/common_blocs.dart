@@ -1,6 +1,7 @@
 library common_blocs;
 
 export 'src/bitcoin_info/bitcoin_info.dart';
+export 'src/fee_revenue/fee_revenue.dart';
 export 'src/hardware_info/hardware_info.dart';
 export 'src/invoices/invoices.dart';
 export 'src/lightning_info/lightning_info.dart';
