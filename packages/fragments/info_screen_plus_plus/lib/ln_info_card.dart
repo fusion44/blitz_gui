@@ -103,9 +103,11 @@ class LnInfoCard extends StatelessWidget {
       );
       return l;
     } else if (state is LightningInfoState) {
-      if (state.info == null) {
+      if (state.info == null || state.feeRevenueData == null) {
         return [
-          _buildErrorWidget('Error: state.info is null').withGridPlacement(
+          _buildErrorWidget(
+                  'Error: state.info and/or state.feeRevenueData is null')
+              .withGridPlacement(
             columnStart: 1,
             columnSpan: 3,
             rowStart: 1,
@@ -119,7 +121,7 @@ class LnInfoCard extends StatelessWidget {
       l.add(_buildDivider('d2', dense));
       l.addAll(_buildNetworkLine(theme, dense, i));
       l.add(_buildDivider('d3', dense));
-      l.addAll(_buildFeeLine(theme, dense, i));
+      l.addAll(_buildFeeLine(theme, dense, state.feeRevenueData!));
     } else {
       return [
         _buildErrorWidget('Error: unknown state: $state').withGridPlacement(
@@ -185,7 +187,7 @@ class LnInfoCard extends StatelessWidget {
     ];
   }
 
-  List<Widget> _buildFeeLine(ThemeData theme, bool dense, LightningInfo i) {
+  List<Widget> _buildFeeLine(ThemeData theme, bool dense, FeeRevenueData r) {
     final format = NumberFormat.compact(locale: 'en');
 
     return [
@@ -195,14 +197,14 @@ class LnInfoCard extends StatelessWidget {
         dense,
         theme,
       ).inGridArea('f0'),
-      DataItem(text: format.format(10), label: 'lightning.fee_revenue_daily')
+      DataItem(text: format.format(r.day), label: 'lightning.fee_revenue_daily')
           .inGridArea('f1'),
       DataItem(
-        text: format.format(120),
+        text: format.format(r.week),
         label: 'lightning.fee_revenue_weekly',
       ).inGridArea('f2'),
       DataItem(
-        text: format.format(5141),
+        text: format.format(r.month),
         label: 'lightning.fee_revenue_monthly',
       ).inGridArea('f3'),
     ];

@@ -5,6 +5,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
+import '../../fee_revenue/fee_revenue.dart';
 import '../../wallet_balance/models/wallet_balance.dart';
 import '../models/lightning_info.dart';
 
@@ -41,6 +42,7 @@ class LightningInfoBloc
         _curr.copyWith(
           lnInfo: event.lnInfo,
           walletBalance: event.walletBalance,
+          feeRevenueData: event.feeRevenueData,
         ),
       );
     }
@@ -50,10 +52,14 @@ class LightningInfoBloc
     _sub = repo.filteredStream([
       SseEventTypes.lnInfo,
       SseEventTypes.walletBalance,
+      SseEventTypes.lnFeeRevenue
     ])?.listen((event) {
       if (event['event'] == 'wallet_balance') {
         final wb = WalletBalance.fromJson(event['data']);
         add(_LightningInfoUpdate(walletBalance: wb));
+      } else if (event['event'] == 'ln_fee_revenue') {
+        final fr = FeeRevenueData.fromJson(event['data']);
+        add(_LightningInfoUpdate(feeRevenueData: fr));
       } else {
         final i = LightningInfo.fromJson(event['data']);
         add(_LightningInfoUpdate(lnInfo: i));

@@ -63,6 +63,10 @@ class SubscriptionRepository {
       return SseEventTypes.btcNetworkStatus;
     } else if (eventId == 'btc_mempool_status') {
       return SseEventTypes.btcMempoolStatus;
+    } else if (eventId == 'ln_fee_revenue') {
+      return SseEventTypes.lnFeeRevenue;
+    } else if (eventId == 'ln_forward_successes') {
+      return SseEventTypes.lnForwardSuccesses;
     } else if (eventId == 'ln_info') {
       return SseEventTypes.lnInfo;
     } else if (eventId == 'ln_info_lite') {

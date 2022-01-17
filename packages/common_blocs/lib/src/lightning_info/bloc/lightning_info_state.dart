@@ -12,16 +12,23 @@ class LightningInfoInitial extends LightningInfoBaseState {}
 class LightningInfoState extends LightningInfoBaseState {
   final LightningInfo? info;
   final WalletBalance? walletBalance;
+  final FeeRevenueData? feeRevenueData;
 
-  const LightningInfoState({this.info, this.walletBalance});
+  const LightningInfoState({
+    this.info,
+    this.walletBalance,
+    this.feeRevenueData,
+  });
 
   LightningInfoState copyWith({
     LightningInfo? lnInfo,
     WalletBalance? walletBalance,
+    FeeRevenueData? feeRevenueData,
   }) {
     return LightningInfoState(
       info: lnInfo ?? info,
       walletBalance: walletBalance ?? this.walletBalance,
+      feeRevenueData: feeRevenueData ?? this.feeRevenueData,
     );
   }
 
@@ -52,5 +59,10 @@ class LightningInfoState extends LightningInfoBaseState {
         walletBalance?.unsettledRemoteBalance.msat,
         walletBalance?.pendingOpenLocalBalance.msat,
         walletBalance?.pendingOpenRemoteBalance.msat,
+        feeRevenueData?.day,
+        feeRevenueData?.month,
+        feeRevenueData?.week,
+        feeRevenueData?.year,
+        feeRevenueData?.total,
       ];
 }
