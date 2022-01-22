@@ -154,3 +154,11 @@ TextTheme buildTextThemeWithEczar(TextTheme base) {
       )
       .apply(fontFamily: 'Eczar');
 }
+
+class TabPageData {
+  final String id;
+  final String label;
+  final IconData icon;
+
+  TabPageData(this.id, this.label, this.icon);
+}

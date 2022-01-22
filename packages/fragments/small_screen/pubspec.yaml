@@ -1,0 +1,40 @@
+name: small_screen
+description: A new Flutter package project.
+
+publish_to: "none"
+
+environment:
+  sdk: ">=2.15.1 <3.0.0"
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+    
+  go_router: ^2.5.2
+  qr_flutter: ^4.0.0
+
+  authentication:
+    path: ../../authentication
+  common:
+    path: ../../common   
+  common_blocs:
+    path: ../../common_blocs
+  custom_keyboard:
+    path: ../../custom_keyboard
+  info_screen_plus_plus:
+    path: ../info_screen_plus_plus
+  list_transactions_fragment:
+    path: ../list_transactions
+  settings_fragment:
+    path: ../settings
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^1.0.0
+
+
+flutter:

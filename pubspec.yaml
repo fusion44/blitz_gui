@@ -23,30 +23,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  qr_flutter: ^4.0.0
-  go_router: ^2.5.2
-
+  
+  
   authentication:
     path: packages/authentication
-  common:
-    path: packages/common   
-  common_blocs:
-    path: packages/common_blocs
-  custom_keyboard:
-    path: packages/custom_keyboard
-  classic_info_screen:
-    path: packages/fragments/classic_info_screen
-  info_screen_plus_plus:
-    path: packages/fragments/info_screen_plus_plus
-  flutter_login_lite:
-    path: packages/flutter_login_lite
-  list_transactions_fragment:
-    path: packages/fragments/list_transactions
-  settings_fragment:
-    path: packages/fragments/settings
-
+  small_screen:
+    path: packages/fragments/small_screen
 
 dev_dependencies:
   flutter_test:

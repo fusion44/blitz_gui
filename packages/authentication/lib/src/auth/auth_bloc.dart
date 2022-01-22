@@ -26,6 +26,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepo _authRepo;
   late StreamSubscription<AuthStatus> _authStatusSub;
 
+  AuthRepo get repository => _authRepo;
+
   @override
   Future<void> close() {
     _authStatusSub.cancel();

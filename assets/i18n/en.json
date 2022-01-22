@@ -19,6 +19,7 @@
     "invalid_url_input_deco": "Invalid url",
     "login_btn": "LOGIN",
     "login_page_header": "Login",
+    "logout_button": "Log Out",
     "password_label": "Password",
     "recover_password_intro_short": "Reset your password here",
     "recover_password_long_explainer": "It is only possible to recover your password by flashing your SD card with a fresh Raspiblitz image.",
@@ -88,6 +89,7 @@
   "settings": {
     "language_label": "Language",
     "reboot_button": "reboot",
+    "settings": "Settings",
     "shutdown_button": "shutdown",
     "theme_label": "Dark Theme"
   },
