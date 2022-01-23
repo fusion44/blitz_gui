@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:common/common.dart' as utils;
 import 'package:flutter/foundation.dart';
+
+import 'package:common/common.dart' as utils;
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 

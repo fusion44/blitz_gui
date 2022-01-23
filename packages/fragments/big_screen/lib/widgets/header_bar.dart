@@ -1,9 +1,10 @@
-import 'raspiblitz_logo.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+
 import 'package:common/common.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 import 'menu_button.dart';
+import 'raspiblitz_logo.dart';
 
 enum Pages {
   apps,

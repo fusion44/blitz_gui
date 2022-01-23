@@ -1,11 +1,12 @@
+import 'package:flutter/material.dart';
+
 import 'package:authentication/authentication.dart';
 import 'package:common/common.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 
 import 'widgets/header_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BigScreenApp extends StatelessWidget {
   static String initialLocation = '/';

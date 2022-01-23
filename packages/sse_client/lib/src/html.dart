@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_web_libraries_in_flutter
 
-import 'dart:html';
 import 'dart:async';
+import 'dart:html';
 
 // https: //github.com/dart-lang/http/issues/593#issuecomment-880984594
 Future<Stream<String>> establishSSEConnection(

@@ -29,3 +29,6 @@ install-deps:
 
 install-to-pi:
 	dart scripts/build_and_push.dart
+
+sort-imports:
+	flutter pub run import_sorter:main

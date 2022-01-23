@@ -6,8 +6,9 @@ import 'dart:async';
 
 import 'package:common/common.dart';
 import 'package:http/http.dart' as http;
-import 'sse_model.dart';
+
 import 'html.dart' if (dart.library.io) 'io.dart';
+import 'sse_model.dart';
 
 class SSEClient {
   static final http.Client _client = http.Client();

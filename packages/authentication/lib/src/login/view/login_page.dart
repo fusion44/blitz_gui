@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login_lite/flutter_login.dart';
 
 import '../../auth/auth_repository.dart';
-
-import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
   static String path = '/login';

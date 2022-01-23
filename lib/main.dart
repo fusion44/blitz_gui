@@ -1,7 +1,8 @@
-import 'package:authentication/authentication.dart';
-import 'package:common/common.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'package:authentication/authentication.dart';
+import 'package:common/common.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';

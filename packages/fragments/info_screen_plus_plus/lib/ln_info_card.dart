@@ -1,10 +1,11 @@
+import 'package:flutter/material.dart';
+
 import 'package:common/common.dart';
 import 'package:common_blocs/common_blocs.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_layout_grid/flutter_layout_grid.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class LnInfoCard extends StatelessWidget {
   const LnInfoCard({Key? key}) : super(key: key);

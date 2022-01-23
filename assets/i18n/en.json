@@ -47,6 +47,14 @@
     "sync_status_short": "Sync"
   },
   "dashboard": {
+    "big_screen": {
+      "headerbar": {
+        "btn_apps": "Apps",
+        "btn_channels": "Channels",
+        "btn_dashboard": "Dashboard",
+        "btn_transactions": "Transactions"
+      }
+    },
     "funds_button": "Funds",
     "info_button": "Info",
     "node_button": "Node",

@@ -2,8 +2,9 @@ library auth_card_builder;
 
 import 'dart:math';
 
-import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:flutter/material.dart';
+
+import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:flutter_login_lite/flutter_login.dart';
 import 'package:flutter_login_lite/src/constants.dart';
 import 'package:flutter_login_lite/src/dart_helper.dart';
