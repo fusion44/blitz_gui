@@ -1,0 +1,38 @@
+name: big_screen
+description: A new Flutter project.
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.15.1 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+    
+  go_router: ^2.5.2
+  dropdown_button2: ^1.0.7
+ 
+  authentication:
+    path: ../../authentication
+  common:
+    path: ../../common   
+  common_blocs:
+    path: ../../common_blocs
+  settings_fragment:
+    path: ../settings
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - ../../../assets/RaspiBlitz_Logo_Icon_Negative.png

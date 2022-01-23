@@ -27,6 +27,8 @@ dependencies:
   
   authentication:
     path: packages/authentication
+  big_screen:
+    path: packages/fragments/big_screen
   small_screen:
     path: packages/fragments/small_screen
 

@@ -1,4 +1,5 @@
 import 'package:authentication/authentication.dart';
+import 'package:big_screen/big_screen.dart';
 import 'package:common/common.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,13 +33,7 @@ class _BaseAppState extends State<BaseApp> {
     final GoRouter _router;
 
     if (big) {
-      return MaterialApp(
-        builder: (context, child) {
-          return const Scaffold(
-            body: Center(child: Text('ToDo: BigScreenApp')),
-          );
-        },
-      );
+      _router = BigScreenApp.buildRouter(widget.authRepo);
     } else {
       _router = SmallScreenApp.buildRouter(widget.authRepo);
     }
