@@ -16,10 +16,12 @@ class AuthStateError implements Exception {
 
 class AuthRepo {
   final _controller = StreamController<AuthStatus>();
+  late final Stream<AuthStatus> _statusStream;
   var _url = '';
   var _token = '';
 
   FutureOr<bool> init() async {
+    _statusStream = _controller.stream.asBroadcastStream();
     if (!kIsWeb) {
       Map<String, String> envVars = Platform.environment;
       if (Platform.isLinux || Platform.isMacOS) {
@@ -69,7 +71,7 @@ class AuthRepo {
   Stream<AuthStatus> get status async* {
     await Future<void>.delayed(const Duration(seconds: 1));
     yield AuthStatus.unauthenticated;
-    yield* _controller.stream;
+    yield* _statusStream;
   }
 
   Future<void> logIn({
