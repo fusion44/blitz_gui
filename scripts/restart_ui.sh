@@ -1,1 +1,1 @@
-sshpass -p $1 ssh $2@$3 "bash /home/$2/dev/blitz_gui/restart_ui.sh"
+sshpass -p $1 ssh $2@$3 "bash /home/$2/dev/blitz_gui/$4_restart_ui.sh"

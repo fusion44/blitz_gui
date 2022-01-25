@@ -4,18 +4,51 @@ import 'dart:io';
 import 'package:dart_console/dart_console.dart';
 import 'package:watcher/watcher.dart';
 
+// Take screenshot on PI (fbgrab must be installed):
+// sudo fbgrab -d /dev/fb1 screenshot1.png
+// -------------------------------------
+// download to dev computer:
+// scp pi@192.168.1.254:/home/pi/screenshot1.png screenshot1.png
+
 class Remote {
   final String name;
   final String ip;
   final String username;
   final String password;
+  final bool attachFlutterTools;
+  final int? displayWidth;
+  final int? displayHeight;
 
-  Remote(this.name, this.ip, this.username, this.password);
+  Remote(
+    this.name,
+    this.ip,
+    this.username,
+    this.password,
+    this.attachFlutterTools, {
+    this.displayWidth,
+    this.displayHeight,
+  });
 }
 
 final remotes = [
-  Remote('name1', '192.168.1.11', 'admin', 'password'),
-  Remote('name2', '192.168.1.12', 'admin', 'password'),
+  Remote(
+    'testiblitz1',
+    '192.168.1.11',
+    'admin',
+    'password',
+    true,
+    displayWidth: 201,
+    displayHeight: 101,
+  ),
+  Remote(
+    'testiblitz2',
+    '192.168.1.12',
+    'admin',
+    'password',
+    true,
+    displayWidth: 373,
+    displayHeight: 305,
+  ),
 ];
 
 final progress = <String, String>{};
@@ -38,7 +71,7 @@ void main() async {
 
   printPos = console.cursorPosition!;
 
-  copyRestartShellFile();
+  copyRestartShellFiles();
 
   await startAndWaitForRsyncProcesses();
   final _fsWatchSub = watchFileSystem();
@@ -127,6 +160,7 @@ Future<int> executeApp(Remote r) async {
     r.password,
     r.username,
     r.ip,
+    r.name,
   ]);
 
   processes.add(p);
@@ -134,16 +168,15 @@ Future<int> executeApp(Remote r) async {
   p.stdout.transform(utf8.decoder).transform(const LineSplitter()).listen(
     (event) {
       if (event.startsWith('flutter: Observatory listening on')) {
-        String url = event.replaceAll(
-          'flutter: Observatory listening on ',
-          r.name,
-        );
+        String url = event.replaceAll('flutter: Observatory listening on ', '');
         url = url.replaceAll('0.0.0.0', r.ip);
         console.writeLine('${r.name} Observatory listening on $url');
-        attachFlutterProcess(
-          r,
-          url.replaceAll('flutter: Observatory listening on ', '').trim(),
-        );
+        if (r.attachFlutterTools) {
+          attachFlutterProcess(
+            r,
+            url.replaceAll('flutter: Observatory listening on ', '').trim(),
+          );
+        }
       }
     },
     onDone: () {
@@ -207,13 +240,24 @@ Future<void> startAndWaitForRsyncProcesses() async {
   t.cancel();
 }
 
-void copyRestartShellFile() {
-  final newFile = File(
-    '${Directory.current.path}/build/flutter_assets/restart_ui.sh',
-  );
-  newFile.writeAsStringSync(
-    "kill -9 \$(pidof flutter-pi)${console.newLine}sleep 1${console.newLine}flutter-pi -d '173.44, 148.96' ~/dev/blitz_gui/ --observatory-host=0.0.0.0",
-  );
+void copyRestartShellFiles() {
+  for (final r in remotes) {
+    final newFile = File(
+      '${Directory.current.path}/build/flutter_assets/${r.name}_restart_ui.sh',
+    );
+
+    String displayOption = '';
+    if (r.displayWidth != null && r.displayHeight != null) {
+      displayOption = "-d '${r.displayWidth}, ${r.displayHeight}' ";
+    }
+
+    newFile.writeAsStringSync('''
+sudo setfacl -m u:admin:rw /dev/input/event*
+sudo kill -9 \$(pidof flutter-pi)
+sleep 1
+flutter-pi $displayOption~/dev/blitz_gui/ --observatory-host=0.0.0.0
+''');
+  }
 }
 
 Future<int> buildBinaries() async {
