@@ -35,6 +35,7 @@ class BlitzCard extends StatelessWidget {
             subtitle,
             style: theme.textTheme.subtitle2,
             textAlign: TextAlign.end,
+            overflow: TextOverflow.ellipsis,
           )
         : Container();
     const divider = Divider(thickness: 2, height: 3);
@@ -56,7 +57,11 @@ class BlitzCard extends StatelessWidget {
           Row(
             textBaseline: TextBaseline.alphabetic,
             crossAxisAlignment: CrossAxisAlignment.baseline,
-            children: [titleText, const Spacer(), subtitleText],
+            children: [
+              titleText,
+              const SizedBox(width: 6.0),
+              Expanded(child: subtitleText)
+            ],
           ),
           divider,
           Expanded(child: child),
