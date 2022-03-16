@@ -6,6 +6,7 @@ help:
 	@echo "To run the app on Linux type 'run-linux'"
 	@echo "To run the app on web type 'run-chrome'"
 	@echo "To install dependencies in all packages"
+	@echo "To upgrade dependencies to latest versions run make upgrade-deps"
 	@echo "To push the app to an Raspiblitz type 'install-to-pi'. Make sure to adjust all values in the script accordingly."
 	@echo "------------------------------------"
 
@@ -26,6 +27,9 @@ run-chrome:
 
 install-deps:
 	bash scripts/install_deps.sh
+
+upgrade-deps:
+	bash scripts/upgrade_deps.sh
 
 install-to-pi:
 	dart scripts/build_and_push.dart
