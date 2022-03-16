@@ -59,7 +59,6 @@ class SmallScreenApp extends StatefulWidget {
   static final String _initialLocation = '/dashboard/${_pages.first.id}';
 
   static GoRouter buildRouter(AuthRepo authRepo) {
-    final authBloc = AuthBloc(authRepository: authRepo);
     return GoRouter(
       redirect: (state) {
         var isLoggedIn = authRepo.isLoggedIn;
@@ -76,8 +75,8 @@ class SmallScreenApp extends StatefulWidget {
           name: LoginPage.routeName,
           path: LoginPage.path,
           builder: (context, state) {
-            return BlocProvider.value(
-              value: authBloc,
+            return BlocProvider(
+              create: (c) => AuthBloc(authRepository: authRepo),
               child: LoginPage(
                 () => context.goNamed(_initialLocation, params: {}),
               ),
@@ -94,13 +93,7 @@ class SmallScreenApp extends StatefulWidget {
               orElse: () => throw Exception('Page not found: $pageId'),
             );
 
-            return BlocProvider.value(
-              value: authBloc,
-              child: RepositoryProvider.value(
-                value: authRepo,
-                child: SmallScreenApp(tabData, key: state.pageKey),
-              ),
-            );
+            return SmallScreenApp(tabData, key: state.pageKey);
           },
         )
       ],
@@ -155,11 +148,6 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
   bool _ready = false;
   @override
   void initState() {
-    final authBloc = BlocProvider.of<AuthBloc>(context);
-    if (authBloc.state.status != AuthStatus.authenticated) {
-      GoRouter.of(context).goNamed(LoginPage.routeName);
-    }
-
     changeLocale(context, 'en');
     updateTimeAgoLib('en');
 
@@ -177,13 +165,13 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
 
   @override
   void dispose() async {
+    super.dispose();
     await _settingsSub?.cancel();
     _hardwareBloc.add(StopListenHardwareInfo());
     _systemBloc.add(StopListenSystemInfo());
     _btcInfoBloc.add(StopListenBitcoinInfo());
     _lnInfoBloc.add(StopListenLightningInfo());
     await _listTxBloc.dispose();
-    super.dispose();
   }
 
   void _initBlocs() async {

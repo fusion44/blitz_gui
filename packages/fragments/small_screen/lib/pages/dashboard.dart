@@ -117,11 +117,6 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
   bool _ready = false;
   @override
   void initState() {
-    final authBloc = BlocProvider.of<AuthBloc>(context);
-    if (authBloc.state.status != AuthStatus.authenticated) {
-      GoRouter.of(context).goNamed(LoginPage.routeName);
-    }
-
     changeLocale(context, 'en');
     updateTimeAgoLib('en');
 
