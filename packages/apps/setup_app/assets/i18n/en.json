@@ -1,0 +1,79 @@
+{
+  "alert_dialog": {
+    "cancel": "Cancel",
+    "confirm_overwrite_file_body": "Overwrite file?",
+    "confirm_overwrite_file_title": "File exists.",
+    "ok": "OK",
+    "overwrite": "Overwrite",
+    "retry": "Retry"
+  },
+  "setup": {
+    "appbar_title": "RaspiBlitz Setup",
+    "available_releases": "Available Releases",
+    "btn": {
+      "connect_node": "connect to my blitz",
+      "connect_node_desc": "If you have the hardware assembled and SD card plugged in.",
+      "connect_to_api": "Connect",
+      "delete_downloaded_files": "Delete",
+      "finish_step": "Finish",
+      "flash_sd_card": "Flash new RaspiBlitz image",
+      "flash_sd_card_desc": "If you don't have a SD card yet, you can flash one with the RaspiBlitz software here.",
+      "migrate": "... migrate from another software",
+      "migrate_desc": "Upload a migration file from another Blitz",
+      "new_node_from_scratch": "... setup a new node",
+      "new_node_from_scratch_desc": "Setup a new node from scratch. This will erase all data on the disk.",
+      "next_step": "next",
+      "open_etcher_btn": "Open Etcher",
+      "recover": "... recover a node",
+      "recover_desc": "If data on the external drive is found then this data will be used to recover the RaspiBlitz",
+      "scan_qr_with_connection_details": "Scan QR Code",
+      "skip_to_next_step": "Skip",
+      "start_download_files": "Download",
+      "update": "... update a blitz",
+      "update_desc": "Update your existing RaspiBlitz"
+    },
+    "choose_setup_type": "I want to ...",
+    "dialog": {
+      "sd_card_flash_success_content": "Was the SD-card flashed correctly? If there was a problem hit retry.",
+      "sd_card_flash_success_title": "Flash OK?"
+    },
+    "download_finished_text": "All files downloaded successfully. You can now flash an SD card with the RaspiBlitz image.",
+    "downloading_file": "Downloading {file}",
+    "downloading_file_progress_next": "{downloadedMiB} MiB of {totalMiB} MiB ({percent} %)",
+    "errors": {
+      "cant_connect_to_url": "Error while trying to connect to {url}\nPlease check if the IP is correct. Go back to change the URL.",
+      "error_message_header": "Error",
+      "that_didnt_work": "Ooops, that didn't work."
+    },
+    "flash_sd_header": "Memory card preparation",
+    "header_establish_connection": "Connect to your RaspiBlitz",
+    "input_label": {
+      "enter_url": "Enter the URL of your RaspiBlitz here"
+    },
+    "latest_release": "Latest release: {release}",
+    "migration_data_found_warning": "We've found data from {hddGotMigrationData} on your SD card. Currently, migrating from another node software is not supported via this desktop installer. If you want to migrate, you can do so via the SSH menu. If you continue this data will be deleted! \n\n Login via {sshLogin}",
+    "migration_data_found_warning_checkbox_text": "I'm OK with discarding all the data from {hddGotMigrationData}",
+    "on_connect_success_info_box_body": "During the next step you'll be asked several questions to finalize the setup of your node.",
+    "question": {
+      "existing_sd_or_flash_new": "Do you have an SD card with the Raspiblitz OS?"
+    },
+    "scan_network_finished_header": "Found {numDevices} RaspiBlitzes in your network.",
+    "scanning_network_header": "Scanning... {progress}% - {numDevices} devices",
+    "sd_card_is_ready_header": "Your SD-Card is ready!",
+    "sd_card_ready_delete_downloaded_files": "You may also delete downloaded resources or keep them for your next RaspiBlitz if you want. Files have been downloaded into a temporary system folder where they'll be deleted automatically during next reboot.",
+    "sd_card_ready_next_steps_message": "Now put the SD-card into your RaspiBlitz and turn it on. It may take a while until the RaspiBlitz is fully booted.",
+    "sd_card_ready_to_flash_explanation": "The sd card will be flashed by an external application called \"balena Etcher\". Click the button below to start Etcher. Make sure the SD-card is inserted and recognized by the operating system. Proceed in Etcher by choosing the SD-card and the hit flash! We'll proceed when the Etcher window is closed.",
+    "sd_card_ready_to_flash_header": "Ready to flash the SD-card",
+    "sd_cart_waiting_for_etcher": "Waiting for Etcher to finish ...",
+    "success_message_body": "Found the node and successfully connected to it.",
+    "success_message_header": "Success",
+    "timeline": {
+      "choose_setup_type": "Setup Type",
+      "final_steps": "Final Steps",
+      "initial_connect_to_node": "Connect",
+      "prepare_sd_card": "SD Card",
+      "set_node_name": "Node Name",
+      "set_passwords_a_b": "Passwords"
+    }
+  }
+}
