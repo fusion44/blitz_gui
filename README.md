@@ -1,16 +1,38 @@
-# blitz_gui
+# Blitz GUI
 
-A new Flutter project.
+This repository contains apps and libraries related to the Blitz GUI project. This a frontend application to be used with the [blitz_api](https://github.com/fusion44/blitz_api) backend.  
 
-## Getting Started
+The user interface is realized using the [Flutter](https://www.flutter.dev) framework and [flutter-pi](https://github.com/ardera/flutter-pi) to make it run natively on a Raspberry PI.  
 
-This project is a starting point for a Flutter application.
+## Disclaimer
 
-A few resources to get you started if this is your first Flutter project:
+This is very much under development and might contain serious bugs. Don't use it in production, yet.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Develop
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Dependencies
+
+* **Blitz API**
+
+  To develop this application, make sure you have an instance of [blitz_api](https://github.com/fusion44/blitz_api) running and reachable.
+
+* **Flutter**
+
+  If you are new to Flutter follow the install instructions for your OS: [Flutter Docs](https://flutter.dev/docs/get-started/install).
+
+  > :information_source: Flutter has opt-out analytics which can be disabled by running `flutter config --no-analytics`.
+
+
+
+* Run the app locally:
+  * With make: `make run-linux` or `make run-chrome`  
+  * With flutter directly `flutter run -d linux` (or windows, or macosx, or chrome)  
+
+## Contribute
+
+If you find any issues, please report them via the [Github issue tracker](https://github.com/fusion44/blitz_api/issues).
+If you are interested in helping developing the software, you are very welcome to submit ideas to the issue tracker and help by opening pull requests.
+
+## LICENSE
+
+MIT - See the [LICENSE](LICENSE) file.
