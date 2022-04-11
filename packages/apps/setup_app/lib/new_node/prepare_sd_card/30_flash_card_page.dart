@@ -61,7 +61,9 @@ class _FlashCardPageState extends State<FlashCardPage> {
                   const SizedBox(height: 20.0),
                   const TrText('setup.sd_cart_waiting_for_etcher'),
                   const SizedBox(height: 36.0),
-                  const SpinKitFadingCube(color: Colors.greenAccent),
+                  const RepaintBoundary(
+                    child: SpinKitFadingCube(color: Colors.greenAccent),
+                  ),
                 ] else if (_etcherError)
                   ..._buildErrorUi()
                 else

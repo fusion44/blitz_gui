@@ -41,7 +41,9 @@ class FindDevicesWidget extends StatelessWidget {
         },
         style: Theme.of(context).textTheme.headline5!,
       );
-      icon = const SpinKitSpinningLines(color: Colors.amberAccent, size: 32.0);
+      icon = const RepaintBoundary(
+        child: SpinKitSpinningLines(color: Colors.amberAccent, size: 32.0),
+      );
       devices = state.devices;
     }
     if (state is NetworkScanFinishedState) {
