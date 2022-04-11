@@ -9,6 +9,7 @@ class TrText extends StatelessWidget {
   final bool? softWrap;
   final TextAlign? textAlign;
   final bool isButton;
+  final Map<String, dynamic> args;
 
   const TrText(
     this.text, {
@@ -18,12 +19,13 @@ class TrText extends StatelessWidget {
     this.softWrap,
     this.textAlign,
     this.isButton = false,
+    this.args = const <String, dynamic>{},
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Text(
-      isButton ? tr(text).toUpperCase() : tr(text),
+      isButton ? tr(text, args).toUpperCase() : tr(text, args),
       style: style,
       overflow: overflow,
       softWrap: softWrap,
