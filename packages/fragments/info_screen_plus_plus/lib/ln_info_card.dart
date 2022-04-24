@@ -21,9 +21,7 @@ class LnInfoCard extends StatelessWidget {
           builder: (context, state) {
             return BlitzCard(
               title: tr('lightning.next_gen_info_screen_card_header'),
-              subtitle: state is LightningInfoState && state.info != null
-                  ? state.info!.alias
-                  : '',
+              subtitle: state is LightningInfoState ? state.info.alias : '',
               child: LayoutGrid(
                 rowGap: 4.0,
                 columnGap: 4.0,
@@ -64,10 +62,11 @@ class LnInfoCard extends StatelessWidget {
     Widget w;
     if (state is LightningInfoInitial) {
       w = const Text('loading ...');
-    } else if (state is LightningInfoState && state.walletBalance != null) {
+    } else if (state is LightningInfoState) {
       final wb = state.walletBalance;
-      if (wb == null) w = _buildErrorWidget('Error: walletBalance is null');
-      w = _buildBalanceOverview(theme, dense, wb!);
+      w = _buildBalanceOverview(theme, dense, wb);
+    } else if (state is LightningInfoErrorState) {
+      w = _buildErrorWidget('Error: ${state.error}');
     } else {
       w = _buildErrorWidget('Error: unknown state: $state');
     }
@@ -104,25 +103,21 @@ class LnInfoCard extends StatelessWidget {
       );
       return l;
     } else if (state is LightningInfoState) {
-      if (state.info == null || state.feeRevenueData == null) {
-        return [
-          _buildErrorWidget(
-                  'Error: state.info and/or state.feeRevenueData is null')
-              .withGridPlacement(
-            columnStart: 1,
-            columnSpan: 3,
-            rowStart: 1,
-            rowSpan: 2,
-          )
-        ];
-      }
-
       final i = state.info;
-      l.addAll(_buildChannelsLine(theme, dense, i!));
+      l.addAll(_buildChannelsLine(theme, dense, i));
       l.add(_buildDivider('d2', dense));
       l.addAll(_buildNetworkLine(theme, dense, i));
       l.add(_buildDivider('d3', dense));
-      l.addAll(_buildFeeLine(theme, dense, state.feeRevenueData!));
+      l.addAll(_buildFeeLine(theme, dense, state.feeRevenueData));
+    } else if (state is LightningInfoErrorState) {
+      return [
+        _buildErrorWidget('Error: : ${state.error}').withGridPlacement(
+          columnStart: 1,
+          columnSpan: 3,
+          rowStart: 1,
+          rowSpan: 2,
+        )
+      ];
     } else {
       return [
         _buildErrorWidget('Error: unknown state: $state').withGridPlacement(

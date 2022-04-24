@@ -15,5 +15,7 @@ class BlitzURL extends FormzInput<String, BlitzURLValidationError> {
     } catch (e) {
       return BlitzURLValidationError.invalid;
     }
+
+    return null;
   }
 }

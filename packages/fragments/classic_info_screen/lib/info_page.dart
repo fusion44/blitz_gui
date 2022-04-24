@@ -137,10 +137,7 @@ class _ClassicInfoScreenState extends State<ClassicInfoScreen> {
       bloc: widget.lnInfoBloc,
       builder: (context, state) {
         if (state is LightningInfoState) {
-          return LightningInfoWidget(
-            info: state.info!,
-            wb: state.walletBalance ?? const WalletBalance(),
-          );
+          return LightningInfoWidget(info: state.info, wb: state.walletBalance);
         } else {
           return const Center(
             child: SpinKitChasingDots(color: Colors.red),

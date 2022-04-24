@@ -68,7 +68,15 @@ class LightningInfoBloc
     } else if (event is _LightningInfoUpdate) {
       LightningInfoState _curr;
       try {
-        _curr = state as LightningInfoState;
+        if (state is LightningInfoState) {
+          _curr = state as LightningInfoState;
+        } else {
+          _curr = LightningInfoState(
+            info: event.lnInfo ?? const LightningInfo(),
+            walletBalance: event.walletBalance ?? const WalletBalance(),
+            feeRevenueData: event.feeRevenueData ?? const FeeRevenueData(),
+          );
+        }
       } catch (e) {
         emit(LightningInfoErrorState(e.toString()));
         return;

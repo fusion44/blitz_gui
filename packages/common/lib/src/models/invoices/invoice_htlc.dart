@@ -1,7 +1,5 @@
 import 'package:common/common.dart';
 
-import 'custom_records_entry.dart';
-
 enum InvoiceHTLCState { accepted, settled, canceled }
 
 /// Details of an HTLC that paid to an invoice
@@ -80,4 +78,6 @@ InvoiceHTLCState? _getState(String state) {
     default:
       BlitzLog().e('Unknown InvoiceHTLCState $state');
   }
+
+  return null;
 }

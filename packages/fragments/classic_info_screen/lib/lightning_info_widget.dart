@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:common/common.dart';
-import 'package:common_blocs/common_blocs.dart';
 import 'package:intl/intl.dart';
 
 class LightningInfoWidget extends StatelessWidget {

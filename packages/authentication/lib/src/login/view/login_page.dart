@@ -20,7 +20,11 @@ class LoginPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: FlutterLogin(
-          onRecoverPassword: (String a) {},
+          onRecoverPassword: (String a) {
+            debugPrint('onRecoverPassword not implemented yet');
+
+            return null;
+          },
           onLogin: (LoginData data) async => await onLogin(data, context),
           title: 'Raspiblitz Touch',
           messages: LoginMessages(),

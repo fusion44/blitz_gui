@@ -3,6 +3,8 @@
 import 'dart:async';
 import 'dart:html';
 
+import 'package:flutter/material.dart';
+
 // https: //github.com/dart-lang/http/issues/593#issuecomment-880984594
 Future<Stream<String>> establishSSEConnection(
   String url,
@@ -37,10 +39,10 @@ Future<Stream<String>> establishSSEConnection(
       }
     })
     ..onLoadEnd.listen((event) {
-      print('all done');
+      debugPrint('all done');
     })
     ..onError.listen((event) {
-      print('all errors ${event}');
+      debugPrint('all errors $event');
     })
     ..send('');
 

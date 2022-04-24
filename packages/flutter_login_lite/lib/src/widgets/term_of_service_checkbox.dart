@@ -53,6 +53,8 @@ class _TermCheckboxState extends State<TermCheckbox> {
             widget.termOfService.getStatus() != true) {
           return widget.termOfService.validationErrorMessage;
         }
+
+        return null;
       },
     );
   }

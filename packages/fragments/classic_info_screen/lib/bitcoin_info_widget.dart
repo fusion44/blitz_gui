@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:common/common.dart';
-import 'package:common_blocs/common_blocs.dart';
 
 class BitcoinInfoWidget extends StatelessWidget {
   final BitcoinInfo info;
@@ -70,5 +69,7 @@ class BitcoinInfoWidget extends StatelessWidget {
     } else if (info.connections == 1) {
       return Colors.orange;
     }
+
+    return null;
   }
 }

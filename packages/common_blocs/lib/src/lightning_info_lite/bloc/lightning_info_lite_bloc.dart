@@ -6,8 +6,6 @@ import 'package:common/common.dart';
 import 'package:equatable/equatable.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
-import '../../../common_blocs.dart';
-
 part 'lightning_info_lite_event.dart';
 part 'lightning_info_lite_state.dart';
 

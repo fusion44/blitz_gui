@@ -5,10 +5,10 @@ class FeeRevenueData {
   final int? year;
   final int? total;
 
-  FeeRevenueData({
-    required this.day,
-    required this.week,
-    required this.month,
+  const FeeRevenueData({
+    this.day = 0,
+    this.week = 0,
+    this.month = 0,
     this.year,
     this.total,
   });

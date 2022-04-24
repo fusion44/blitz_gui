@@ -155,7 +155,7 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
     _hardwareBloc = HardwareInfoBloc(_subRepo, _authRepo);
     _systemBloc = SystemInfoBloc(_subRepo);
     _btcInfoBloc = BitcoinInfoBloc(_subRepo);
-    _lnInfoBloc = LightningInfoBloc(_subRepo);
+    _lnInfoBloc = LightningInfoBloc(_authRepo, _subRepo);
     _listTxBloc = ListTxBloc(_authRepo, _subRepo);
 
     _walletLockedChecker.add(StartCheckWalletLocked());
@@ -245,7 +245,9 @@ class _BlitzDashboardState extends State<BlitzDashboard> {
                 'Overview Widget goes here',
                 style: theme.textTheme.headline3,
               ),
-              Expanded(child: FundsPage((visible) => print(visible))),
+              Expanded(
+                child: FundsPage((visible) => debugPrint(visible.toString())),
+              ),
             ],
           ),
         ),
