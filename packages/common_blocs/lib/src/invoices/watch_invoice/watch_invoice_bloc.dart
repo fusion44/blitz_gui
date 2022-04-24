@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:common/common.dart';
 import 'package:equatable/equatable.dart';
 import 'package:subscription_repository/subscription_repository.dart';
-
-import '../models/invoices.dart';
 
 part 'watch_invoice_event.dart';
 part 'watch_invoice_state.dart';

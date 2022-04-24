@@ -8,8 +8,6 @@ import 'package:common/common.dart';
 import 'package:equatable/equatable.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
-import '../models/hardware_info_model.dart';
-
 part 'hardware_info_event.dart';
 part 'hardware_info_state.dart';
 

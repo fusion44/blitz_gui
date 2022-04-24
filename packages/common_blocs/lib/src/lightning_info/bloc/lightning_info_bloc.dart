@@ -1,25 +1,60 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:authentication/authentication.dart';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:common/common.dart';
 import 'package:equatable/equatable.dart';
 import 'package:subscription_repository/subscription_repository.dart';
-
-import '../../fee_revenue/fee_revenue.dart';
-import '../../wallet_balance/models/wallet_balance.dart';
-import '../models/lightning_info.dart';
 
 part 'lightning_info_event.dart';
 part 'lightning_info_state.dart';
 
 class LightningInfoBloc
     extends Bloc<LightningInfoEvent, LightningInfoBaseState> {
-  SubscriptionRepository repo;
+  final AuthRepo _authRepo;
+  final SubscriptionRepository _repo;
 
   StreamSubscription<Map<String, dynamic>>? _sub;
 
-  LightningInfoBloc(this.repo) : super(LightningInfoInitial()) {
+  LightningInfoBloc(this._authRepo, this._repo)
+      : super(LightningInfoInitial()) {
+    _warmup();
     on<LightningInfoEvent>(_onEvent, transformer: sequential());
+  }
+
+  void _warmup() async {
+    try {
+      final res = await Future.wait([
+        fetch(
+          Uri.parse('${_authRepo.baseUrl()}/latest/lightning/get-info'),
+          _authRepo.token(),
+        ),
+        fetch(
+          Uri.parse('${_authRepo.baseUrl()}/latest/lightning/get-fee-revenue'),
+          _authRepo.token(),
+        ),
+        fetch(
+          Uri.parse('${_authRepo.baseUrl()}/latest/lightning/get-balance'),
+          _authRepo.token(),
+        )
+      ]);
+
+      final i = LightningInfo.fromJson(jsonDecode(res[0].body));
+      final fr = FeeRevenueData.fromJson(jsonDecode(res[1].body));
+      final wb = WalletBalance.fromJson(jsonDecode(res[2].body));
+
+      add(
+        _LightningInfoUpdate(
+          lnInfo: i,
+          feeRevenueData: fr,
+          walletBalance: wb,
+        ),
+      );
+    } catch (e) {
+      add(_LightningInfoErrorEvent(e.toString()));
+    }
   }
 
   FutureOr<void> _onEvent(
@@ -35,7 +70,8 @@ class LightningInfoBloc
       try {
         _curr = state as LightningInfoState;
       } catch (e) {
-        _curr = const LightningInfoState();
+        emit(LightningInfoErrorState(e.toString()));
+        return;
       }
 
       emit(
@@ -45,11 +81,13 @@ class LightningInfoBloc
           feeRevenueData: event.feeRevenueData,
         ),
       );
+    } else if (event is _LightningInfoErrorEvent) {
+      emit(LightningInfoErrorState(event.errorMessage));
     }
   }
 
   void _startListenLnEvents() {
-    _sub = repo.filteredStream([
+    _sub = _repo.filteredStream([
       SseEventTypes.lnInfo,
       SseEventTypes.walletBalance,
       SseEventTypes.lnFeeRevenue

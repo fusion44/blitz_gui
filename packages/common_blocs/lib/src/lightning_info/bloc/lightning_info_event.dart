@@ -22,3 +22,9 @@ class _LightningInfoUpdate extends LightningInfoEvent {
     this.feeRevenueData,
   });
 }
+
+class _LightningInfoErrorEvent extends LightningInfoEvent {
+  final String errorMessage;
+
+  const _LightningInfoErrorEvent(this.errorMessage);
+}

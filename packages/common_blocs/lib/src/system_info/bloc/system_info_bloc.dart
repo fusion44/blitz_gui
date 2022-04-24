@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:common/common.dart';
 import 'package:equatable/equatable.dart';
 import 'package:subscription_repository/subscription_repository.dart';
-
-import '../models/system_info_model.dart';
 
 part 'system_info_event.dart';
 part 'system_info_state.dart';

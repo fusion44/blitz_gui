@@ -5,8 +5,6 @@ import 'package:authentication/authentication.dart';
 import 'package:common/common.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
-import '../models/fee_revenue_data.dart';
-
 class FeeRevenueRepository {
   final AuthRepo _authRepo;
   final SubscriptionRepository _subRepo;

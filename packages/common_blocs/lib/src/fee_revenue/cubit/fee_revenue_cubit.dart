@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:common/common.dart';
 import 'package:meta/meta.dart';
 
-import '../models/fee_revenue_data.dart';
 import '../repository/fee_revenue_repository.dart';
 
 part 'fee_revenue_state.dart';

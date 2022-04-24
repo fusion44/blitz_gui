@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:common/common.dart';
 import 'package:meta/meta.dart';
 import 'package:subscription_repository/subscription_repository.dart';
-
-import '../models/block_data.dart';
 
 part 'new_block_watcher_state.dart';
 

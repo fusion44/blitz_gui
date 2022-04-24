@@ -1,4 +1,4 @@
-import 'package:common/common.dart';
+import '../utils.dart';
 
 class BlockData {
   final String hash;
