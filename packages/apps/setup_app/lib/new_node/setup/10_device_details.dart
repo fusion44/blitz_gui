@@ -2,8 +2,9 @@
 
 import 'dart:async';
 
-import 'package:common/common.dart';
 import 'package:flutter/material.dart';
+
+import 'package:common/common.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:go_router/go_router.dart';

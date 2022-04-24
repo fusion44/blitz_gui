@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'setup/10_device_details.dart';
 
 import 'bloc/setup_bloc.dart';
+import 'setup/10_device_details.dart';
 
 class NewNodeSetupPage extends StatefulWidget {
   const NewNodeSetupPage({Key? key}) : super(key: key);

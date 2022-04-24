@@ -1,9 +1,10 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:lan_scanner/lan_scanner.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 
