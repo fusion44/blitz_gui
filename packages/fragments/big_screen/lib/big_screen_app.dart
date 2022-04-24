@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:authentication/authentication.dart';
+import 'package:big_screen/big_screen_app_repos.dart';
+import 'package:big_screen/widgets/big_screen_tx.dart';
 import 'package:common/common.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,11 +10,12 @@ import 'package:settings_fragment/settings_fragment.dart';
 
 import 'widgets/header_bar.dart';
 
-class BigScreenApp extends StatelessWidget {
+class BigScreenApp extends StatefulWidget {
   static String initialLocation = '/';
 
-  static GoRouter buildRouter(AuthRepo authRepo) {
-    final authBloc = AuthBloc(authRepository: authRepo);
+  static GoRouter buildRouter(BigScreenAppRepos repos) {
+    final authBloc = AuthBloc(authRepository: repos.authRepo);
+    final authRepo = repos.authRepo;
     return GoRouter(
       redirect: (state) {
         var isLoggedIn = authRepo.isLoggedIn;
@@ -54,8 +57,7 @@ class BigScreenApp extends StatelessWidget {
           name: Pages.transactions.name,
           pageBuilder: (context, state) {
             return NoTransitionPage(
-              child: BlocProvider(
-                create: (context) => AuthBloc(authRepository: authRepo),
+              child: repos.provide(
                 child: BigScreenApp(Pages.transactions, key: state.pageKey),
               ),
             );
@@ -108,39 +110,56 @@ class BigScreenApp extends StatelessWidget {
   const BigScreenApp(this.currentPage, {Key? key}) : super(key: key);
 
   @override
+  State<BigScreenApp> createState() => _BigScreenAppState();
+}
+
+class _BigScreenAppState extends State<BigScreenApp> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: HeaderBar((item) {
-              if (item == Pages.dashboard) {
-                context.goNamed(Pages.dashboard.name);
-              } else if (item == Pages.transactions) {
-                context.goNamed(Pages.transactions.name);
-              } else if (item == Pages.channels) {
-                context.goNamed(Pages.channels.name);
-              } else if (item == Pages.apps) {
-                context.goNamed(Pages.apps.name);
-              } else if (item == Pages.settings) {
-                context.pushNamed(Pages.settings.name);
-              } else if (item == Pages.reboot) {
-                debugPrint('TODO: implement reboot system');
-              } else if (item == Pages.shutdown) {
-                debugPrint('TODO: implement shutdown system');
-              } else if (item == Pages.logout) {
-                debugPrint('TODO: implement logout');
-              } else {
-                debugPrint('Not implemented: $item');
-              }
-            }, currentPage),
-          ),
-          Center(child: Text(currentPage.name)),
+          _buildHeaderBar(context),
+          _buildBody(context),
         ],
       ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    if (widget.currentPage == Pages.transactions) {
+      return const BigScreenTxWidget();
+    }
+
+    return Center(child: Text(widget.currentPage.name));
+  }
+
+  Padding _buildHeaderBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: HeaderBar((item) {
+        if (item == Pages.dashboard) {
+          context.goNamed(Pages.dashboard.name);
+        } else if (item == Pages.transactions) {
+          context.goNamed(Pages.transactions.name);
+        } else if (item == Pages.channels) {
+          context.goNamed(Pages.channels.name);
+        } else if (item == Pages.apps) {
+          context.goNamed(Pages.apps.name);
+        } else if (item == Pages.settings) {
+          context.pushNamed(Pages.settings.name);
+        } else if (item == Pages.reboot) {
+          debugPrint('TODO: implement reboot system');
+        } else if (item == Pages.shutdown) {
+          debugPrint('TODO: implement shutdown system');
+        } else if (item == Pages.logout) {
+          debugPrint('TODO: implement logout');
+        } else {
+          debugPrint('Not implemented: $item');
+        }
+      }, widget.currentPage),
     );
   }
 }

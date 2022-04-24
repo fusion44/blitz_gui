@@ -13,6 +13,8 @@ import 'package:list_transactions_fragment/list_transactions.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
+import 'small_screen_app_repos.dart';
+
 class BlitzDashboardAppBar extends StatelessWidget
     implements PreferredSizeWidget {
   final String title;
@@ -58,10 +60,10 @@ class SmallScreenApp extends StatefulWidget {
   static const String _routeName = 'dashboard';
   static final String _initialLocation = '/dashboard/${_pages.first.id}';
 
-  static GoRouter buildRouter(AuthRepo authRepo) {
+  static GoRouter buildRouter(SmallScreenAppRepos repos) {
     return GoRouter(
       redirect: (state) {
-        var isLoggedIn = authRepo.isLoggedIn;
+        var isLoggedIn = repos.authRepo.isLoggedIn;
         var isLogging = state.location == LoginPage.path;
 
         if (!isLoggedIn && !isLogging) return LoginPage.path;
@@ -76,7 +78,7 @@ class SmallScreenApp extends StatefulWidget {
           path: LoginPage.path,
           builder: (context, state) {
             return BlocProvider(
-              create: (c) => AuthBloc(authRepository: authRepo),
+              create: (c) => AuthBloc(authRepository: repos.authRepo),
               child: LoginPage(
                 () => context.goNamed(_initialLocation, params: {}),
               ),
@@ -93,7 +95,9 @@ class SmallScreenApp extends StatefulWidget {
               orElse: () => throw Exception('Page not found: $pageId'),
             );
 
-            return SmallScreenApp(tabData, key: state.pageKey);
+            return repos.provide(
+              child: SmallScreenApp(tabData, key: state.pageKey),
+            );
           },
         )
       ],

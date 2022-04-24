@@ -1,0 +1,183 @@
+{
+  "alert_dialog": {
+    "cancel": "Cancel",
+    "confirm_overwrite_file_body": "Overwrite file?",
+    "confirm_overwrite_file_title": "File exists.",
+    "ok": "OK",
+    "overwrite": "Overwrite",
+    "retry": "Retry"
+  },
+  "app": {
+    "title": "Blitz GUI"
+  },
+  "auth": {
+    "authentication_failed": "Authentication Failure",
+    "back_btn": "BACK",
+    "confirm_password_label": "Confirm password",
+    "forgot_password_label": "Forgot password?",
+    "invalid_password_input_deco": "Invalid password",
+    "invalid_url_input_deco": "Invalid url",
+    "login_btn": "LOGIN",
+    "login_page_header": "Login",
+    "logout_button": "Log Out",
+    "password_label": "Password",
+    "recover_password_intro_short": "Reset your password here",
+    "recover_password_long_explainer": "It is only possible to recover your password by flashing your SD card with a fresh Raspiblitz image.",
+    "snackbar_error_title": "Error",
+    "snackbar_success_title": "Success",
+    "url_label": "Url"
+  },
+  "bitcoin": {
+    "block_height_long": "Block Height",
+    "block_height_short": "Blocks",
+    "blockchain_disk_space_used": "disk space used",
+    "connections": {
+      "0": "no connections",
+      "1": "one connection",
+      "else": "{{value}} connections"
+    },
+    "connections_in": "connections in",
+    "connections_no_appendix": {
+      "0": "none",
+      "1": "one",
+      "else": "{{value}}"
+    },
+    "connections_out": "connections out",
+    "sync_status_long": "Sync Status",
+    "sync_status_short": "Sync"
+  },
+  "dashboard": {
+    "big_screen": {
+      "headerbar": {
+        "btn_apps": "Apps",
+        "btn_channels": "Channels",
+        "btn_dashboard": "Dashboard",
+        "btn_transactions": "Transactions"
+      }
+    },
+    "funds_button": "Funds",
+    "info_button": "Info",
+    "node_button": "Node",
+    "settings_button": "SETTINGS"
+  },
+  "errors": {
+    "unable_to_connect_reach_node": "Unable to reach the node."
+  },
+  "lightning": {
+    "channels": {
+      "has_active_and_inactive": "{active} of {total} channels active",
+      "has_no_channel": "No channels, yet.",
+      "has_only_active": {
+        "1": "One of one channel active",
+        "else": "All {{value}} channels active"
+      },
+      "has_only_inactive": {
+        "1": "One of one channel inactive",
+        "else": "All {{value}} channels inactive"
+      },
+      "header_description": "Channels",
+      "pending_channels": {
+        "1": ", one pending",
+        "else": ", {{value}} pending"
+      }
+    },
+    "fee_report_desc": "(Day-Week-Month)",
+    "fee_report_in_sats": "Fee Report [sats]",
+    "fee_revenue_daily": "Day",
+    "fee_revenue_monthly": "Month",
+    "fee_revenue_weekly": "Week",
+    "forwarding_fees": "Fees",
+    "next_gen_info_screen_card_header": "Lightning",
+    "peers": "peers",
+    "sync_header_description": "Sync",
+    "synced_to_chain_label": "Chain",
+    "synced_to_graph_label": "Graph"
+  },
+  "no": "no",
+  "settings": {
+    "language_label": "Language",
+    "reboot_button": "reboot",
+    "settings": "Settings",
+    "shutdown_button": "shutdown",
+    "theme_label": "Dark Theme"
+  },
+  "setup": {
+    "btn": {
+      "connect_to_api": "Connect",
+      "delete_downloaded_files": "Delete",
+      "finish_step": "Finish",
+      "flash_sd_card": "Flash",
+      "migrate": "Migrate",
+      "migrate_desc": "Upload a migration file from another Blitz",
+      "new_node_from_scratch": "New",
+      "new_node_from_scratch_desc": "Setup a new node from scratch. This will erase all data on the disk.",
+      "next_step": "next",
+      "open_etcher_application": "Open Etcher",
+      "recover": "Recover",
+      "recover_desc": "If data on the external drive is found then this data will be used to recover the RaspiBlitz",
+      "scan_qr_with_connection_details": "Scan QR Code",
+      "skip_to_next_step": "Skip",
+      "start_download_files": "Download"
+    },
+    "choose_setup_type": "Chose the type of the setup",
+    "downloading_file": "Downloading {file}",
+    "downloading_file_progress_next": "{downloadedMiB} MiB of {totalMiB} MiB ({percent} %)",
+    "flash_sd_header": "Memory card preparation",
+    "header_establish_connection": "Connect to your RaspiBlitz",
+    "input_label": {
+      "enter_url": "Enter the URL of your RaspiBlitz here"
+    },
+    "question": {
+      "existing_sd_or_flash_new": "Do you have a flashed SD card with latest RaspiBlitz version already? If so, you can skip the next step. If not, we'll help you flashing a new one."
+    },
+    "sd_card_is_ready_header": "Your SD-Card is ready!",
+    "sd_card_ready_delete_downloaded_files": "You may also delete downloaded resources or keep them for your next RaspiBlitz if you want.",
+    "sd_card_ready_next_steps_message": "Now put the SD-card into your RaspiBlitz and turn it on. It may take a while until the RaspiBlitz is fully booted.",
+    "sd_card_ready_to_flash_explanation": "The sd card will be flashed by an external application called \"balena Etcher\". Click the button below to start Etcher. Make sure the SD-card is inserted and recognized by the operating system. Proceed in Etcher by choosing the SD-card and the hit flash! We'll proceed when the Etcher window is closed.",
+    "sd_card_ready_to_flash_header": "Ready to flash the SD-card",
+    "sd_cart_waiting_for_etcher": "Waiting for Etcher to finish ...",
+    "timeline": {
+      "choose_setup_type": "Setup Type",
+      "final_steps": "Final Steps",
+      "initial_connect_to_node": "Connect",
+      "prepare_sd_card": "SD Card",
+      "set_node_name": "Node Name",
+      "set_passwords_a_b": "Passwords"
+    }
+  },
+  "system": {
+    "api_url": "API url",
+    "api_version": "API version",
+    "cpu_load": "CPU load",
+    "cpu_temperatures": "CPU temperatures",
+    "cpu_usage_overall": "CPU usage overall",
+    "cpu_usage_per_cpu_short": ".. per CPU",
+    "hdd_use_short": "HDD use",
+    "health": "health",
+    "main_chain": "chain",
+    "network_not_found": "network not found",
+    "next_gen_info_screen_card_header": "System",
+    "platform": "Platform",
+    "ram_usage": "ram usage",
+    "temperature": "Temperature",
+    "temperature_short": "Temp"
+  },
+  "wallet": {
+    "balance": "Balance",
+    "lightning": {
+      "add_invoice": "Add Invoice",
+      "get_invoice": "Generate Invoice",
+      "memo": "Memo",
+      "short": "ln"
+    },
+    "new_invoice_amount": "Amount",
+    "onchain": {
+      "short": "onchain"
+    },
+    "total_balance": "Total Balance",
+    "total_balance_subtitle": "Total",
+    "wallet": "Wallet"
+  },
+  "wallet_locked_message_two_line": "Wallet is locked.\\nUnlock via SSH menu.",
+  "yes": "yes"
+}

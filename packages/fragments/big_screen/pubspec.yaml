@@ -16,6 +16,7 @@ dependencies:
     
   go_router: ^3.0.4
   dropdown_button2: ^1.0.7
+  flutter_bloc: ^8.0.1
  
   authentication:
     path: ../../authentication
@@ -23,9 +24,14 @@ dependencies:
     path: ../../common   
   common_blocs:
     path: ../../common_blocs
+  list_transactions_fragment:
+    path: ../list_transactions
   settings_fragment:
     path: ../settings
-
+  subscription_repository:
+    path: ../../subscription_repository
+    
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

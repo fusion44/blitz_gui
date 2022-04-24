@@ -10,6 +10,12 @@ This is very much under development and might contain serious bugs. Don't use it
 
 ## Develop
 
+### Repository information
+This is a monorepo which contains multiple apps and libraries. The shell app in `lib/main.dart` currently does nothing but exit when run. Currently there are two apps available:
+
+* `setup_app`: An app to help setting up a new RaspiBlitz. Located in `packages/apps/setup_app`
+* `blitz_app`: The main RaspiBlitz Desktop app. Located in `packages/apps/setup_app`
+
 ### Dependencies
 
 * **Blitz API**
@@ -22,11 +28,11 @@ This is very much under development and might contain serious bugs. Don't use it
 
   > :information_source: Flutter has opt-out analytics which can be disabled by running `flutter config --no-analytics`.
 
-
-
-* Run the app locally:
-  * With make: `make run-linux` or `make run-chrome`  
-  * With flutter directly `flutter run -d linux` (or windows, or macosx, or chrome)  
+### Run the apps
+* Run an app locally:
+  * With make: `make run-linux`
+     * Use `make` without any arguments to print a help message with all available options 
+  * With flutter directly `flutter run -d linux` (or windows, or macosx, or chrome). Make sure to run this not in the base folder but in each apps specific folder in `packages/apps/app_name`  
 
 ## Contribute
 

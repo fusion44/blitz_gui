@@ -7,97 +7,42 @@
         {
             "name": "blitz_gui",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "program": "packages/apps/blitz_app/lib/main.dart"
         },
         {
             "name": "blitz_gui (profile mode)",
             "request": "launch",
             "type": "dart",
+            "program": "packages/apps/blitz_app/lib/main.dart",
             "flutterMode": "profile"
         },
         {
-            "name": "authentication",
-            "cwd": "packages/authentication",
+            "name": "blitz_gui (release mode)",
             "request": "launch",
             "type": "dart",
-            "program": "../lib/main.dart"
+            "program": "packages/apps/blitz_app/lib/main.dart",
+            "flutterMode": "release"
         },
         {
-            "name": "authentication (profile mode)",
-            "cwd": "packages/authentication",
+            "name": "setup_app",
             "request": "launch",
             "type": "dart",
+            "program": "packages/apps/setup_app/lib/main.dart"
+        },
+        {
+            "name": "setup_app (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "program": "packages/apps/setup_app/lib/main.dart",
             "flutterMode": "profile"
         },
         {
-            "name": "common",
-            "cwd": "packages/common",
+            "name": "setup_app (release mode)",
             "request": "launch",
             "type": "dart",
-            "program": "../lib/main.dart"
-        },
-        {
-            "name": "common (profile mode)",
-            "cwd": "packages/common",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "profile"
-        },
-        {
-            "name": "custom_keyboard",
-            "cwd": "packages/custom_keyboard",
-            "request": "launch",
-            "type": "dart",
-            "program": "../lib/main.dart"
-        },
-        {
-            "name": "custom_keyboard (profile mode)",
-            "cwd": "packages/custom_keyboard",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "profile"
-        },
-        {
-            "name": "flutter_login_lite",
-            "cwd": "packages/flutter_login_lite",
-            "request": "launch",
-            "type": "dart",
-            "program": "../lib/main.dart"
-        },
-        {
-            "name": "flutter_login_lite (profile mode)",
-            "cwd": "packages/flutter_login_lite",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "profile"
-        },
-        {
-            "name": "sse_client",
-            "cwd": "packages/sse_client",
-            "request": "launch",
-            "type": "dart",
-            "program": "../lib/main.dart"
-        },
-        {
-            "name": "sse_client (profile mode)",
-            "cwd": "packages/sse_client",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "profile"
-        },
-        {
-            "name": "subscription_repository",
-            "cwd": "packages/subscription_repository",
-            "request": "launch",
-            "type": "dart",
-            "program": "../lib/main.dart"
-        },
-        {
-            "name": "subscription_repository (profile mode)",
-            "cwd": "packages/subscription_repository",
-            "request": "launch",
-            "type": "dart",
-            "flutterMode": "profile"
+            "program": "packages/apps/setup_app/lib/main.dart",
+            "flutterMode": "release"
         },
         {
             "name": "Blitz GUI Remote on PI",
