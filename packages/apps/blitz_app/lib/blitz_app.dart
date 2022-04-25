@@ -52,7 +52,7 @@ class _BlitzAppState extends State<BlitzApp> {
     final listTxBloc = ListTxBloc(widget.authRepo, subRepo);
     listTxBloc.add(LoadMoreTx());
 
-    final lnInfoBloc = LightningInfoBloc(subRepo);
+    final lnInfoBloc = LightningInfoBloc(widget.authRepo, subRepo);
     lnInfoBloc.add(StartListenLightningInfo());
 
     final systemBloc = SystemInfoBloc(subRepo);

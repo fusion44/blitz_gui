@@ -190,7 +190,7 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
     _hardwareBloc = HardwareInfoBloc(_subRepo, _authRepo);
     _systemBloc = SystemInfoBloc(_subRepo);
     _btcInfoBloc = BitcoinInfoBloc(_subRepo);
-    _lnInfoBloc = LightningInfoBloc(_subRepo);
+    _lnInfoBloc = LightningInfoBloc(_authRepo, _subRepo);
     _listTxBloc = ListTxBloc(_authRepo, _subRepo);
 
     _walletLockedChecker.add(StartCheckWalletLocked());
@@ -280,7 +280,9 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
                 'Overview Widget goes here',
                 style: theme.textTheme.headline3,
               ),
-              Expanded(child: FundsPage((visible) => print(visible))),
+              Expanded(
+                child: FundsPage((visible) => debugPrint(visible.toString())),
+              ),
             ],
           ),
         ),

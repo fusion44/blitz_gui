@@ -144,13 +144,16 @@ Future<http.Response> post(
   }
 }
 
-TextTheme buildTextThemeWithEczar(TextTheme base) {
+TextTheme buildTextThemeWithEczar(
+  TextTheme base, {
+  double fontSize = 32,
+  double height = 1.2,
+}) {
   return base
       .copyWith(
         bodyText2: base.bodyText2?.copyWith(
-          fontSize: 32,
-          height: 1.2,
-
+          fontSize: fontSize,
+          height: height,
         ),
       )
       .apply(fontFamily: 'Eczar');

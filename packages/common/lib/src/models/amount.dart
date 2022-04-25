@@ -12,4 +12,5 @@ class Amount {
   }
 
   static Amount fromSats(int sats) => Amount(sat: sats, msat: sats * 1000);
+  static Amount fromMSats(int mSats) => Amount(sat: mSats ~/ 1000, msat: mSats);
 }

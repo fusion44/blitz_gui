@@ -164,6 +164,9 @@
   },
   "wallet": {
     "balance": "Balance",
+    "balances_headline": "Balances",
+    "channel_local_balance": "Channel Balance",
+    "confirmed_onchain_balance": "Onchain Confirmed",
     "lightning": {
       "add_invoice": "Add Invoice",
       "get_invoice": "Generate Invoice",
@@ -174,6 +177,8 @@
     "onchain": {
       "short": "onchain"
     },
+    "receive_btn": "Receive",
+    "send_btn": "Send",
     "total_balance": "Total Balance",
     "total_balance_subtitle": "Total",
     "wallet": "Wallet"
