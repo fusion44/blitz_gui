@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 
 import 'package:common/common.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../bloc/list_tx_bloc.dart';
 import '../widgets/tx_list_item.dart';
@@ -65,17 +66,31 @@ class _FundsPageState extends State<FundsPage> {
               return const Center(child: Text('no transactions'));
             }
 
-            return ListView.separated(
-              separatorBuilder: (context, index) => const Divider(thickness: 1),
-              itemBuilder: (BuildContext context, int i) {
-                return i >= txState.txs.length
-                    ? const BottomLoader()
-                    : TxListItem(tx: txState.txs[i]);
-              },
-              itemCount: txState.hasReachedMax
-                  ? txState.txs.length
-                  : txState.txs.length + 1,
-              controller: _scrollController,
+            return AnimationLimiter(
+              child: ListView.separated(
+                separatorBuilder: (context, index) =>
+                    const Divider(thickness: 1),
+                itemBuilder: (BuildContext context, int i) {
+                  final child = i >= txState.txs.length
+                      ? const BottomLoader()
+                      : TxListItem(tx: txState.txs[i]);
+                  return AnimationConfiguration.staggeredList(
+                    position: i,
+                    duration: defaultListItemAnimationSpeed,
+                    child: SlideAnimation(
+                      verticalOffset: defaultListItemVerticalOffset,
+                      horizontalOffset: defaultListItemHorizontalOffset,
+                      child: FadeInAnimation(
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+                itemCount: txState.hasReachedMax
+                    ? txState.txs.length
+                    : txState.txs.length + 1,
+                controller: _scrollController,
+              ),
             );
           default:
             return const Center(child: CircularProgressIndicator());

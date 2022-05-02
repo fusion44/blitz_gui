@@ -13,7 +13,7 @@ dependencies:
   flutter_bloc: ^8.0.0
   bloc_concurrency: ^0.2.0
   freezed_annotation: ^1.1.0
-
+  flutter_staggered_animations: ^1.0.0
 
   authentication:
     path: ../../authentication

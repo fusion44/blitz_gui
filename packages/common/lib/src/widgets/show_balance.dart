@@ -14,7 +14,7 @@ class ShowBalanceWidget extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Column(
-      children: [
+      children: buildAnimatedVerticalColumnChildren([
         TrText(
           'wallet.balances_headline',
           style: theme.textTheme.displaySmall!,
@@ -46,7 +46,7 @@ class ShowBalanceWidget extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         SatsDisplay(value: balance.localBalance.sat, locale: 'en'),
-      ],
+      ]),
     );
   }
 }

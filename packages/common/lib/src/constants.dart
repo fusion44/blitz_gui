@@ -30,3 +30,7 @@ const blitzLocalBalance = Colors.green;
 const blitzRemoteBalance = Colors.amberAccent;
 const blitzReceiveButton = blitzDarkGreen;
 const blitzSendButton = blitzBlue700;
+
+const defaultListItemAnimationSpeed = Duration(milliseconds: 250);
+const defaultListItemVerticalOffset = 50.0;
+const defaultListItemHorizontalOffset = 20.0;

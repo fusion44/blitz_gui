@@ -4,9 +4,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:http/http.dart' as http;
 import 'package:timeago/timeago.dart' as timeago;
+
+import 'constants.dart';
 
 /// Translates a string with the given [key] and the [args].
 String tr(String key, [Map<String, dynamic> args = const <String, dynamic>{}]) {
@@ -165,4 +168,18 @@ class TabPageData {
   final IconData icon;
 
   TabPageData(this.id, this.label, this.icon);
+}
+
+List<Widget> buildAnimatedVerticalColumnChildren(List<Widget> children) {
+  return AnimationConfiguration.toStaggeredList(
+    duration: defaultListItemAnimationSpeed,
+    childAnimationBuilder: (widget) => SlideAnimation(
+      verticalOffset: defaultListItemVerticalOffset,
+      horizontalOffset: defaultListItemHorizontalOffset,
+      child: FadeInAnimation(
+        child: widget,
+      ),
+    ),
+    children: children,
+  );
 }

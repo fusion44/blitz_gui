@@ -38,27 +38,26 @@ class BigScreenTxWidget extends StatelessWidget {
               ],
             );
           } else {
-            return Row(
-              children: [
-                Expanded(
-                  child: BlocBuilder<LightningInfoBloc, LightningInfoBaseState>(
-                    builder: _buildBalanceWidget,
-                  ),
+            return Row(children: [
+              Expanded(
+                child: BlocBuilder<LightningInfoBloc, LightningInfoBaseState>(
+                  builder: _buildBalanceWidget,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: txListMaxWidth),
-                    child:
-                        FundsPage((visible) => debugPrint(visible.toString())),
-                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: txListMaxWidth),
+                  child: FundsPage((visible) => debugPrint(visible.toString())),
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 32.0, right: 32.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 32.0, right: 32.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: buildAnimatedVerticalColumnChildren(
+                      [
                         const SizedBox(height: 32),
                         ElevatedButton.icon(
                           icon: const Icon(Icons.arrow_downward_outlined),
@@ -101,8 +100,8 @@ class BigScreenTxWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            );
+              ),
+            ]);
           }
         }),
       ),
@@ -114,7 +113,7 @@ class BigScreenTxWidget extends StatelessWidget {
     LightningInfoBaseState state,
   ) {
     if (state is LightningInfoInitial) {
-      return const Text('loading');
+      return const Center(child: Text('loading'));
     }
 
     if (state is LightningInfoState) {
