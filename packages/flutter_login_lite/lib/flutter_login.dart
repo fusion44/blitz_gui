@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 library flutter_login;
 
 import 'dart:math';
@@ -86,7 +88,6 @@ class _Header extends StatefulWidget {
     this.logoController,
     this.titleController,
     required this.loginTheme,
-    this.footer,
   });
 
   final ImageProvider? logo;
@@ -98,7 +99,6 @@ class _Header extends StatefulWidget {
   final LoginTheme loginTheme;
   final AnimationController? logoController;
   final AnimationController? titleController;
-  final String? footer;
 
   @override
   __HeaderState createState() => __HeaderState();
@@ -242,7 +242,6 @@ class FlutterLogin extends StatefulWidget {
     this.titleTag,
     this.showDebugButtons = false,
     this.hideForgotPasswordButton = false,
-    this.footer,
     this.disableCustomPageTransformer = false,
     this.navigateBackAfterRecovery = false,
     this.termsOfService = const <TermOfService>[],
@@ -306,9 +305,6 @@ class FlutterLogin extends StatefulWidget {
 
   /// Set to true to hide the Forgot Password button
   final bool hideForgotPasswordButton;
-
-  /// Optional footer text for example a copyright notice
-  final String? footer;
 
   /// Disable the page transformation between switching authentication modes.
   /// Fixes #97 if disabled. https://github.com/NearHuscarl/flutter_login/issues/97
@@ -633,17 +629,6 @@ class _FlutterLoginState extends State<FlutterLogin>
     final passwordValidator =
         widget.passwordValidator ?? FlutterLogin.defaultPasswordValidator;
 
-    Widget footerWidget = const SizedBox();
-    if (widget.footer != null) {
-      footerWidget = Padding(
-        padding: EdgeInsets.only(bottom: loginTheme.footerBottomPadding),
-        child: Text(
-          widget.footer!,
-          style: loginTheme.footerTextStyle,
-        ),
-      );
-    }
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
@@ -704,11 +689,7 @@ class _FlutterLoginState extends State<FlutterLogin>
                     Positioned(
                       top: cardTopPosition - headerHeight - headerMargin,
                       child: _buildHeader(headerHeight, loginTheme),
-                    ),
-                    Positioned.fill(
-                        child: Align(
-                            alignment: Alignment.bottomCenter,
-                            child: footerWidget))
+                    )
                   ],
                 ),
               ),

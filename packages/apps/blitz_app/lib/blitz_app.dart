@@ -62,7 +62,7 @@ class _BlitzAppState extends State<BlitzApp> {
     walletLockedChecker.add(StartCheckWalletLocked());
 
     _big = MediaQueryData.fromWindow(
-          WidgetsBinding.instance!.window,
+          WidgetsBinding.instance.window,
         ).size.width >
         1024;
 

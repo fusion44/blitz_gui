@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:hive/hive.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:meta/meta.dart';
 
 part 'settings_event.dart';
 part 'settings_state.dart';

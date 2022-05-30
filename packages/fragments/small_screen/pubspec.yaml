@@ -15,6 +15,8 @@ dependencies:
     
   go_router: ^3.0.4
   qr_flutter: ^4.0.0
+  flutter_bloc: ^8.0.1
+  flutter_translate: ^4.0.2
 
   authentication:
     path: ../../authentication
@@ -30,11 +32,13 @@ dependencies:
     path: ../list_transactions
   settings_fragment:
     path: ../settings
+  subscription_repository:
+    path: ../../subscription_repository
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.1
 
 
 flutter:

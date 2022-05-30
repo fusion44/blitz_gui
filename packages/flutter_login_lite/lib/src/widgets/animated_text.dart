@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -54,7 +56,7 @@ class _AnimatedTextState extends State<AnimatedText>
 
     _oldText = widget.text;
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() => _layoutHeight = getWidgetSize(_textKey)?.height);
     });
   }

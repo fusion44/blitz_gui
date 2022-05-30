@@ -10,14 +10,14 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_staggered_animations: ^1.0.0
-  flutter_translate: ^3.0.1
+  flutter_translate: ^4.0.2
   http: ^0.13.4
   intl: ^0.17.0
   logger: ^1.1.0
-  timeago: ^3.1.0
+  timeago: ^3.2.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^2.0.1
 

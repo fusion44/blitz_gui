@@ -1,8 +1,9 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
+
 import 'package:common/common.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
 part 'new_block_watcher_state.dart';

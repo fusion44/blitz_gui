@@ -10,11 +10,12 @@ dependencies:
     sdk: flutter
   http: ^0.13.4
   equatable: ^2.0.3
-  flutter_bloc: ^8.0.0
+  flutter_bloc: ^8.0.1
   bloc_concurrency: ^0.2.0
-  freezed_annotation: ^1.1.0
+  freezed_annotation: ^2.0.3
   flutter_staggered_animations: ^1.0.0
-
+  intl: ^0.17.0
+  
   authentication:
     path: ../../authentication
   common:
@@ -27,6 +28,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
-  freezed: ^1.1.1
+  flutter_lints: ^2.0.1
+  freezed: ^2.0.3+1
   build_runner: ^2.1.7

@@ -106,6 +106,10 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     _formKey.currentState!.save();
     await _submitController.forward();
     setState(() => _isSubmitting = true);
+    if (!mounted) {
+      BlitzLog().e('Trying to use context after unmounted');
+      return false;
+    }
     final auth = Provider.of<Auth>(context, listen: false);
     String? error;
 
@@ -124,6 +128,10 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
     await _submitController.reverse();
 
     if (!DartHelper.isNullOrEmpty(error)) {
+      if (!mounted) {
+        BlitzLog().w('Trying to show error dialog after unmounted');
+        return false;
+      }
       showErrorToast(context, messages.flushbarTitleError, error!);
       Future.delayed(const Duration(milliseconds: 271), () {
         if (mounted) {

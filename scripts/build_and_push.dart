@@ -74,15 +74,15 @@ void main() async {
   copyRestartShellFiles();
 
   await startAndWaitForRsyncProcesses();
-  final _fsWatchSub = watchFileSystem();
+  final fsWatchSub = watchFileSystem();
   await restartApps();
 
-  _fsWatchSub.cancel();
+  fsWatchSub.cancel();
   console.cursorPosition = Coordinate(console.windowHeight, 0);
   await Future.delayed(const Duration(seconds: 2));
   console.writeLine('Finish - cool');
   console.showCursor();
-  _inputSub?.cancel();
+  inputSub?.cancel();
   exit(0);
 }
 
@@ -107,9 +107,9 @@ void scheduleRestart() async {
   }
 }
 
-StreamSubscription<String>? _inputSub;
+StreamSubscription<String>? inputSub;
 void _listenForCommands() async {
-  _inputSub = stdin.transform(const Utf8Decoder()).listen((data) {
+  inputSub = stdin.transform(const Utf8Decoder()).listen((data) {
     switch (data.trim()) {
       case 'exit':
         console.writeLine(

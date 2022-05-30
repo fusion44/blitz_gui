@@ -116,7 +116,7 @@ class _FlashCardPageState extends State<FlashCardPage> {
   }
 
   void _showSDCardFlashAlert() {
-    SchedulerBinding.instance!.addPostFrameCallback((_) async {
+    SchedulerBinding.instance.addPostFrameCallback((_) async {
       var result = await showDialog<bool>(
         context: context,
         builder: (BuildContext c) {

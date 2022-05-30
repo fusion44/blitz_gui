@@ -35,10 +35,7 @@ class BitcoinInfoCard extends StatelessWidget {
                 ),
                 _buildRow(
                   'bitcoin.blockchain_disk_space_used',
-                  (i.sizeOnDisk / 1000 / 1000 / 1000)
-                          .roundToDouble()
-                          .toString() +
-                      ' GB',
+                  '${(i.sizeOnDisk / 1000 / 1000 / 1000).roundToDouble().toString()} GB',
                 ),
               ],
             ),

@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+
 import 'package:authentication/authentication.dart';
-import 'package:bloc/bloc.dart';
 import 'package:common/common.dart';
 import 'package:common_blocs/common_blocs.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
 import '../models/transaction.dart';

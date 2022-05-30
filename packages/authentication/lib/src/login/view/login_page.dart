@@ -42,9 +42,9 @@ class LoginPage extends StatelessWidget {
   }
 
   Future<String> onLogin(LoginData data, BuildContext context) async {
-    final _authRepo = RepositoryProvider.of<AuthRepo>(context);
+    final authRepo = RepositoryProvider.of<AuthRepo>(context);
     try {
-      await _authRepo.logIn(
+      await authRepo.logIn(
         url: data.url,
         username: 'admin',
         password: data.password,

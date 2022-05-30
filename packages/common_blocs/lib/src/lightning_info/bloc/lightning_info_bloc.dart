@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:authentication/authentication.dart';
-import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:common/common.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
 part 'lightning_info_event.dart';
@@ -66,12 +66,12 @@ class LightningInfoBloc
     } else if (event is StopListenLightningInfo) {
       await _sub?.cancel();
     } else if (event is _LightningInfoUpdate) {
-      LightningInfoState _curr;
+      LightningInfoState curr;
       try {
         if (state is LightningInfoState) {
-          _curr = state as LightningInfoState;
+          curr = state as LightningInfoState;
         } else {
-          _curr = LightningInfoState(
+          curr = LightningInfoState(
             info: event.lnInfo ?? const LightningInfo(),
             walletBalance: event.walletBalance ?? const WalletBalance(),
             feeRevenueData: event.feeRevenueData ?? const FeeRevenueData(),
@@ -83,7 +83,7 @@ class LightningInfoBloc
       }
 
       emit(
-        _curr.copyWith(
+        curr.copyWith(
           lnInfo: event.lnInfo,
           walletBalance: event.walletBalance,
           feeRevenueData: event.feeRevenueData,

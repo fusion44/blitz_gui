@@ -7,14 +7,14 @@ Future<Stream<String>> establishSSEConnection(
   String url,
   String token,
 ) async {
-  final http.Client _client = http.Client();
+  final http.Client client = http.Client();
   StreamController<String> streamController = StreamController();
   var request = http.Request('GET', Uri.parse(url));
 
   request.headers['Cache-Control'] = 'no-cache';
   request.headers['Accept'] = 'text/event-stream';
   request.headers['Authorization'] = token;
-  http.StreamedResponse response = await _client.send(request);
+  http.StreamedResponse response = await client.send(request);
   response.stream
       .transform(const Utf8Decoder())
       .transform(const LineSplitter())

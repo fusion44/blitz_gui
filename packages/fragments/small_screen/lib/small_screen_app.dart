@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -179,19 +181,19 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
   }
 
   void _initBlocs() async {
-    final _authRepo = RepositoryProvider.of<AuthRepo>(context);
+    final authRepo = RepositoryProvider.of<AuthRepo>(context);
     _subRepo = SubscriptionRepository(
-      _authRepo.baseUrl(),
-      _authRepo.token(),
+      authRepo.baseUrl(),
+      authRepo.token(),
     );
     await _subRepo.init();
 
     _walletLockedChecker = WalletLockedCheckerBloc(_subRepo);
-    _hardwareBloc = HardwareInfoBloc(_subRepo, _authRepo);
+    _hardwareBloc = HardwareInfoBloc(_subRepo, authRepo);
     _systemBloc = SystemInfoBloc(_subRepo);
     _btcInfoBloc = BitcoinInfoBloc(_subRepo);
-    _lnInfoBloc = LightningInfoBloc(_authRepo, _subRepo);
-    _listTxBloc = ListTxBloc(_authRepo, _subRepo);
+    _lnInfoBloc = LightningInfoBloc(authRepo, _subRepo);
+    _listTxBloc = ListTxBloc(authRepo, _subRepo);
 
     _walletLockedChecker.add(StartCheckWalletLocked());
     _hardwareBloc.add(StartListenHardwareInfo());

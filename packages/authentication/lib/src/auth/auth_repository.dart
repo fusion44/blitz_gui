@@ -28,7 +28,7 @@ class AuthRepo {
         String? home = envVars['HOME'];
 
         if (home != null) {
-          var f = File(home + '/.blitz_api/.cookie');
+          var f = File('$home/.blitz_api/.cookie');
           var exists = await f.exists();
           if (!exists) {
             // TODO: remove me. This is a hack. Currently flutter-pi
@@ -80,7 +80,7 @@ class AuthRepo {
     required String password,
   }) async {
     var newUrl = url;
-    if (!url.endsWith('/')) newUrl = url + '/';
+    if (!url.endsWith('/')) newUrl = '$url/';
     newUrl += 'latest/system/login';
     try {
       var res = await utils.post(Uri.parse(newUrl), '', {'password': password});

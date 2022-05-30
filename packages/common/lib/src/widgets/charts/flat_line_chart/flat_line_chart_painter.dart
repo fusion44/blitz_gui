@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../chart_section_input.dart';
 
-class _LineChartSection {
+class LineChartSection {
   final double start;
   final double end;
   final Paint paint;
 
-  _LineChartSection(this.start, this.end, this.paint);
+  LineChartSection(this.start, this.end, this.paint);
 }
 
 class FlatLineChartPainter extends CustomPainter {
-  List<_LineChartSection> sections = [];
+  List<LineChartSection> sections = [];
   final double total;
   final double strokeWidth;
 
@@ -28,7 +28,7 @@ class FlatLineChartPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth;
       var length = v.amount * unit;
-      sections.add(_LineChartSection(lastEnd, lastEnd + length, p));
+      sections.add(LineChartSection(lastEnd, lastEnd + length, p));
       lastEnd += length;
     }
   }
