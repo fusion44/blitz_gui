@@ -170,16 +170,18 @@ class LnInfoCard extends StatelessWidget {
               text: format.format(i.blockHeight),
               label: 'bitcoin.block_height_short')
           .inGridArea('n1'),
-      DataItem(
-        color: i.syncedToChain ? Colors.greenAccent : Colors.red,
-        text: i.syncedToChain ? 'yes' : 'no',
-        label: 'lightning.synced_to_chain_label',
-      ).inGridArea('n2'),
-      DataItem(
-        color: i.syncedToChain ? Colors.greenAccent : Colors.red,
-        text: i.syncedToGraph ? 'yes' : 'no',
-        label: 'lightning.synced_to_graph_label',
-      ).inGridArea('n3'),
+      if (i.syncedToChain != null)
+        DataItem(
+          color: i.syncedToChain! ? Colors.greenAccent : Colors.red,
+          text: i.syncedToChain! ? 'yes' : 'no',
+          label: 'lightning.synced_to_chain_label',
+        ).inGridArea('n2'),
+      if (i.syncedToGraph != null)
+        DataItem(
+          color: i.syncedToGraph! ? Colors.greenAccent : Colors.red,
+          text: i.syncedToGraph! ? 'yes' : 'no',
+          label: 'lightning.synced_to_graph_label',
+        ).inGridArea('n3'),
     ];
   }
 

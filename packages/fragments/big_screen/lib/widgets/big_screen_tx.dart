@@ -123,6 +123,13 @@ class BigScreenTxWidget extends StatelessWidget {
       );
     }
 
+    if (state is LightningInfoErrorState) {
+      return Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Text("Error loading the balance ${state.error}"),
+      );
+    }
+
     return Text('Unknown state: $state');
   }
 }

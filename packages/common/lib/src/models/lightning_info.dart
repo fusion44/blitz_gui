@@ -11,9 +11,9 @@ class LightningInfo {
   final int numPeers;
   final int blockHeight;
   final String blockHash;
-  final int bestHeaderTimestamp;
-  final bool syncedToChain;
-  final bool syncedToGraph;
+  final int? bestHeaderTimestamp;
+  final bool? syncedToChain;
+  final bool? syncedToGraph;
   final List<Chain> chains;
   final List<String> uris;
   final List<Feature> features;
