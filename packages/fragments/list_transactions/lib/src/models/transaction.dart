@@ -15,13 +15,14 @@ class Transaction with _$Transaction {
     required String id,
     required TxCategory category,
     required TxType type,
-    required int amount,
+    required double amount,
     required DateTime timeStamp,
     required String comment,
     required TxStatus status,
     @Default(0) int blockHeight,
     @Default(0) int numConfs,
-    @Default(0) int totalFees,
+    @Default(0.0) double totalFees,
+    @Default(true) bool hasRemainder,
   }) = _Transaction;
 
   Transaction withIncreasedBlockHeight() =>
@@ -46,19 +47,25 @@ class Transaction with _$Transaction {
       status = TxStatus.failed;
     }
 
+    // all amounts are in millisatoshis => convert to satoshis
+    // we display satoshis and msats as the remainder
+    double a = json['amount'] != null ? json['amount'] / 1000 : 0.0;
+    double f = json['total_fees'] != null ? json['total_fees'] / 1000 : 0.0;
+
     return Transaction(
       index: json['index'] ?? -1,
       id: json['id'] ?? '',
       category: cat,
       type: type,
-      amount: json['amount'] ?? 0,
+      amount: a,
       timeStamp:
           DateTime.fromMillisecondsSinceEpoch(json['time_stamp'] * 1000 ?? 0),
       comment: json['comment'] ?? '',
       status: status,
       blockHeight: json['block_height'] ?? 0,
       numConfs: json['num_confs'] ?? 0,
-      totalFees: json['total_fees'] ?? 0,
+      totalFees: f,
+      hasRemainder: a % 1 != 0,
     );
   }
 }

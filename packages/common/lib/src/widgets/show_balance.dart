@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:common/common.dart';
-import 'package:common/src/widgets/sats_display.dart';
 
 class ShowBalanceWidget extends StatelessWidget {
   final WalletBalance balance;

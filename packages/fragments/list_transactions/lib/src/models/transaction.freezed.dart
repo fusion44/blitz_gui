@@ -12,42 +12,7 @@ part of 'transaction.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
-
-/// @nodoc
-class _$TransactionTearOff {
-  const _$TransactionTearOff();
-
-  _Transaction call(
-      {required int index,
-      required String id,
-      required TxCategory category,
-      required TxType type,
-      required int amount,
-      required DateTime timeStamp,
-      required String comment,
-      required TxStatus status,
-      int blockHeight = 0,
-      int numConfs = 0,
-      int totalFees = 0}) {
-    return _Transaction(
-      index: index,
-      id: id,
-      category: category,
-      type: type,
-      amount: amount,
-      timeStamp: timeStamp,
-      comment: comment,
-      status: status,
-      blockHeight: blockHeight,
-      numConfs: numConfs,
-      totalFees: totalFees,
-    );
-  }
-}
-
-/// @nodoc
-const $Transaction = _$TransactionTearOff();
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 /// @nodoc
 mixin _$Transaction {
@@ -55,13 +20,14 @@ mixin _$Transaction {
   String get id => throw _privateConstructorUsedError;
   TxCategory get category => throw _privateConstructorUsedError;
   TxType get type => throw _privateConstructorUsedError;
-  int get amount => throw _privateConstructorUsedError;
+  double get amount => throw _privateConstructorUsedError;
   DateTime get timeStamp => throw _privateConstructorUsedError;
   String get comment => throw _privateConstructorUsedError;
   TxStatus get status => throw _privateConstructorUsedError;
   int get blockHeight => throw _privateConstructorUsedError;
   int get numConfs => throw _privateConstructorUsedError;
-  int get totalFees => throw _privateConstructorUsedError;
+  double get totalFees => throw _privateConstructorUsedError;
+  bool get hasRemainder => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $TransactionCopyWith<Transaction> get copyWith =>
@@ -78,13 +44,14 @@ abstract class $TransactionCopyWith<$Res> {
       String id,
       TxCategory category,
       TxType type,
-      int amount,
+      double amount,
       DateTime timeStamp,
       String comment,
       TxStatus status,
       int blockHeight,
       int numConfs,
-      int totalFees});
+      double totalFees,
+      bool hasRemainder});
 }
 
 /// @nodoc
@@ -108,6 +75,7 @@ class _$TransactionCopyWithImpl<$Res> implements $TransactionCopyWith<$Res> {
     Object? blockHeight = freezed,
     Object? numConfs = freezed,
     Object? totalFees = freezed,
+    Object? hasRemainder = freezed,
   }) {
     return _then(_value.copyWith(
       index: index == freezed
@@ -129,7 +97,7 @@ class _$TransactionCopyWithImpl<$Res> implements $TransactionCopyWith<$Res> {
       amount: amount == freezed
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       timeStamp: timeStamp == freezed
           ? _value.timeStamp
           : timeStamp // ignore: cast_nullable_to_non_nullable
@@ -153,41 +121,46 @@ class _$TransactionCopyWithImpl<$Res> implements $TransactionCopyWith<$Res> {
       totalFees: totalFees == freezed
           ? _value.totalFees
           : totalFees // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
+      hasRemainder: hasRemainder == freezed
+          ? _value.hasRemainder
+          : hasRemainder // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
 
 /// @nodoc
-abstract class _$TransactionCopyWith<$Res>
+abstract class _$$_TransactionCopyWith<$Res>
     implements $TransactionCopyWith<$Res> {
-  factory _$TransactionCopyWith(
-          _Transaction value, $Res Function(_Transaction) then) =
-      __$TransactionCopyWithImpl<$Res>;
+  factory _$$_TransactionCopyWith(
+          _$_Transaction value, $Res Function(_$_Transaction) then) =
+      __$$_TransactionCopyWithImpl<$Res>;
   @override
   $Res call(
       {int index,
       String id,
       TxCategory category,
       TxType type,
-      int amount,
+      double amount,
       DateTime timeStamp,
       String comment,
       TxStatus status,
       int blockHeight,
       int numConfs,
-      int totalFees});
+      double totalFees,
+      bool hasRemainder});
 }
 
 /// @nodoc
-class __$TransactionCopyWithImpl<$Res> extends _$TransactionCopyWithImpl<$Res>
-    implements _$TransactionCopyWith<$Res> {
-  __$TransactionCopyWithImpl(
-      _Transaction _value, $Res Function(_Transaction) _then)
-      : super(_value, (v) => _then(v as _Transaction));
+class __$$_TransactionCopyWithImpl<$Res> extends _$TransactionCopyWithImpl<$Res>
+    implements _$$_TransactionCopyWith<$Res> {
+  __$$_TransactionCopyWithImpl(
+      _$_Transaction _value, $Res Function(_$_Transaction) _then)
+      : super(_value, (v) => _then(v as _$_Transaction));
 
   @override
-  _Transaction get _value => super._value as _Transaction;
+  _$_Transaction get _value => super._value as _$_Transaction;
 
   @override
   $Res call({
@@ -202,8 +175,9 @@ class __$TransactionCopyWithImpl<$Res> extends _$TransactionCopyWithImpl<$Res>
     Object? blockHeight = freezed,
     Object? numConfs = freezed,
     Object? totalFees = freezed,
+    Object? hasRemainder = freezed,
   }) {
-    return _then(_Transaction(
+    return _then(_$_Transaction(
       index: index == freezed
           ? _value.index
           : index // ignore: cast_nullable_to_non_nullable
@@ -223,7 +197,7 @@ class __$TransactionCopyWithImpl<$Res> extends _$TransactionCopyWithImpl<$Res>
       amount: amount == freezed
           ? _value.amount
           : amount // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
       timeStamp: timeStamp == freezed
           ? _value.timeStamp
           : timeStamp // ignore: cast_nullable_to_non_nullable
@@ -247,7 +221,11 @@ class __$TransactionCopyWithImpl<$Res> extends _$TransactionCopyWithImpl<$Res>
       totalFees: totalFees == freezed
           ? _value.totalFees
           : totalFees // ignore: cast_nullable_to_non_nullable
-              as int,
+              as double,
+      hasRemainder: hasRemainder == freezed
+          ? _value.hasRemainder
+          : hasRemainder // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -266,7 +244,8 @@ class _$_Transaction extends _Transaction {
       required this.status,
       this.blockHeight = 0,
       this.numConfs = 0,
-      this.totalFees = 0})
+      this.totalFees = 0.0,
+      this.hasRemainder = true})
       : super._();
 
   @override
@@ -278,33 +257,36 @@ class _$_Transaction extends _Transaction {
   @override
   final TxType type;
   @override
-  final int amount;
+  final double amount;
   @override
   final DateTime timeStamp;
   @override
   final String comment;
   @override
   final TxStatus status;
-  @JsonKey()
   @override
+  @JsonKey()
   final int blockHeight;
-  @JsonKey()
   @override
+  @JsonKey()
   final int numConfs;
-  @JsonKey()
   @override
-  final int totalFees;
+  @JsonKey()
+  final double totalFees;
+  @override
+  @JsonKey()
+  final bool hasRemainder;
 
   @override
   String toString() {
-    return 'Transaction(index: $index, id: $id, category: $category, type: $type, amount: $amount, timeStamp: $timeStamp, comment: $comment, status: $status, blockHeight: $blockHeight, numConfs: $numConfs, totalFees: $totalFees)';
+    return 'Transaction(index: $index, id: $id, category: $category, type: $type, amount: $amount, timeStamp: $timeStamp, comment: $comment, status: $status, blockHeight: $blockHeight, numConfs: $numConfs, totalFees: $totalFees, hasRemainder: $hasRemainder)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _Transaction &&
+            other is _$_Transaction &&
             const DeepCollectionEquality().equals(other.index, index) &&
             const DeepCollectionEquality().equals(other.id, id) &&
             const DeepCollectionEquality().equals(other.category, category) &&
@@ -316,7 +298,9 @@ class _$_Transaction extends _Transaction {
             const DeepCollectionEquality()
                 .equals(other.blockHeight, blockHeight) &&
             const DeepCollectionEquality().equals(other.numConfs, numConfs) &&
-            const DeepCollectionEquality().equals(other.totalFees, totalFees));
+            const DeepCollectionEquality().equals(other.totalFees, totalFees) &&
+            const DeepCollectionEquality()
+                .equals(other.hasRemainder, hasRemainder));
   }
 
   @override
@@ -332,53 +316,57 @@ class _$_Transaction extends _Transaction {
       const DeepCollectionEquality().hash(status),
       const DeepCollectionEquality().hash(blockHeight),
       const DeepCollectionEquality().hash(numConfs),
-      const DeepCollectionEquality().hash(totalFees));
+      const DeepCollectionEquality().hash(totalFees),
+      const DeepCollectionEquality().hash(hasRemainder));
 
   @JsonKey(ignore: true)
   @override
-  _$TransactionCopyWith<_Transaction> get copyWith =>
-      __$TransactionCopyWithImpl<_Transaction>(this, _$identity);
+  _$$_TransactionCopyWith<_$_Transaction> get copyWith =>
+      __$$_TransactionCopyWithImpl<_$_Transaction>(this, _$identity);
 }
 
 abstract class _Transaction extends Transaction {
   const factory _Transaction(
-      {required int index,
-      required String id,
-      required TxCategory category,
-      required TxType type,
-      required int amount,
-      required DateTime timeStamp,
-      required String comment,
-      required TxStatus status,
-      int blockHeight,
-      int numConfs,
-      int totalFees}) = _$_Transaction;
+      {required final int index,
+      required final String id,
+      required final TxCategory category,
+      required final TxType type,
+      required final double amount,
+      required final DateTime timeStamp,
+      required final String comment,
+      required final TxStatus status,
+      final int blockHeight,
+      final int numConfs,
+      final double totalFees,
+      final bool hasRemainder}) = _$_Transaction;
   const _Transaction._() : super._();
 
   @override
-  int get index;
+  int get index => throw _privateConstructorUsedError;
   @override
-  String get id;
+  String get id => throw _privateConstructorUsedError;
   @override
-  TxCategory get category;
+  TxCategory get category => throw _privateConstructorUsedError;
   @override
-  TxType get type;
+  TxType get type => throw _privateConstructorUsedError;
   @override
-  int get amount;
+  double get amount => throw _privateConstructorUsedError;
   @override
-  DateTime get timeStamp;
+  DateTime get timeStamp => throw _privateConstructorUsedError;
   @override
-  String get comment;
+  String get comment => throw _privateConstructorUsedError;
   @override
-  TxStatus get status;
+  TxStatus get status => throw _privateConstructorUsedError;
   @override
-  int get blockHeight;
+  int get blockHeight => throw _privateConstructorUsedError;
   @override
-  int get numConfs;
+  int get numConfs => throw _privateConstructorUsedError;
   @override
-  int get totalFees;
+  double get totalFees => throw _privateConstructorUsedError;
+  @override
+  bool get hasRemainder => throw _privateConstructorUsedError;
   @override
   @JsonKey(ignore: true)
-  _$TransactionCopyWith<_Transaction> get copyWith =>
+  _$$_TransactionCopyWith<_$_Transaction> get copyWith =>
       throw _privateConstructorUsedError;
 }

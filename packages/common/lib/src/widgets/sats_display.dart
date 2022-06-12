@@ -5,10 +5,13 @@ import 'package:intl/intl.dart';
 import '../utils.dart';
 
 class SatsDisplay extends StatelessWidget {
-  final int value;
+  final num value;
   final String? locale;
   final double fontSize;
   final double fontHeight;
+  final MainAxisAlignment mainAxisAlignment;
+  final MainAxisSize mainAxisSize;
+  final bool showDecimal;
 
   const SatsDisplay({
     Key? key,
@@ -16,12 +19,19 @@ class SatsDisplay extends StatelessWidget {
     this.locale,
     this.fontSize = 32,
     this.fontHeight = 1.2,
+    this.mainAxisAlignment = MainAxisAlignment.center,
+    this.mainAxisSize = MainAxisSize.min,
+    this.showDecimal = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final numberFormat = NumberFormat.decimalPattern(locale);
+    final numberFormat = NumberFormat.currency(
+      symbol: '',
+      locale: locale,
+      decimalDigits: showDecimal ? 3 : 0,
+    );
     final t = buildTextThemeWithEczar(
       theme.textTheme,
       fontSize: fontSize,
@@ -29,7 +39,8 @@ class SatsDisplay extends StatelessWidget {
     );
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: mainAxisAlignment,
+      mainAxisSize: mainAxisSize,
       children: [
         Text(
           numberFormat.format(value),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:common/common.dart';
-import 'package:intl/intl.dart';
 
 import '../models/transaction.dart';
+
+const _kLeftTextPadding = 38.0;
 
 class TxListItem extends StatelessWidget {
   const TxListItem({Key? key, required this.tx}) : super(key: key);
@@ -19,7 +20,8 @@ class TxListItem extends StatelessWidget {
     bool settled = true;
     Icon? icon;
 
-    var textStyle = theme.textTheme.caption;
+    final isOnchain = tx.category == TxCategory.onchain;
+    var subtitleTextStyle = theme.textTheme.labelSmall;
     if (tx.category == TxCategory.ln && tx.type == TxType.incoming) {
       if (tx.status == TxStatus.succeeded) {
         icon = const Icon(Icons.arrow_forward, color: Colors.greenAccent);
@@ -30,7 +32,7 @@ class TxListItem extends StatelessWidget {
     } else if (tx.category == TxCategory.ln && tx.type == TxType.outgoing) {
       icon = const Icon(Icons.arrow_back, color: Colors.redAccent);
       if (tx.status != TxStatus.succeeded) settled = false;
-    } else if (tx.category == TxCategory.onchain) {
+    } else if (isOnchain) {
       if (tx.numConfs == 0) settled = false;
       if (tx.amount > 0) {
         icon = Icon(
@@ -44,61 +46,109 @@ class TxListItem extends StatelessWidget {
         );
       }
       if (!settled) {
-        textStyle = theme.textTheme.caption!.copyWith(
+        subtitleTextStyle = theme.textTheme.caption!.copyWith(
           color: Colors.deepOrangeAccent,
         );
       }
       memo = 'Confirmations: ${tx.numConfs}';
     }
 
-    int amount = tx.amount;
-    if (tx.category == TxCategory.ln) amount = amount ~/ 1000;
+    return _TheDisplay(
+      memo,
+      theme.textTheme.bodyText2,
+      subtitleTextStyle,
+      icon,
+      tx,
+    );
+  }
+}
 
-    return ListTile(
-      leading: icon,
-      title: TimeAgoText(tx.timeStamp, 'en', allowFromNow: false),
-      subtitle: Text(
-        memo,
-        style: textStyle,
-      ),
-      trailing: _buildValueDisplay(
-        context: context,
-        amount: amount,
-        settled: settled,
-        fee: tx.totalFees,
-      ),
-      dense: true,
+class _TheDisplay extends StatelessWidget {
+  final String memo;
+  final TextStyle? titleTextStyle;
+  final TextStyle? subtitleTextStyle;
+  final Icon? icon;
+  final Transaction tx;
+
+  const _TheDisplay(
+    this.memo,
+    this.titleTextStyle,
+    this.subtitleTextStyle,
+    this.icon,
+    this.tx, {
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: _kLeftTextPadding),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.4,
+              child: Text(
+                memo,
+                style: titleTextStyle,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 22.0, left: _kLeftTextPadding),
+            child: TimeAgoText(
+              tx.timeStamp,
+              'en',
+              allowFromNow: false,
+              style: subtitleTextStyle,
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: icon,
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: _buildValueDisplay(context: context, tx: tx),
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildValueDisplay({
     required BuildContext context,
-    required int amount,
-    required bool settled,
-    int? fee,
+    required Transaction tx,
   }) {
-    final theme = Theme.of(context);
-    final numberFormat = NumberFormat.currency(
-      locale: 'de',
-      symbol: 'sat',
-      decimalDigits: 0,
-    );
-
-    return SizedBox(
-      width: 100,
-      child: Stack(
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: <Widget>[
-          Align(
-            alignment: Alignment.topRight,
-            child: Text(numberFormat.format(amount)),
+          SatsDisplay(
+            value: tx.amount,
+            fontSize: 16.0,
+            mainAxisAlignment: MainAxisAlignment.end,
+            showDecimal: tx.hasRemainder,
           ),
-          if (fee != null && fee != 0)
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Text(
-                numberFormat.format(fee),
-                style: theme.textTheme.caption,
-              ),
+          if (tx.totalFees != 0)
+            SatsDisplay(
+              value: tx.totalFees,
+              fontSize: 12.0,
+              mainAxisAlignment: MainAxisAlignment.end,
+              showDecimal: tx.hasRemainder,
             )
         ],
       ),
