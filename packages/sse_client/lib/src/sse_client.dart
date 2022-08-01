@@ -28,9 +28,10 @@ class SSEClient {
             //This means that the complete event set has been read.
             //We then add the event to the stream
 
-            if (currentSSEModel.event == 'ping') return;
+            if (currentSSEModel.event != 'ping') {
+              streamController.add(currentSSEModel);
+            }
 
-            streamController.add(currentSSEModel);
             currentSSEModel = SSEModel(data: '', id: '', event: '');
             return;
           }
