@@ -1,7 +1,7 @@
 name: big_screen
 description: A new Flutter project.
 
-publish_to: 'none' 
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -13,15 +13,15 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-    
-  go_router: ^3.0.4
-  dropdown_button2: ^1.5.2
-  flutter_bloc: ^8.0.1
- 
+
+  go_router: ^4.4.1
+  dropdown_button2: ^1.8.0
+  flutter_bloc: ^8.1.1
+
   authentication:
     path: ../../authentication
   common:
-    path: ../../common   
+    path: ../../common
   common_blocs:
     path: ../../common_blocs
   list_transactions_fragment:
@@ -30,8 +30,7 @@ dependencies:
     path: ../settings
   subscription_repository:
     path: ../../subscription_repository
-    
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

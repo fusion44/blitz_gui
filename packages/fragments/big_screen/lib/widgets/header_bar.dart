@@ -71,8 +71,6 @@ class HeaderBar extends StatelessWidget {
                   color: Colors.amber,
                   size: 30,
                 ),
-                customItemsIndexes: const [3],
-                customItemsHeight: 8,
                 items: [
                   ..._MenuItems.firstItems.map(
                     (item) => DropdownMenuItem<_MenuItem>(
