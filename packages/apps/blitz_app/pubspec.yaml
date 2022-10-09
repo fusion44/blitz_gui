@@ -1,13 +1,12 @@
 name: blitz_desktop
 description: A new Flutter project.
 
-publish_to: 'none'
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
   sdk: ">=2.16.2 <3.0.0"
-
 
 dependencies:
   flutter:
@@ -15,7 +14,7 @@ dependencies:
   authentication:
     path: ../../authentication
   common:
-    path: ../../common   
+    path: ../../common
   common_blocs:
     path: ../../common_blocs
   info_screen_plus_plus:
@@ -31,7 +30,7 @@ dependencies:
   small_screen:
     path: ../../fragments/small_screen
 
-  flutter_bloc: ^8.0.1
+  flutter_bloc: ^8.1.1
 
   cupertino_icons: ^1.0.2
 
@@ -40,9 +39,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^1.0.0
 
-
 flutter:
-
   uses-material-design: true
 
   assets:

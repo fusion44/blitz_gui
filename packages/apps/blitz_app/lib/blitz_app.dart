@@ -98,6 +98,7 @@ class _BlitzAppState extends State<BlitzApp> {
   void dispose() async {
     super.dispose();
     bsaRepos?.dispose();
+    ssaRepos?.dispose();
   }
 
   @override
@@ -117,6 +118,7 @@ class _BlitzAppState extends State<BlitzApp> {
         bloc: widget.settingsBloc,
         builder: (context, state) {
           return MaterialApp.router(
+            routeInformationProvider: _router.routeInformationProvider,
             routeInformationParser: _router.routeInformationParser,
             routerDelegate: _router.routerDelegate,
             title: tr('app.title'),

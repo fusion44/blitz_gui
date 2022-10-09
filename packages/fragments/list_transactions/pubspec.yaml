@@ -9,13 +9,13 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.4
-  equatable: ^2.0.3
-  flutter_bloc: ^8.0.1
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.1
   bloc_concurrency: ^0.2.0
   freezed_annotation: ^2.0.3
   flutter_staggered_animations: ^1.0.0
   intl: ^0.17.0
-  
+
   authentication:
     path: ../../authentication
   common:

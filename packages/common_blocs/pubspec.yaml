@@ -9,8 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  equatable: ^2.0.3
-  flutter_bloc: ^8.0.1
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.1
   bloc_concurrency: ^0.2.0
 
   authentication:
@@ -19,7 +19,6 @@ dependencies:
     path: ../common
   subscription_repository:
     path: ../subscription_repository
-
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,6 @@
 name: setup_app
 description: A Desktop application to help creating an SD card for the RaspiBlitz project.
-publish_to: 'none' 
+publish_to: "none"
 version: 0.5.0+1
 
 environment:
@@ -11,10 +11,10 @@ dependencies:
     sdk: flutter
 
   material_design_icons_flutter: ^5.0.6595
-  flutter_bloc: ^8.0.1
+  flutter_bloc: ^8.1.1
   validators: ^3.0.0
   flutter_spinkit: ^5.1.0
-  equatable: ^2.0.3
+  equatable: ^2.0.5
   flutter_translate: ^4.0.2
   flutter_breadcrumb: ^1.0.1
   flutter_staggered_animations: ^1.0.0
@@ -26,9 +26,8 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   common:
-    path:
-      ../../common
-      
+    path: ../../common
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

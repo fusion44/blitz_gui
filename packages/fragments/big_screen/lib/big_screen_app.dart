@@ -17,7 +17,7 @@ class BigScreenApp extends StatefulWidget {
     final authBloc = AuthBloc(authRepository: repos.authRepo);
     final authRepo = repos.authRepo;
     return GoRouter(
-      redirect: (state) {
+      redirect: (context, state) {
         var isLoggedIn = authRepo.isLoggedIn;
         var isLogging = state.location == LoginPage.path;
 
@@ -25,7 +25,6 @@ class BigScreenApp extends StatefulWidget {
         if (isLoggedIn && isLogging) return initialLocation;
         return null;
       },
-      urlPathStrategy: UrlPathStrategy.path,
       initialLocation: initialLocation,
       routes: [
         GoRoute(

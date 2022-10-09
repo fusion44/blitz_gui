@@ -64,7 +64,7 @@ class SmallScreenApp extends StatefulWidget {
 
   static GoRouter buildRouter(SmallScreenAppRepos repos) {
     return GoRouter(
-      redirect: (state) {
+      redirect: (context, state) {
         var isLoggedIn = repos.authRepo.isLoggedIn;
         var isLogging = state.location == LoginPage.path;
 
@@ -72,7 +72,6 @@ class SmallScreenApp extends StatefulWidget {
         if (isLoggedIn && isLogging) return _initialLocation;
         return null;
       },
-      urlPathStrategy: UrlPathStrategy.path,
       initialLocation: _initialLocation,
       routes: [
         GoRoute(
