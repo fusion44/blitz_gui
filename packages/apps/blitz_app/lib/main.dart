@@ -35,7 +35,9 @@ void main() async {
   runApp(
     LocalizedApp(
       delegate,
-      BlitzApp(settingsBloc: bloc, authRepo: authRepo),
+      RestartWidget(
+        child: BlitzApp(settingsBloc: bloc, authRepo: authRepo),
+      ),
     ),
   );
 }

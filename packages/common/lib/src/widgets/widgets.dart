@@ -7,6 +7,7 @@ export 'custom_dialog.dart';
 export 'data_item.dart';
 export 'debug_view.dart';
 export 'money_value_view.dart';
+export 'restart_widget.dart';
 export 'show_balance.dart';
 export 'sats_display.dart';
 export 'text_fragment.dart';

@@ -83,4 +83,6 @@ class SubscriptionRepository {
       throw UnknownSseTypeException.withDefaultMessage(eventId);
     }
   }
+
+  void dispose() => SSEClient.unsubscribeFromSSE();
 }

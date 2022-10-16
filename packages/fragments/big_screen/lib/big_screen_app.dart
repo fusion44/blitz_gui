@@ -1,21 +1,51 @@
 import 'package:flutter/material.dart';
 
 import 'package:authentication/authentication.dart';
-import 'package:big_screen/big_screen_app_repos.dart';
 import 'package:big_screen/widgets/big_screen_tx.dart';
 import 'package:common/common.dart';
+import 'package:common_blocs/common_blocs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:list_transactions_fragment/list_transactions.dart';
 import 'package:settings_fragment/settings_fragment.dart';
+import 'package:subscription_repository/subscription_repository.dart';
 
 import 'widgets/header_bar.dart';
 
 class BigScreenApp extends StatefulWidget {
   static String initialLocation = '/';
 
-  static GoRouter buildRouter(BigScreenAppRepos repos) {
-    final authBloc = AuthBloc(authRepository: repos.authRepo);
-    final authRepo = repos.authRepo;
+  static _provide(
+    Pages page,
+    AuthRepo authRepo,
+    SubscriptionRepository subRepo, {
+    required Widget child,
+  }) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(authRepository: authRepo),
+        ),
+        if (page == Pages.transactions || page == Pages.dashboard)
+          BlocProvider<LightningInfoBloc>(
+            create: (context) => LightningInfoBloc(authRepo, subRepo),
+          ),
+        if (page == Pages.transactions)
+          BlocProvider<ListTxBloc>(
+            create: (context) =>
+                ListTxBloc(authRepo, subRepo)..add(LoadMoreTx()),
+          ),
+      ],
+      child: child,
+    );
+  }
+
+  static GoRouter buildRouter(
+    AuthRepo authRepo,
+    SubscriptionRepository subRepo,
+  ) {
+    final authBloc = AuthBloc(authRepository: authRepo);
+
     return GoRouter(
       redirect: (context, state) {
         var isLoggedIn = authRepo.isLoggedIn;
@@ -44,8 +74,10 @@ class BigScreenApp extends StatefulWidget {
           name: Pages.dashboard.name,
           pageBuilder: (context, state) {
             return NoTransitionPage(
-              child: BlocProvider(
-                create: (context) => AuthBloc(authRepository: authRepo),
+              child: BigScreenApp._provide(
+                Pages.dashboard,
+                authRepo,
+                subRepo,
                 child: BigScreenApp(Pages.dashboard, key: state.pageKey),
               ),
             );
@@ -56,7 +88,10 @@ class BigScreenApp extends StatefulWidget {
           name: Pages.transactions.name,
           pageBuilder: (context, state) {
             return NoTransitionPage(
-              child: repos.provide(
+              child: BigScreenApp._provide(
+                Pages.transactions,
+                authRepo,
+                subRepo,
                 child: BigScreenApp(Pages.transactions, key: state.pageKey),
               ),
             );
@@ -79,8 +114,10 @@ class BigScreenApp extends StatefulWidget {
           name: Pages.apps.name,
           pageBuilder: (context, state) {
             return NoTransitionPage(
-              child: BlocProvider(
-                create: (context) => AuthBloc(authRepository: authRepo),
+              child: BigScreenApp._provide(
+                Pages.apps,
+                authRepo,
+                subRepo,
                 child: BigScreenApp(Pages.apps, key: state.pageKey),
               ),
             );
