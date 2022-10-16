@@ -86,8 +86,7 @@ class AuthRepo {
       var res = await utils.post(Uri.parse(newUrl), '', {'password': password});
       if (res.statusCode == 200) {
         _url = newUrl.replaceAll('/latest/system/login', '');
-        final dynamic jsonBody = jsonDecode(res.body);
-        _token = 'Bearer ${jsonBody["access_token"]}';
+        _token = jsonDecode(res.body);
         _controller.add(AuthStatus.authenticated);
       } else if (res.statusCode == 401) {
         throw AuthStateError('Password is wrong');
