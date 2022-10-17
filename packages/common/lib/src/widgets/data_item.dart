@@ -6,12 +6,16 @@ class DataItem extends StatelessWidget {
   final String text;
   final String label;
   final Color? color;
+  final bool showSatSymbol;
+  final bool showNotificationContainer;
 
   const DataItem({
     Key? key,
     required this.text,
     required this.label,
     this.color,
+    this.showSatSymbol = false,
+    this.showNotificationContainer = true,
   }) : super(key: key);
 
   @override
@@ -20,33 +24,51 @@ class DataItem extends StatelessWidget {
 
     return Stack(
       children: <Widget>[
-        Container(
-          width: 3,
-          height: 45,
-          color: color,
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TrText(
-                text,
-                style: theme.textTheme.subtitle1,
-                overflow: TextOverflow.ellipsis,
-                softWrap: false,
-              ),
-              label != ''
-                  ? TrText(
-                      label,
-                      style: theme.textTheme.caption,
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
-                    )
-                  : Container(),
-            ],
+        if (showNotificationContainer)
+          Container(
+            width: 3,
+            height: 45,
+            color: color,
           ),
+        if (showNotificationContainer)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: _buildColumn(theme),
+          ),
+        if (!showNotificationContainer) _buildColumn(theme),
+      ],
+    );
+  }
+
+  Column _buildColumn(ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: [
+            TrText(
+              text,
+              style: theme.textTheme.subtitle1,
+              overflow: TextOverflow.ellipsis,
+              softWrap: false,
+            ),
+            if (showSatSymbol) ...[
+              const SizedBox(width: 2.0),
+              Image.asset(
+                'assets/icons/satoshi-v2.png',
+                color: theme.textTheme.bodyText1!.color,
+                width: 9,
+              )
+            ]
+          ],
         ),
+        if (label != '')
+          TrText(
+            label,
+            style: theme.textTheme.caption,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+          )
       ],
     );
   }
