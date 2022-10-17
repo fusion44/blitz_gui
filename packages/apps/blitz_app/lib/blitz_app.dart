@@ -26,17 +26,14 @@ class BlitzApp extends StatefulWidget {
 }
 
 class _BlitzAppState extends State<BlitzApp> {
+  bool _initialized = false;
   bool _big = false;
   late final GoRouter _router;
   late final SubscriptionRepository _subRepo;
 
   @override
   void initState() {
-    _subRepo = SubscriptionRepository(
-      widget.authRepo.baseUrl(),
-      widget.authRepo.token(),
-    );
-    _subRepo.init();
+    _initSubRepo();
 
     _big = MediaQueryData.fromWindow(
           WidgetsBinding.instance.window,
@@ -60,6 +57,12 @@ class _BlitzAppState extends State<BlitzApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_initialized) {
+      return const MaterialApp(
+        home: Scaffold(body: Center(child: Text("Loading ..."))),
+      );
+    }
+
     var localizationDelegate = LocalizedApp.of(context).delegate;
     return RepositoryProvider.value(
       value: widget.authRepo,
@@ -110,5 +113,14 @@ class _BlitzAppState extends State<BlitzApp> {
         ),
       ),
     );
+  }
+
+  void _initSubRepo() async {
+    _subRepo = SubscriptionRepository(
+      widget.authRepo.baseUrl(),
+      widget.authRepo.token(),
+    );
+    await _subRepo.init();
+    setState(() => _initialized = true);
   }
 }
