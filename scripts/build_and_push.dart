@@ -56,6 +56,8 @@ final progress = <String, String>{};
 final console = Console();
 late final Coordinate printPos;
 
+final String pwd = '${Directory.current.path}/packages/apps/blitz_app';
+
 void main() async {
   console.hideCursor();
 
@@ -243,7 +245,7 @@ Future<void> startAndWaitForRsyncProcesses() async {
 void copyRestartShellFiles() {
   for (final r in remotes) {
     final newFile = File(
-      '${Directory.current.path}/build/flutter_assets/${r.name}_restart_ui.sh',
+      '$pwd/build/flutter_assets/${r.name}_restart_ui.sh',
     );
 
     String displayOption = '';
@@ -261,7 +263,11 @@ flutter-pi $displayOption~/dev/blitz_gui/ --observatory-host=0.0.0.0
 }
 
 Future<int> buildBinaries() async {
-  var process = await Process.start('flutter', ['build', 'bundle']);
+  var process = await Process.start(
+    'flutter',
+    ['build', 'bundle'],
+    workingDirectory: pwd,
+  );
   process.stdout
       .transform(utf8.decoder)
       .listen((event) => console.writeLine(event.trim()));
@@ -285,7 +291,7 @@ Future<int> rsyncToRemote(Remote r) async {
   final p = await Process.start('bash', [
     '${Directory.current.path}/scripts/push_files.sh',
     r.password,
-    '/home/fusion44/dev/raspiblitz/blitz_gui/build/flutter_assets',
+    '$pwd/build/flutter_assets',
     '${r.username}@${r.ip}:/home/${r.username}/dev/blitz_gui/',
   ]);
 

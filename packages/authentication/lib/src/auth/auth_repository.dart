@@ -34,7 +34,7 @@ class AuthRepo {
             // TODO: remove me. This is a hack. Currently flutter-pi
             // can only be run as root. Check if the file is there
             // and if not, fail
-            f = File('/home/admin/.blitz_api/.cookie');
+            f = File('/home/blitzapi/.blitz_api/.cookie');
             exists = await f.exists();
             if (!exists) {
               // user must log in normally
