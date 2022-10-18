@@ -26,6 +26,8 @@ dependencies:
     path: ../../common_blocs
   list_transactions_fragment:
     path: ../list_transactions
+  fee_revenue_fragment:
+    path: ../fee_revenue
   settings_fragment:
     path: ../settings
   subscription_repository:

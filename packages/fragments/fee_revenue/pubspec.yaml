@@ -1,0 +1,27 @@
+name: fee_revenue_fragment
+description: A fragment that shows fee revenues
+publish_to: "none"
+
+environment:
+  sdk: ">=2.15.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.1
+  bloc_concurrency: ^0.2.0
+  intl: ^0.17.0
+
+  common:
+    path: ../../common
+  common_blocs:
+    path: ../../common_blocs
+  subscription_repository:
+    path: ../../subscription_repository
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.1

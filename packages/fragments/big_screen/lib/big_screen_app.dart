@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:authentication/authentication.dart';
-import 'package:big_screen/widgets/big_screen_tx.dart';
+import 'package:big_screen/widgets/widgets.dart';
 import 'package:common/common.dart';
 import 'package:common_blocs/common_blocs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,8 +9,6 @@ import 'package:go_router/go_router.dart';
 import 'package:list_transactions_fragment/list_transactions.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 import 'package:subscription_repository/subscription_repository.dart';
-
-import 'widgets/header_bar.dart';
 
 class BigScreenApp extends StatefulWidget {
   static String initialLocation = '/';
@@ -21,22 +19,35 @@ class BigScreenApp extends StatefulWidget {
     SubscriptionRepository subRepo, {
     required Widget child,
   }) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(authRepository: authRepo),
+    final blocs = [
+      BlocProvider<AuthBloc>(
+        create: (context) => AuthBloc(authRepository: authRepo),
+      ),
+      if (page == Pages.transactions || page == Pages.dashboard)
+        BlocProvider<LightningInfoBloc>(
+          create: (context) => LightningInfoBloc(authRepo, subRepo),
         ),
-        if (page == Pages.transactions || page == Pages.dashboard)
-          BlocProvider<LightningInfoBloc>(
-            create: (context) => LightningInfoBloc(authRepo, subRepo),
-          ),
-        if (page == Pages.transactions)
-          BlocProvider<ListTxBloc>(
-            create: (context) =>
-                ListTxBloc(authRepo, subRepo)..add(LoadMoreTx()),
-          ),
-      ],
-      child: child,
+      if (page == Pages.transactions)
+        BlocProvider<ListTxBloc>(
+          create: (context) => ListTxBloc(authRepo, subRepo)..add(LoadMoreTx()),
+        ),
+    ];
+
+    final repos = [
+      if (page == Pages.dashboard)
+        RepositoryProvider(
+          create: (context) => FeeRevenueRepository(subRepo, authRepo),
+        )
+    ];
+
+    return MultiBlocProvider(
+      providers: blocs,
+      child: repos.isEmpty
+          ? child
+          : MultiRepositoryProvider(
+              providers: repos,
+              child: child,
+            ),
     );
   }
 
@@ -165,11 +176,14 @@ class _BigScreenAppState extends State<BigScreenApp> {
   }
 
   Widget _buildBody(BuildContext context) {
-    if (widget.currentPage == Pages.transactions) {
-      return const BigScreenTxWidget();
+    switch (widget.currentPage) {
+      case Pages.dashboard:
+        return const BigScreenDashboard();
+      case Pages.transactions:
+        return const BigScreenTxWidget();
+      default:
+        return Center(child: Text(widget.currentPage.name));
     }
-
-    return Center(child: Text(widget.currentPage.name));
   }
 
   Padding _buildHeaderBar(BuildContext context) {
