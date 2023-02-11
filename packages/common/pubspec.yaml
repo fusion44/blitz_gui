@@ -9,12 +9,12 @@ dependencies:
   auto_size_text: ^3.0.0
   flutter:
     sdk: flutter
-  flutter_staggered_animations: ^1.0.0
-  flutter_translate: ^4.0.2
-  http: ^0.13.4
+  flutter_staggered_animations: ^1.1.1
+  flutter_translate: ^4.0.3
+  http: ^0.13.5
   intl: ^0.17.0
   logger: ^1.1.0
-  timeago: ^3.2.2
+  timeago: ^3.3.0
 
 dev_dependencies:
   flutter_test:

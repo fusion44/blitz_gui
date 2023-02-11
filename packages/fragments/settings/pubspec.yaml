@@ -8,9 +8,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.1
-  bloc_concurrency: ^0.2.0
-  hive_flutter: ^1.1.0
+  flutter_bloc: ^8.1.2
+  bloc_concurrency: ^0.2.1
+  hive_flutter: ^2.0.0-dev
   intl: ^0.17.0
 
   common:
