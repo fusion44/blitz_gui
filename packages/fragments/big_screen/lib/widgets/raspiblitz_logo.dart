@@ -19,12 +19,12 @@ class RaspiBlitzLogo extends StatelessWidget {
           children: [
             Text(
               'RaspiBlitz',
-              style: theme.textTheme.headline6!
+              style: theme.textTheme.titleLarge!
                   .copyWith(fontWeight: FontWeight.bold),
             ),
             Text(
               'v1.7.1',
-              style: theme.textTheme.caption,
+              style: theme.textTheme.bodySmall,
             )
           ],
         ),

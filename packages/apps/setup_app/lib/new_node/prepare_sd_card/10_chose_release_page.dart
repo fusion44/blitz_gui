@@ -56,7 +56,7 @@ class ChoseReleasePage extends StatelessWidget {
           const SizedBox(height: 8.0),
           TrText(
             'setup.available_releases',
-            style: theme.textTheme.headline5!,
+            style: theme.textTheme.headlineSmall!,
           ),
           const SizedBox(height: 8.0),
           TrText(

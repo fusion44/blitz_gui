@@ -22,7 +22,7 @@ class BigScreenTxWidget extends StatelessWidget {
               children: [
                 Text(
                   'Overview Widget goes here $width',
-                  style: theme.textTheme.headline3,
+                  style: theme.textTheme.displaySmall,
                 ),
                 Expanded(
                   child: Container(

@@ -29,7 +29,7 @@ class MenuButton extends StatelessWidget {
       icon: Icon(icon, color: highlight ? theme.indicatorColor : null),
       label: TrText(
         labelText,
-        style: theme.textTheme.button!.copyWith(
+        style: theme.textTheme.labelLarge!.copyWith(
           color: highlight ? theme.indicatorColor : null,
         ),
       ),

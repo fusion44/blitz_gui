@@ -49,7 +49,7 @@ class SetupInfoBox extends StatelessWidget {
   Widget _buildTextRow(ThemeData theme) {
     return Row(
       children: [
-        Icon(icon, size: 48, color: isError ? theme.errorColor : null),
+        Icon(icon, size: 48, color: isError ? theme.colorScheme.error : null),
         const SizedBox(width: 8),
         Flexible(
           child: TrText(text, args: args),

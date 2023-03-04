@@ -154,7 +154,7 @@ TextTheme buildTextThemeWithEczar(
 }) {
   return base
       .copyWith(
-        bodyText2: base.bodyText2?.copyWith(
+        bodyMedium: base.bodyMedium?.copyWith(
           fontSize: fontSize,
           height: height,
         ),

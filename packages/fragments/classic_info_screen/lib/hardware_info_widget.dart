@@ -49,8 +49,8 @@ class HardwareInfoWidget extends StatelessWidget {
     return TextFragment(
       text,
       color == null
-          ? theme.textTheme.bodyText1!
-          : theme.textTheme.bodyText1!.copyWith(
+          ? theme.textTheme.bodyLarge!
+          : theme.textTheme.bodyLarge!.copyWith(
               color: color,
               fontFamily: 'RobotoMono',
               fontWeight: FontWeight.w700,

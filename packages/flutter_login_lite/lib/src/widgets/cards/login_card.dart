@@ -205,7 +205,7 @@ class _LoginCardState extends State<_LoginCard> with TickerProviderStateMixin {
             : null,
         child: Text(
           messages.forgotPasswordButton,
-          style: theme.textTheme.bodyText2,
+          style: theme.textTheme.bodyMedium,
           textAlign: TextAlign.left,
         ),
       ),

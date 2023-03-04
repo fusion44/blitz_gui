@@ -34,7 +34,7 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                   const SizedBox(height: 16),
                   Text(
                     'Please enter the name of your new RaspiBlitz:\none word, keep characters basic & not too long',
-                    style: theme.textTheme.subtitle1,
+                    style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
                   TextFormField(
@@ -53,7 +53,7 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                   const SizedBox(height: 16),
                   Text(
                     'Master User Password',
-                    style: theme.textTheme.subtitle1,
+                    style: theme.textTheme.titleMedium,
                   ),
                   TextFormField(
                     controller: _passAController,
@@ -86,7 +86,7 @@ class _PasswordInputPageState extends State<PasswordInputPage>
                   const SizedBox(height: 16),
                   Text(
                     'Blockchain RPC Password',
-                    style: theme.textTheme.subtitle1,
+                    style: theme.textTheme.titleMedium,
                   ),
                   TextFormField(
                     controller: _passBController,

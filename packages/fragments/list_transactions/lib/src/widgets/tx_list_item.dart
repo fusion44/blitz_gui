@@ -46,7 +46,7 @@ class TxListItem extends StatelessWidget {
         );
       }
       if (!settled) {
-        subtitleTextStyle = theme.textTheme.caption!.copyWith(
+        subtitleTextStyle = theme.textTheme.bodySmall!.copyWith(
           color: Colors.deepOrangeAccent,
         );
       }
@@ -55,7 +55,7 @@ class TxListItem extends StatelessWidget {
 
     return _TheDisplay(
       memo,
-      theme.textTheme.bodyText2,
+      theme.textTheme.bodyMedium,
       subtitleTextStyle,
       icon,
       tx,

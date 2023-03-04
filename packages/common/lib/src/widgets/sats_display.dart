@@ -44,7 +44,7 @@ class SatsDisplay extends StatelessWidget {
       children: [
         Text(
           numberFormat.format(value),
-          style: t.bodyText2,
+          style: t.bodyMedium,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 8.0, bottom: 5.0),
@@ -54,7 +54,7 @@ class SatsDisplay extends StatelessWidget {
               height: fontSize,
               child: Image.asset(
                 'assets/icons/satoshi-v2.png',
-                color: t.bodyText2?.color,
+                color: t.bodyMedium?.color,
                 scale: 0.75,
               ),
             ),

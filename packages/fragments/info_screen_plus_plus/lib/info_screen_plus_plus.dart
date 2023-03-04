@@ -72,7 +72,7 @@ class _InfoScreenPlusPlusState extends State<InfoScreenPlusPlus> {
         const SizedBox(width: 8.0),
         Text(
           tr('wallet_locked_message_two_line'),
-          style: theme.textTheme.headline5,
+          style: theme.textTheme.headlineSmall,
         )
       ],
     );

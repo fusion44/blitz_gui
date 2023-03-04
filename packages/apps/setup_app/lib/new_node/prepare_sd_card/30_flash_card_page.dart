@@ -173,7 +173,7 @@ class _FlashCardPageState extends State<FlashCardPage> {
           const SizedBox(width: 8),
           TrText(
             'setup.success_message_header',
-            style: theme.textTheme.headline4,
+            style: theme.textTheme.headlineMedium,
           ),
           const SizedBox(width: 8),
           const Icon(MdiIcons.rocket, size: 30, color: Colors.orange),

@@ -39,7 +39,7 @@ class FindDevicesWidget extends StatelessWidget {
           'progress': (state.progress * 100).floor(),
           'numDevices': state.devices.length,
         },
-        style: Theme.of(context).textTheme.headline5!,
+        style: Theme.of(context).textTheme.headlineSmall!,
       );
       icon = const RepaintBoundary(
         child: SpinKitSpinningLines(color: Colors.amberAccent, size: 32.0),
@@ -50,7 +50,7 @@ class FindDevicesWidget extends StatelessWidget {
       header = TrText(
         'setup.scan_network_finished_header',
         args: {'numDevices': state.devices.length},
-        style: Theme.of(context).textTheme.headline5!,
+        style: Theme.of(context).textTheme.headlineSmall!,
       );
       icon = const Icon(Icons.done_all, size: 32.0);
 

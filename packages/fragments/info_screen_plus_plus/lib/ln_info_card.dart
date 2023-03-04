@@ -223,7 +223,7 @@ class LnInfoCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: TrText(
             'wallet.total_balance',
-            style: theme.textTheme.headline6,
+            style: theme.textTheme.titleLarge,
           ),
         ),
         const SizedBox(height: 8.0),
@@ -234,7 +234,7 @@ class LnInfoCard extends StatelessWidget {
               height: 32,
               child: Text(
                 numberFormat.format(total),
-                style: t.bodyText2,
+                style: t.bodyMedium,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -242,7 +242,7 @@ class LnInfoCard extends StatelessWidget {
               padding: const EdgeInsets.only(left: 4.0, bottom: 5.0),
               child: Image.asset(
                 'assets/icons/satoshi-v2.png',
-                color: t.bodyText2?.color,
+                color: t.bodyMedium?.color,
                 scale: 0.85,
               ),
             )
@@ -264,7 +264,7 @@ class LnInfoCard extends StatelessWidget {
           ? Icon(iconData, size: 30)
           : TrText(
               text,
-              style: theme.textTheme.headline6,
+              style: theme.textTheme.titleLarge,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.start,
             ),

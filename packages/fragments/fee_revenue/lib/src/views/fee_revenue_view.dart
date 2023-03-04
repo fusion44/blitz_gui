@@ -20,7 +20,9 @@ class FeeRevenueView extends StatelessWidget {
         children: [
           TrText(
             'lightning.forwarding_fees',
-            style: theme.textTheme.headline6,
+            style: theme.textTheme.headlineSmall!.copyWith(
+              color: blitzHeaderTextColor,
+            ),
           ),
           const SizedBox(height: 8.0),
           const FeeRevenueWidget(),

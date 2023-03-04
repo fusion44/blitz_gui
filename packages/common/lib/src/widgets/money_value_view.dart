@@ -32,7 +32,7 @@ class MoneyValueView extends StatelessWidget {
       decimalDigits: 0,
     );
 
-    var style = hero ? textTheme.headline5 : textTheme.bodyText2;
+    var style = hero ? textTheme.headlineSmall : textTheme.bodyMedium;
     if (!settled) style = style!.copyWith(color: Colors.grey);
 
     return Expanded(

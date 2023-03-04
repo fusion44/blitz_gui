@@ -73,7 +73,7 @@ class _ClassicInfoScreenState extends State<ClassicInfoScreen> {
                   const Text('Alias: '),
                   Text(
                     state.info.alias,
-                    style: theme.textTheme.bodyText1!.copyWith(
+                    style: theme.textTheme.bodyLarge!.copyWith(
                       color: Colors.green[600],
                     ),
                   )
@@ -158,7 +158,7 @@ class _ClassicInfoScreenState extends State<ClassicInfoScreen> {
         const SizedBox(width: 8.0),
         Text(
           tr('Wallet is locked.\nUnlock via SSH menu.'),
-          style: theme.textTheme.headline5,
+          style: theme.textTheme.headlineSmall,
         )
       ],
     );

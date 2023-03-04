@@ -48,7 +48,7 @@ class DataItem extends StatelessWidget {
           children: [
             TrText(
               text,
-              style: theme.textTheme.subtitle1,
+              style: theme.textTheme.titleMedium,
               overflow: TextOverflow.ellipsis,
               softWrap: false,
             ),
@@ -56,7 +56,7 @@ class DataItem extends StatelessWidget {
               const SizedBox(width: 2.0),
               Image.asset(
                 'assets/icons/satoshi-v2.png',
-                color: theme.textTheme.bodyText1!.color,
+                color: theme.textTheme.bodyLarge!.color,
                 width: 9,
               )
             ]
@@ -65,7 +65,7 @@ class DataItem extends StatelessWidget {
         if (label != '')
           TrText(
             label,
-            style: theme.textTheme.caption,
+            style: theme.textTheme.bodySmall,
             overflow: TextOverflow.ellipsis,
             softWrap: false,
           )

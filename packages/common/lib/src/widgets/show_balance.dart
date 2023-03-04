@@ -23,7 +23,7 @@ class ShowBalanceWidget extends StatelessWidget {
         // Total balance
         TrText(
           'wallet.total_balance_subtitle',
-          style: theme.textTheme.headline5!,
+          style: theme.textTheme.headlineSmall!,
         ),
         const SizedBox(height: 8),
         SatsDisplay(value: total, locale: 'en'),
@@ -32,7 +32,7 @@ class ShowBalanceWidget extends StatelessWidget {
         const SizedBox(height: 24),
         TrText(
           'wallet.confirmed_onchain_balance',
-          style: theme.textTheme.headline5!,
+          style: theme.textTheme.headlineSmall!,
         ),
         const SizedBox(height: 8),
         SatsDisplay(value: balance.localBalance.sat, locale: 'en'),
@@ -41,7 +41,7 @@ class ShowBalanceWidget extends StatelessWidget {
         const SizedBox(height: 24),
         TrText(
           'wallet.channel_local_balance',
-          style: theme.textTheme.headline5!,
+          style: theme.textTheme.headlineSmall!,
         ),
         const SizedBox(height: 8),
         SatsDisplay(value: balance.localBalance.sat, locale: 'en'),

@@ -204,7 +204,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
               const SizedBox(width: 8),
               TrText(
                 'wallet.lightning.add_invoice',
-                style: theme.textTheme.headline5!,
+                style: theme.textTheme.headlineSmall!,
                 textAlign: TextAlign.center,
               ),
             ],

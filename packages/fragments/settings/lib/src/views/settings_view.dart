@@ -56,7 +56,7 @@ class SettingsView extends StatelessWidget {
                   const snackBar = SnackBar(content: Text('TODO :('));
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 },
-                style: ElevatedButton.styleFrom(primary: Colors.orange),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
                 child: const TrText(
                   'settings.reboot_button',
                   overflow: TextOverflow.ellipsis,
@@ -72,7 +72,7 @@ class SettingsView extends StatelessWidget {
                   const snackBar = SnackBar(content: Text('TODO :('));
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 },
-                style: ElevatedButton.styleFrom(primary: Colors.red),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: const TrText(
                   'settings.shutdown_button',
                   overflow: TextOverflow.ellipsis,

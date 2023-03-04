@@ -26,14 +26,14 @@ class FeeRevenueWidget extends StatelessWidget {
               ),
               const SizedBox(width: 8.0),
               DataItem(
-                text: format.format(state.data.week + 5125),
+                text: format.format(state.data.week),
                 label: 'lightning.fee_revenue_weekly',
                 showSatSymbol: true,
                 showNotificationContainer: false,
               ),
               const SizedBox(width: 8.0),
               DataItem(
-                text: format.format(state.data.month + 152123),
+                text: format.format(state.data.month),
                 label: 'lightning.fee_revenue_monthly',
                 showSatSymbol: true,
                 showNotificationContainer: false,

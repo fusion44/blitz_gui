@@ -37,7 +37,7 @@ class BitcoinBlockSimple extends StatelessWidget {
                     overflow: TextOverflow.clip,
                     textAlign: TextAlign.center,
                     style: sideLength >= 80
-                        ? theme.textTheme.bodyText2?.copyWith(
+                        ? theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           )
                         : null,

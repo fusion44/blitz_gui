@@ -29,11 +29,11 @@ class BlitzCard extends StatelessWidget {
   }
 
   Widget _buildChild(BoxConstraints constraints, ThemeData theme) {
-    final titleText = Text(title, style: theme.textTheme.headline5);
+    final titleText = Text(title, style: theme.textTheme.headlineSmall);
     final subtitleText = subtitle.isNotEmpty
         ? Text(
             subtitle,
-            style: theme.textTheme.subtitle2,
+            style: theme.textTheme.titleSmall,
             textAlign: TextAlign.end,
             overflow: TextOverflow.ellipsis,
           )

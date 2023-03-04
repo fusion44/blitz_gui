@@ -61,7 +61,7 @@ class BlockchainBlockRow extends StatelessWidget {
                 child: Container(
                   height: sideLength - 20,
                   width: dividerThickness,
-                  color: theme.textTheme.bodyText1?.color,
+                  color: theme.textTheme.bodyLarge?.color,
                 ),
               ),
               ...blocks

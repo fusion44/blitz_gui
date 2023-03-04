@@ -50,7 +50,7 @@ class BlitzDashboardAppBar extends StatelessWidget
       leadingWidth: 35,
       leading: leading,
       flexibleSpace: flexiText != null
-          ? Center(child: Text(flexiText!, style: theme.textTheme.headline6))
+          ? Center(child: Text(flexiText!, style: theme.textTheme.titleLarge))
           : null,
     );
   }
@@ -275,7 +275,7 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
             children: [
               Text(
                 'Overview Widget goes here',
-                style: theme.textTheme.headline3,
+                style: theme.textTheme.displaySmall,
               ),
               Expanded(
                 child: FundsPage((visible) => debugPrint(visible.toString())),

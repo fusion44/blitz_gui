@@ -41,7 +41,7 @@ class _ConnectPageState extends State<ConnectPage> {
                   const SizedBox(height: 8),
                   TrText(
                     'setup.success_message_header',
-                    style: theme.textTheme.headline5,
+                    style: theme.textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 16),
                   TrText('URL: ${state.url}'),

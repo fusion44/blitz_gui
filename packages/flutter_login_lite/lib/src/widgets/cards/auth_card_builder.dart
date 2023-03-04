@@ -319,7 +319,7 @@ class AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
           onSubmitCompleted: () => _changeCard(_loginPageIndex),
         );
     }
-    throw IndexError(index, 5);
+    throw IndexError.withLength(index, 5);
   }
 
   @override
