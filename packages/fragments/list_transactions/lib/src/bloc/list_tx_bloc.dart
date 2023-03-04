@@ -17,14 +17,13 @@ part 'list_tx_state.dart';
 
 class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
   final AuthRepo _authRepo;
-  final SubscriptionRepository _subRepo;
   late final NewBlockWatcherCubit _blockWatcherCubit;
   late final StreamSubscription<NewBlockWatcherState> _blockWatcherSub;
   late final StreamSubscription<Map<String, dynamic>>? _lnSub;
 
   bool _isLoading = false;
 
-  ListTxBloc(this._authRepo, this._subRepo) : super(const ListTxState()) {
+  ListTxBloc(this._authRepo) : super(const ListTxState()) {
     on<LoadMoreTx>(_onLoadMoreTx);
     on<_NewBlocAppended>((event, emit) async {
       final txs = <Transaction>[];
@@ -38,14 +37,16 @@ class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
       emit(state.copyWith(txs: txs));
     });
 
-    _blockWatcherCubit = NewBlockWatcherCubit(_subRepo);
+    final subRepo = SubscriptionRepository.instanceChecked();
+
+    _blockWatcherCubit = NewBlockWatcherCubit(subRepo);
     _blockWatcherSub = _blockWatcherCubit.stream.listen((event) {
       if (event is NewBlockAppended) {
         add(_NewBlocAppended());
       }
     });
 
-    _lnSub = _subRepo.filteredStream([
+    _lnSub = subRepo.filteredStream([
       SseEventTypes.lnPaymentStatus,
       SseEventTypes.lnInvoiceStatus,
     ])?.listen(

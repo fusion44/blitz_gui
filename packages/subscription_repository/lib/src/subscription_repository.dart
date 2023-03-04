@@ -8,19 +8,44 @@ part 'exceptions.dart';
 part 'sse_event_types.dart';
 
 class SubscriptionRepository {
-  final String baseUrl;
-  final String token;
+  static SubscriptionRepository? _instance;
+
+  late final String baseUrl;
+  late final String token;
   Stream<SSEModel>? _stream;
 
-  SubscriptionRepository(this.baseUrl, this.token);
+  bool _isInitialized = false;
 
-  Future<void> init() async {
+  SubscriptionRepository._internal();
+
+  static SubscriptionRepository instance() {
+    _instance ??= SubscriptionRepository._internal();
+
+    return _instance!;
+  }
+
+  static SubscriptionRepository instanceChecked() {
+    if (_instance == null) {
+      throw StateError('SubscriptionRepository is not initialized');
+    }
+
+    return SubscriptionRepository.instance();
+  }
+
+  bool get initialized => _isInitialized;
+
+  Future<void> init(String baseUrl, String token) async {
+    this.baseUrl = baseUrl;
+    this.token = token;
+
     final url = '$baseUrl/sse/subscribe';
     try {
       _stream = await SSEClient.subscribeToSSE(url, token);
     } catch (e) {
       BlitzLog().w('Unable to connect to the SEE endpoint. $e');
     }
+
+    _isInitialized = true;
   }
 
   Stream<dynamic>? get rawStream => _stream;

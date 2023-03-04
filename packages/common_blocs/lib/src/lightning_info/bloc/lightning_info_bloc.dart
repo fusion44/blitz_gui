@@ -14,12 +14,10 @@ part 'lightning_info_state.dart';
 class LightningInfoBloc
     extends Bloc<LightningInfoEvent, LightningInfoBaseState> {
   final AuthRepo _authRepo;
-  final SubscriptionRepository _repo;
 
   StreamSubscription<Map<String, dynamic>>? _sub;
 
-  LightningInfoBloc(this._authRepo, this._repo)
-      : super(LightningInfoInitial()) {
+  LightningInfoBloc(this._authRepo) : super(LightningInfoInitial()) {
     _warmup();
     on<LightningInfoEvent>(_onEvent, transformer: sequential());
   }
@@ -95,7 +93,9 @@ class LightningInfoBloc
   }
 
   void _startListenLnEvents() {
-    _sub = _repo.filteredStream([
+    final subRepo = SubscriptionRepository.instanceChecked();
+
+    _sub = subRepo.filteredStream([
       SseEventTypes.lnInfo,
       SseEventTypes.walletBalance,
       SseEventTypes.lnFeeRevenue

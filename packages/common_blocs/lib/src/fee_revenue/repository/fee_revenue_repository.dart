@@ -7,14 +7,13 @@ import 'package:subscription_repository/subscription_repository.dart';
 
 class FeeRevenueRepository {
   final AuthRepo _authRepo;
-  final SubscriptionRepository _subRepo;
+
   late final Stream<Map<String, dynamic>> _stream;
 
-  FeeRevenueRepository(this._subRepo, this._authRepo) {
-    if (_subRepo.filteredStream([SseEventTypes.lnFeeRevenue]) == null) {
-      throw StateError('SubscriptionRepo Stream is null');
-    }
-    _stream = _subRepo.filteredStream([SseEventTypes.lnFeeRevenue])!;
+  FeeRevenueRepository(this._authRepo) {
+    final subRepo = SubscriptionRepository.instanceChecked();
+
+    _stream = subRepo.filteredStream([SseEventTypes.lnFeeRevenue])!;
   }
 
   Stream<FeeRevenueData> revenueStream() {

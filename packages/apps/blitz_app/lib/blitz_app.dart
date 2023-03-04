@@ -50,8 +50,7 @@ class _BlitzAppState extends State<BlitzApp> {
   }
 
   @override
-  void dispose() {
-    _subRepo.dispose();
+    SubscriptionRepository.instance().dispose();
     super.dispose();
   }
 

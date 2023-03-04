@@ -8,15 +8,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:list_transactions_fragment/list_transactions.dart';
 import 'package:settings_fragment/settings_fragment.dart';
-import 'package:subscription_repository/subscription_repository.dart';
 
 class BigScreenApp extends StatefulWidget {
   static String initialLocation = '/';
 
   static _provide(
     Pages page,
-    AuthRepo authRepo,
-    SubscriptionRepository subRepo, {
+    AuthRepo authRepo, {
     required Widget child,
   }) {
     final blocs = [
@@ -25,18 +23,18 @@ class BigScreenApp extends StatefulWidget {
       ),
       if (page == Pages.transactions || page == Pages.dashboard)
         BlocProvider<LightningInfoBloc>(
-          create: (context) => LightningInfoBloc(authRepo, subRepo),
+          create: (context) => LightningInfoBloc(authRepo),
         ),
       if (page == Pages.transactions)
         BlocProvider<ListTxBloc>(
-          create: (context) => ListTxBloc(authRepo, subRepo)..add(LoadMoreTx()),
+          create: (context) => ListTxBloc(authRepo)..add(LoadMoreTx()),
         ),
     ];
 
     final repos = [
       if (page == Pages.dashboard)
         RepositoryProvider(
-          create: (context) => FeeRevenueRepository(subRepo, authRepo),
+          create: (context) => FeeRevenueRepository(authRepo),
         )
     ];
 
@@ -51,10 +49,7 @@ class BigScreenApp extends StatefulWidget {
     );
   }
 
-  static GoRouter buildRouter(
-    AuthRepo authRepo,
-    SubscriptionRepository subRepo,
-  ) {
+  static GoRouter buildRouter(AuthRepo authRepo) {
     final authBloc = AuthBloc(authRepository: authRepo);
 
     return GoRouter(
@@ -88,7 +83,6 @@ class BigScreenApp extends StatefulWidget {
               child: BigScreenApp._provide(
                 Pages.dashboard,
                 authRepo,
-                subRepo,
                 child: BigScreenApp(Pages.dashboard, key: state.pageKey),
               ),
             );
@@ -102,7 +96,6 @@ class BigScreenApp extends StatefulWidget {
               child: BigScreenApp._provide(
                 Pages.transactions,
                 authRepo,
-                subRepo,
                 child: BigScreenApp(Pages.transactions, key: state.pageKey),
               ),
             );
@@ -128,7 +121,6 @@ class BigScreenApp extends StatefulWidget {
               child: BigScreenApp._provide(
                 Pages.apps,
                 authRepo,
-                subRepo,
                 child: BigScreenApp(Pages.apps, key: state.pageKey),
               ),
             );
