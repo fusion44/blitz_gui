@@ -13,13 +13,8 @@ import 'package:subscription_repository/subscription_repository.dart';
 
 class BlitzApp extends StatefulWidget {
   final AuthRepo authRepo;
-  final SettingsBloc settingsBloc;
 
-  const BlitzApp({
-    required this.authRepo,
-    required this.settingsBloc,
-    Key? key,
-  }) : super(key: key);
+  const BlitzApp({required this.authRepo, Key? key}) : super(key: key);
 
   @override
   State<BlitzApp> createState() => _BlitzAppState();
@@ -31,6 +26,7 @@ class _BlitzAppState extends State<BlitzApp> {
   late final GoRouter _router;
   late final SubscriptionRepository _subRepo;
   bool _goLogin = false;
+  final _sBloc = SettingsBloc();
 
   @override
   void initState() {
@@ -53,17 +49,16 @@ class _BlitzAppState extends State<BlitzApp> {
     if (_big) {
       _router = BigScreenApp.buildRouter(widget.authRepo);
     } else {
-      _router = SmallScreenApp.buildRouter(
-        widget.authRepo,
-        widget.settingsBloc,
-      );
+      _router = SmallScreenApp.buildRouter(widget.authRepo);
     }
   }
 
   @override
   void dispose() async {
-    SubscriptionRepository.instance().dispose();
     super.dispose();
+    SubscriptionRepository.instance().dispose();
+    await SettingsRepository.instance().dispose();
+    await _sBloc.close();
   }
 
   @override
@@ -99,7 +94,7 @@ class _BlitzAppState extends State<BlitzApp> {
     return RepositoryProvider.value(
       value: widget.authRepo,
       child: BlocBuilder<SettingsBloc, SettingsBaseState>(
-        bloc: widget.settingsBloc,
+        bloc: _sBloc,
         builder: (context, state) {
           return MaterialApp.router(
             routeInformationProvider: _router.routeInformationProvider,
@@ -142,10 +137,7 @@ class _BlitzAppState extends State<BlitzApp> {
           RepositoryProvider.value(value: widget.authRepo),
           RepositoryProvider.value(value: _subRepo),
         ],
-        child: BlocProvider.value(
-          value: widget.settingsBloc,
-          child: SizeChangedLayoutNotifier(child: child),
-        ),
+        child: SizeChangedLayoutNotifier(child: child),
       ),
     );
   }
@@ -155,7 +147,7 @@ class _BlitzAppState extends State<BlitzApp> {
     return RepositoryProvider.value(
       value: widget.authRepo,
       child: BlocBuilder<SettingsBloc, SettingsBaseState>(
-        bloc: widget.settingsBloc,
+        bloc: _sBloc,
         builder: (context, state) {
           return MaterialApp.router(
             routeInformationProvider: _router.routeInformationProvider,

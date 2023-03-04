@@ -21,8 +21,7 @@ void main() async {
 
   BlitzLog.level = LogLevel.warning;
 
-  final bloc = SettingsBloc();
-  bloc.add(AppStartEvent());
+  await SettingsRepository.instance().init();
 
   var delegate = await LocalizationDelegate.create(
     fallbackLocale: 'en',
@@ -36,7 +35,7 @@ void main() async {
     LocalizedApp(
       delegate,
       RestartWidget(
-        child: BlitzApp(settingsBloc: bloc, authRepo: authRepo),
+        child: BlitzApp(authRepo: authRepo),
       ),
     ),
   );

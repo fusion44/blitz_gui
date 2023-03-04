@@ -4,57 +4,68 @@ import 'package:flutter/material.dart';
 
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:settings_fragment/src/settings_repository.dart';
 
 part 'settings_event.dart';
 part 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsBaseState> {
-  final String _dbName = 'settings';
-  final String _keyTheme = 'settings_is_dark';
-  final String _keyLanguage = 'settings_language';
-  late Box _box;
+  late final StreamSubscription<Setting> _sub;
 
-  SettingsBloc() : super(SettingsState(darkTheme: false)) {
+  SettingsBloc()
+      : super(SettingsState(
+          darkTheme: SettingsRepository.instance().isDark,
+          langCode: SettingsRepository.instance().language,
+        )) {
     on<SettingsEvent>(_onEvent, transformer: sequential());
+    _subscribe();
+  }
+
+  Future<void> _subscribe() async {
+    _sub = SettingsRepository.instanceChecked().changeNotifier.listen((event) {
+      add(_SettingChangedEvent(event));
+    });
+  }
+
+  @override
+  Future<void> close() async {
+    await _sub.cancel();
+    await super.close();
   }
 
   FutureOr<void> _onEvent(
     SettingsEvent event,
     Emitter<SettingsBaseState> emit,
   ) async {
-    if (event is AppStartEvent) {
-      _box = await Hive.openBox(_dbName);
-      if (_box.isEmpty) {
-        // set default values
-        await _box.putAll({
-          _keyLanguage: 'en',
-          _keyTheme: false,
-        });
-        emit(SettingsLoadedState());
-      } else {
-        final lang = await _box.get(_keyLanguage);
+    var i = SettingsRepository.instance();
+    if (!i.initialized) {
+      await SettingsRepository.instance().init();
+    }
+
+    if (event is ToggleThemeEvent) {
+      await i.setIsDark(!state.darkTheme);
+      return;
+    }
+
+    if (event is ChangeLanguageEvent) {
+      await i.setLanguage(event.languageCode);
+
+      return;
+    }
+
+    if (event is _SettingChangedEvent) {
+      if (event.setting.key == SettingKey.isDark) {
+        emit(state.copyWith(darkTheme: event.setting.value));
+      } else if (event.setting.key == SettingKey.language) {
+        final isLeft = _getCurrencySymbolPos(event.setting.value);
         emit(
-          SettingsLoadedState(
-            darkTheme: await _box.get(_keyTheme),
-            langCode: lang,
-            currSymbolIsLeft: _getCurrencySymbolPos(lang),
+          state.copyWith(
+            langCode: event.setting.value,
+            currSymbolIsLeft: isLeft,
           ),
         );
       }
-    } else if (event is ToggleThemeEvent) {
-      await _box.put(_keyTheme, !state.darkTheme);
-      emit(state.copyWith(darkTheme: !state.darkTheme));
-    } else if (event is ChangeLanguageEvent) {
-      final isLeft = _getCurrencySymbolPos(event.languageCode);
-      await _box.put(_keyLanguage, event.languageCode);
-      emit(
-        state.copyWith(
-          langCode: event.languageCode,
-          currSymbolIsLeft: isLeft,
-        ),
-      );
     }
   }
 

@@ -14,7 +14,6 @@ class SettingsView extends StatelessWidget {
       children: [
         const SizedBox(height: 32.0),
         BlocBuilder<SettingsBloc, SettingsBaseState>(
-          bloc: BlocProvider.of(context),
           builder: (context, state) {
             return ListTile(
               title: const TrText('settings.language_label'),
@@ -31,7 +30,6 @@ class SettingsView extends StatelessWidget {
           },
         ),
         BlocBuilder<SettingsBloc, SettingsBaseState>(
-          bloc: BlocProvider.of(context),
           builder: (context, state) {
             return ListTile(
               title: const TrText('settings.theme_label'),

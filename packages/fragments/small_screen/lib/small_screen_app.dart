@@ -60,7 +60,7 @@ class SmallScreenApp extends StatefulWidget {
   static const String _routeName = 'dashboard';
   static final String _initialLocation = '/dashboard/${_pages.first.id}';
 
-  static GoRouter buildRouter(AuthRepo authRepo, SettingsBloc settingsBloc) {
+  static GoRouter buildRouter(AuthRepo authRepo) {
     return GoRouter(
       redirect: (context, state) {
         var isLoggedIn = authRepo.isLoggedIn;
@@ -94,8 +94,8 @@ class SmallScreenApp extends StatefulWidget {
               orElse: () => throw Exception('Page not found: $pageId'),
             );
 
-            return BlocProvider.value(
-                value: settingsBloc,
+            return BlocProvider(
+                create: (c) => SettingsBloc(),
                 child: SmallScreenApp(tabData, key: state.pageKey));
           },
         )
@@ -283,7 +283,12 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
         ),
       );
     } else if (widget.currentTabData.id == SmallScreenApp._pages[3].id) {
-      return const Expanded(child: SettingsView());
+      return Expanded(
+        child: BlocProvider(
+          create: (context) => SettingsBloc(),
+          child: const SettingsView(),
+        ),
+      );
     } else {
       return Center(child: Text(widget.currentTabData.label));
     }

@@ -130,8 +130,13 @@ class BigScreenApp extends StatefulWidget {
           path: '/settings',
           name: Pages.settings.name,
           builder: (context, state) {
-            return BlocProvider(
-              create: (context) => AuthBloc(authRepository: authRepo),
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) => AuthBloc(authRepository: authRepo),
+                ),
+                BlocProvider(create: (context) => SettingsBloc()),
+              ],
               child: Scaffold(
                   appBar: AppBar(title: Text(tr('settings.settings'))),
                   body: SettingsView(key: state.pageKey)),
