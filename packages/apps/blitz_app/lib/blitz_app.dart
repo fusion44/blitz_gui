@@ -63,8 +63,6 @@ class _BlitzAppState extends State<BlitzApp> {
   @override
   void dispose() async {
     SubscriptionRepository.instance().dispose();
-    // AuthRepo cannot be disposed in main, where it's created
-    await widget.authRepo.dispose();
     super.dispose();
   }
 

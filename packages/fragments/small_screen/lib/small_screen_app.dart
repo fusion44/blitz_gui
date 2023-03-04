@@ -94,7 +94,9 @@ class SmallScreenApp extends StatefulWidget {
               orElse: () => throw Exception('Page not found: $pageId'),
             );
 
-            return SmallScreenApp(tabData, key: state.pageKey);
+            return BlocProvider.value(
+                value: settingsBloc,
+                child: SmallScreenApp(tabData, key: state.pageKey));
           },
         )
       ],
@@ -177,18 +179,14 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
 
   void _initBlocs() async {
     final authRepo = RepositoryProvider.of<AuthRepo>(context);
-    _subRepo = SubscriptionRepository(
-      authRepo.baseUrl(),
-      authRepo.token(),
-    );
-    await _subRepo.init();
+    _subRepo = SubscriptionRepository.instanceChecked();
 
     _walletLockedChecker = WalletLockedCheckerBloc(_subRepo);
     _hardwareBloc = HardwareInfoBloc(_subRepo, authRepo);
     _systemBloc = SystemInfoBloc(_subRepo);
     _btcInfoBloc = BitcoinInfoBloc(_subRepo);
-    _lnInfoBloc = LightningInfoBloc(authRepo, _subRepo);
-    _listTxBloc = ListTxBloc(authRepo, _subRepo);
+    _lnInfoBloc = LightningInfoBloc(authRepo);
+    _listTxBloc = ListTxBloc(authRepo);
 
     _walletLockedChecker.add(StartCheckWalletLocked());
     _hardwareBloc.add(StartListenHardwareInfo());
