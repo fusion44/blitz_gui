@@ -51,7 +51,6 @@ class BigScreenTxWidget extends StatelessWidget {
                   child: BlocProvider(
                     create: (context) => LightningInfoBloc(
                       RepositoryProvider.of(context),
-                      RepositoryProvider.of(context),
                     ),
                     child:
                         FundsPage((visible) => debugPrint(visible.toString())),

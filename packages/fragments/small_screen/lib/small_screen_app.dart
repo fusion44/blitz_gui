@@ -60,7 +60,7 @@ class SmallScreenApp extends StatefulWidget {
   static const String _routeName = 'dashboard';
   static final String _initialLocation = '/dashboard/${_pages.first.id}';
 
-  static GoRouter buildRouter(AuthRepo authRepo) {
+  static GoRouter buildRouter(AuthRepo authRepo, SettingsBloc settingsBloc) {
     return GoRouter(
       redirect: (context, state) {
         var isLoggedIn = authRepo.isLoggedIn;

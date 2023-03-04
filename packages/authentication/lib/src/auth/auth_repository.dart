@@ -20,35 +20,39 @@ class AuthRepo {
   var _url = '';
   var _token = '';
 
-  FutureOr<bool> init() async {
+  FutureOr<bool> init([bool useCookie = false]) async {
     _statusStream = _controller.stream.asBroadcastStream();
-    if (!kIsWeb) {
-      Map<String, String> envVars = Platform.environment;
-      if (Platform.isLinux || Platform.isMacOS) {
-        String? home = envVars['HOME'];
 
-        if (home != null) {
-          var f = File('$home/.blitz_api/.cookie');
-          var exists = await f.exists();
+    if (!useCookie || kIsWeb) return false;
+
+    Map<String, String> envVars = Platform.environment;
+
+    if (Platform.isLinux || Platform.isMacOS) {
+      String? home = envVars['HOME'];
+
+      if (home != null) {
+        var f = File('$home/.blitz_api/.cookie');
+        var exists = await f.exists();
+        if (!exists) {
+          // TODO: remove me. This is a hack. Currently flutter-pi
+          // can only be run as root. Check if the file is there
+          // and if not, fail
+          f = File('/home/blitzapi/.blitz_api/.cookie');
+          exists = await f.exists();
           if (!exists) {
-            // TODO: remove me. This is a hack. Currently flutter-pi
-            // can only be run as root. Check if the file is there
-            // and if not, fail
-            f = File('/home/blitzapi/.blitz_api/.cookie');
-            exists = await f.exists();
-            if (!exists) {
-              // user must log in normally
-              return false;
-            }
+            // user must log in normally
+            return false;
           }
-
-          _token = 'Bearer ${(await f.readAsString()).trim()}';
-          _url = 'http://0.0.0.0:11111';
-          _controller.add(AuthStatus.authenticated);
-          return true;
         }
+
+        _token = 'Bearer ${(await f.readAsString()).trim()}';
+        _url = 'http://0.0.0.0:11111';
+        _controller.add(AuthStatus.authenticated);
+
+        return true;
       }
     }
+
     return false;
   }
 
@@ -58,7 +62,8 @@ class AuthRepo {
     if (_token.isEmpty) {
       throw AuthStateError('AuthRepo.token() called before successful login');
     }
-    return _token;
+
+    return 'Bearer $_token';
   }
 
   String baseUrl() {
@@ -108,9 +113,9 @@ class AuthRepo {
     _controller.add(AuthStatus.unauthenticated);
   }
 
-  void dispose() {
+  Future<void> dispose() async {
     _token = '';
     _url = '';
-    _controller.close();
+    await _controller.close();
   }
 }

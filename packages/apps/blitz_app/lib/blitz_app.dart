@@ -30,9 +30,19 @@ class _BlitzAppState extends State<BlitzApp> {
   bool _big = false;
   late final GoRouter _router;
   late final SubscriptionRepository _subRepo;
+  bool _goLogin = false;
 
   @override
   void initState() {
+    super.initState();
+
+    if (!widget.authRepo.isLoggedIn) {
+      _router = _buildLoginRouter();
+      _goLogin = true;
+      _initialized = true;
+      return;
+    }
+
     _initSubRepo();
 
     _big = MediaQueryData.fromWindow(
@@ -41,21 +51,46 @@ class _BlitzAppState extends State<BlitzApp> {
         1024;
 
     if (_big) {
-      _router = BigScreenApp.buildRouter(widget.authRepo, _subRepo);
+      _router = BigScreenApp.buildRouter(widget.authRepo);
     } else {
-      _router = SmallScreenApp.buildRouter(widget.authRepo);
+      _router = SmallScreenApp.buildRouter(
+        widget.authRepo,
+        widget.settingsBloc,
+      );
     }
-
-    super.initState();
   }
 
   @override
+  void dispose() async {
     SubscriptionRepository.instance().dispose();
+    // AuthRepo cannot be disposed in main, where it's created
+    await widget.authRepo.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder(
+      bloc: AuthBloc(authRepository: widget.authRepo),
+      builder: (context, AuthState state) {
+        if (state.status == AuthStatus.authenticated) {
+          return _wrap(_buildLoggedInState(context));
+        }
+
+        if (state.status == AuthStatus.unauthenticated) {
+          return _wrap(_buildLoggedOutState());
+        }
+
+        return MaterialApp(
+          home: Scaffold(
+            body: Center(child: Text("Unknown auth state: ${state.status}")),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoggedInState(BuildContext context) {
     if (!_initialized) {
       return const MaterialApp(
         home: Scaffold(body: Center(child: Text("Loading ..."))),
@@ -68,21 +103,19 @@ class _BlitzAppState extends State<BlitzApp> {
       child: BlocBuilder<SettingsBloc, SettingsBaseState>(
         bloc: widget.settingsBloc,
         builder: (context, state) {
-          return _wrap(
-            MaterialApp.router(
-              routeInformationProvider: _router.routeInformationProvider,
-              routeInformationParser: _router.routeInformationParser,
-              routerDelegate: _router.routerDelegate,
-              title: tr('app.title'),
-              theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
-              localizationsDelegates: [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                localizationDelegate
-              ],
-              supportedLocales: localizationDelegate.supportedLocales,
-              locale: localizationDelegate.currentLocale,
-            ),
+          return MaterialApp.router(
+            routeInformationProvider: _router.routeInformationProvider,
+            routeInformationParser: _router.routeInformationParser,
+            routerDelegate: _router.routerDelegate,
+            title: tr('app.title'),
+            theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              localizationDelegate
+            ],
+            supportedLocales: localizationDelegate.supportedLocales,
+            locale: localizationDelegate.currentLocale,
           );
         },
       ),
@@ -90,6 +123,11 @@ class _BlitzAppState extends State<BlitzApp> {
   }
 
   Widget _wrap(Widget child) {
+    if (_goLogin) {
+      // We don't need to wrap the login page
+      return child;
+    }
+
     return NotificationListener(
       onNotification: (SizeChangedLayoutNotification notification) {
         final big = MediaQueryData.fromWindow(
@@ -114,12 +152,55 @@ class _BlitzAppState extends State<BlitzApp> {
     );
   }
 
+  Widget _buildLoggedOutState() {
+    var localizationDelegate = LocalizedApp.of(context).delegate;
+    return RepositoryProvider.value(
+      value: widget.authRepo,
+      child: BlocBuilder<SettingsBloc, SettingsBaseState>(
+        bloc: widget.settingsBloc,
+        builder: (context, state) {
+          return MaterialApp.router(
+            routeInformationProvider: _router.routeInformationProvider,
+            routeInformationParser: _router.routeInformationParser,
+            routerDelegate: _router.routerDelegate,
+            title: tr('app.title'),
+            theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              localizationDelegate
+            ],
+            supportedLocales: localizationDelegate.supportedLocales,
+            locale: localizationDelegate.currentLocale,
+          );
+        },
+      ),
+    );
+  }
+
   void _initSubRepo() async {
-    _subRepo = SubscriptionRepository(
+    _subRepo = SubscriptionRepository.instance();
+    await _subRepo.init(
       widget.authRepo.baseUrl(),
       widget.authRepo.token(),
     );
-    await _subRepo.init();
     setState(() => _initialized = true);
+  }
+
+  GoRouter _buildLoginRouter() {
+    return GoRouter(
+      initialLocation: LoginPage.path,
+      routes: [
+        GoRoute(
+          name: LoginPage.routeName,
+          path: LoginPage.path,
+          builder: (context, state) {
+            return LoginPage(() => RestartWidget.restartApp(context));
+          },
+        ),
+      ],
+      errorBuilder: (context, state) =>
+          Scaffold(body: Center(child: Text(state.error.toString()))),
+    );
   }
 }

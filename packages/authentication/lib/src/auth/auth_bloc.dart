@@ -9,9 +9,8 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc({
-    required AuthRepo authRepository,
-  })  : _authRepo = authRepository,
+  AuthBloc({required AuthRepo authRepository})
+      : _authRepo = authRepository,
         super(const AuthState.unknown()) {
     on<AuthStatusChanged>(_onAuthStatusChanged);
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
@@ -31,7 +30,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   @override
   Future<void> close() {
     _authStatusSub.cancel();
-    _authRepo.dispose();
     return super.close();
   }
 
