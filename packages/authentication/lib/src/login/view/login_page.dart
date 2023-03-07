@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login_lite/flutter_login.dart';
+import 'package:settings_fragment/settings_fragment.dart';
 
 import '../../auth/auth_repository.dart';
 
@@ -34,7 +35,7 @@ class LoginPage extends StatelessWidget {
             pageColorDark: Colors.transparent,
             pageColorLight: Colors.transparent,
           ),
-          savedUrl: 'http://127.0.0.1:8000/',
+          savedUrl: SettingsRepository.instance().defaultEndpoint,
           onSubmitAnimationCompleted: onSubmitAnimationCompleted,
         ),
       ),
@@ -44,6 +45,8 @@ class LoginPage extends StatelessWidget {
   Future<String> onLogin(LoginData data, BuildContext context) async {
     final authRepo = RepositoryProvider.of<AuthRepo>(context);
     try {
+      // TODO: use a login bloc instead
+      await SettingsRepository.instance().addEndpoint(data.url);
       await authRepo.logIn(
         url: data.url,
         username: 'admin',

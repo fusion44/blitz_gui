@@ -11,6 +11,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 
 import 'package:provider/provider.dart';
+import 'package:settings_fragment/settings_fragment.dart';
 
 import 'src/color_helper.dart';
 import 'src/constants.dart';
@@ -246,11 +247,14 @@ class FlutterLogin extends StatefulWidget {
     this.navigateBackAfterRecovery = false,
     this.termsOfService = const <TermOfService>[],
     this.onConfirmRecover,
-    this.savedUrl = 'http://127.0.0.1:8000/',
+    String savedUrl = '',
     this.savedPassword = '',
     this.initialAuthMode = AuthMode.login,
   })  : assert((logo is String?) || (logo is ImageProvider?)),
         logo = logo is String ? AssetImage(logo) : logo,
+        savedUrl = savedUrl.isEmpty
+            ? SettingsRepository.instance().defaultEndpoint
+            : savedUrl,
         super(key: key);
 
   /// Called when the user hit the submit button when in login mode

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import 'package:common/common.dart' as utils;
+import 'package:settings_fragment/settings_fragment.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
 
@@ -46,7 +47,7 @@ class AuthRepo {
         }
 
         _token = 'Bearer ${(await f.readAsString()).trim()}';
-        _url = 'http://0.0.0.0:11111';
+        _url = SettingsRepository.instance().defaultEndpoint;
         _controller.add(AuthStatus.authenticated);
 
         return true;

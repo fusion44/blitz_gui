@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
+import 'package:settings_fragment/settings_fragment.dart';
 
 import '../../auth/auth_repository.dart';
 import '../models/models.dart';
@@ -14,9 +15,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   LoginBloc({required AuthRepo authRepo})
       : _authRepo = authRepo,
         super(
-          const LoginState(
-            url: BlitzURL.dirty('http://127.0.0.1:8000/'),
-            username: Username.dirty('admin'),
+          LoginState(
+            url: BlitzURL.dirty(SettingsRepository.instance().defaultEndpoint),
+            username: const Username.dirty('admin'),
           ),
         ) {
     on<LoginUrlChanged>(_onUrlChanged);

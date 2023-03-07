@@ -17,6 +17,8 @@ dependencies:
   
   common:
     path: ../common
+  settings_fragment:
+    path: ../fragments/settings
     
 dev_dependencies:
   flutter_test:
