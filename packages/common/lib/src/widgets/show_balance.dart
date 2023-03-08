@@ -26,7 +26,11 @@ class ShowBalanceWidget extends StatelessWidget {
           style: theme.textTheme.headlineSmall!,
         ),
         const SizedBox(height: 8),
-        SatsDisplay(value: total, locale: 'en'),
+        SatsDisplay(
+          value: total,
+          locale: 'en',
+          showDecimal: false,
+        ),
 
         // Onchain balance
         const SizedBox(height: 24),
@@ -35,7 +39,11 @@ class ShowBalanceWidget extends StatelessWidget {
           style: theme.textTheme.headlineSmall!,
         ),
         const SizedBox(height: 8),
-        SatsDisplay(value: balance.localBalance.sat, locale: 'en'),
+        SatsDisplay(
+          value: balance.onchainTotalBalance,
+          locale: 'en',
+          showDecimal: false,
+        ),
 
         // Local channel balance
         const SizedBox(height: 24),
@@ -44,7 +52,11 @@ class ShowBalanceWidget extends StatelessWidget {
           style: theme.textTheme.headlineSmall!,
         ),
         const SizedBox(height: 8),
-        SatsDisplay(value: balance.localBalance.sat, locale: 'en'),
+        SatsDisplay(
+          value: balance.localBalance.sat,
+          locale: 'en',
+          showDecimal: false,
+        ),
       ]),
     );
   }
