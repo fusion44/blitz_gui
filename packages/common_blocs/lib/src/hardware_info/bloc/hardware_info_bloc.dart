@@ -78,4 +78,10 @@ class HardwareInfoBloc extends Bloc<HardwareInfoEvent, HardwareInfoBaseState> {
       _listenHardwareEvents();
     }
   }
+
+  @override
+  Future<void> close() async {
+    await _sub?.cancel();
+    return super.close();
+  }
 }

@@ -45,4 +45,10 @@ class LightningInfoLiteBloc
       add(_LightningInfoLiteUpdate(lnInfo: i));
     });
   }
+
+  @override
+  Future<void> close() async {
+    await _sub?.cancel();
+    return super.close();
+  }
 }

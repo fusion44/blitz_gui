@@ -112,4 +112,10 @@ class LightningInfoBloc
       }
     });
   }
+
+  @override
+  close() async {
+    await _sub?.cancel();
+    return super.close();
+  }
 }

@@ -47,4 +47,10 @@ class WatchInvoiceBloc
       }
     });
   }
+
+  @override
+  Future<void> close() async {
+    await _sub?.cancel();
+    return super.close();
+  }
 }

@@ -42,4 +42,10 @@ class BitcoinInfoBloc extends Bloc<BitcoinInfoEvent, BitcoinInfoBaseState> {
       add(_BitcoinInfoUpdate(i));
     });
   }
+
+  @override
+  Future<void> close() async {
+    await _sub?.cancel();
+    return super.close();
+  }
 }
