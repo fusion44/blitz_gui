@@ -49,11 +49,10 @@ class BigScreenTxWidget extends StatelessWidget {
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: txListMaxWidth),
                   child: BlocProvider(
-                    create: (context) => LightningInfoBloc(
-                      RepositoryProvider.of(context),
+                    create: (context) => LightningInfoBloc(),
+                    child: FundsPage(
+                      (visible) => debugPrint(visible.toString()),
                     ),
-                    child:
-                        FundsPage((visible) => debugPrint(visible.toString())),
                   ),
                 ),
               ),

@@ -13,29 +13,28 @@ part 'lightning_info_state.dart';
 
 class LightningInfoBloc
     extends Bloc<LightningInfoEvent, LightningInfoBaseState> {
-  final AuthRepo _authRepo;
-
   StreamSubscription<Map<String, dynamic>>? _sub;
 
-  LightningInfoBloc(this._authRepo) : super(LightningInfoInitial()) {
+  LightningInfoBloc() : super(LightningInfoInitial()) {
     _warmup();
     on<LightningInfoEvent>(_onEvent, transformer: sequential());
   }
 
   void _warmup() async {
+    final authRepo = AuthRepo.instanceChecked();
     try {
       final res = await Future.wait([
         fetch(
-          Uri.parse('${_authRepo.baseUrl()}/latest/lightning/get-info'),
-          _authRepo.token(),
+          Uri.parse('${authRepo.baseUrl()}/latest/lightning/get-info'),
+          authRepo.token(),
         ),
         fetch(
-          Uri.parse('${_authRepo.baseUrl()}/latest/lightning/get-fee-revenue'),
-          _authRepo.token(),
+          Uri.parse('${authRepo.baseUrl()}/latest/lightning/get-fee-revenue'),
+          authRepo.token(),
         ),
         fetch(
-          Uri.parse('${_authRepo.baseUrl()}/latest/lightning/get-balance'),
-          _authRepo.token(),
+          Uri.parse('${authRepo.baseUrl()}/latest/lightning/get-balance'),
+          authRepo.token(),
         )
       ]);
 

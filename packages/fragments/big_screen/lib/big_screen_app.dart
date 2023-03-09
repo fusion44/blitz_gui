@@ -13,28 +13,27 @@ class BigScreenApp extends StatefulWidget {
   static String initialLocation = '/';
 
   static _provide(
-    Pages page,
-    AuthRepo authRepo, {
+    Pages page, {
     required Widget child,
   }) {
     final blocs = [
       BlocProvider<AuthBloc>(
-        create: (context) => AuthBloc(authRepository: authRepo),
+        create: (context) => AuthBloc(),
       ),
       if (page == Pages.transactions || page == Pages.dashboard)
         BlocProvider<LightningInfoBloc>(
-          create: (context) => LightningInfoBloc(authRepo),
+          create: (context) => LightningInfoBloc(),
         ),
       if (page == Pages.transactions)
         BlocProvider<ListTxBloc>(
-          create: (context) => ListTxBloc(authRepo)..add(LoadMoreTx()),
+          create: (context) => ListTxBloc()..add(LoadMoreTx()),
         ),
     ];
 
     final repos = [
       if (page == Pages.dashboard)
         RepositoryProvider(
-          create: (context) => FeeRevenueRepository(authRepo),
+          create: (context) => FeeRevenueRepository(),
         )
     ];
 
@@ -49,12 +48,12 @@ class BigScreenApp extends StatefulWidget {
     );
   }
 
-  static GoRouter buildRouter(AuthRepo authRepo) {
-    final authBloc = AuthBloc(authRepository: authRepo);
+  static GoRouter buildRouter() {
+    final authBloc = AuthBloc();
 
     return GoRouter(
       redirect: (context, state) {
-        var isLoggedIn = authRepo.isLoggedIn;
+        var isLoggedIn = AuthRepo.instanceChecked().isLoggedIn;
         var isLogging = state.location == LoginPage.path;
 
         if (!isLoggedIn && !isLogging) return LoginPage.path;
@@ -82,7 +81,6 @@ class BigScreenApp extends StatefulWidget {
             return NoTransitionPage(
               child: BigScreenApp._provide(
                 Pages.dashboard,
-                authRepo,
                 child: BigScreenApp(Pages.dashboard, key: state.pageKey),
               ),
             );
@@ -95,7 +93,6 @@ class BigScreenApp extends StatefulWidget {
             return NoTransitionPage(
               child: BigScreenApp._provide(
                 Pages.transactions,
-                authRepo,
                 child: BigScreenApp(Pages.transactions, key: state.pageKey),
               ),
             );
@@ -107,7 +104,7 @@ class BigScreenApp extends StatefulWidget {
           pageBuilder: (context, state) {
             return NoTransitionPage(
               child: BlocProvider(
-                create: (context) => AuthBloc(authRepository: authRepo),
+                create: (context) => AuthBloc(),
                 child: BigScreenApp(Pages.channels, key: state.pageKey),
               ),
             );
@@ -120,7 +117,6 @@ class BigScreenApp extends StatefulWidget {
             return NoTransitionPage(
               child: BigScreenApp._provide(
                 Pages.apps,
-                authRepo,
                 child: BigScreenApp(Pages.apps, key: state.pageKey),
               ),
             );
@@ -133,7 +129,7 @@ class BigScreenApp extends StatefulWidget {
             return MultiBlocProvider(
               providers: [
                 BlocProvider(
-                  create: (context) => AuthBloc(authRepository: authRepo),
+                  create: (context) => AuthBloc(),
                 ),
                 BlocProvider(create: (context) => SettingsBloc()),
               ],

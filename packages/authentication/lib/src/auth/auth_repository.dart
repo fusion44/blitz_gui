@@ -119,4 +119,24 @@ class AuthRepo {
     _url = '';
     await _controller.close();
   }
+
+  //-----------------------------------
+  // Singleton
+  //-----------------------------------
+  static AuthRepo? _instance;
+  AuthRepo._internal();
+
+  static AuthRepo instance() {
+    _instance ??= AuthRepo._internal();
+
+    return _instance!;
+  }
+
+  static AuthRepo instanceChecked() {
+    if (_instance == null) {
+      throw StateError('SubscriptionRepository is not initialized');
+    }
+
+    return AuthRepo.instance();
+  }
 }

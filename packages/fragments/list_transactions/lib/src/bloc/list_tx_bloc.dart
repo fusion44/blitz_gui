@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:authentication/authentication.dart';
 import 'package:flutter/material.dart';
 
-import 'package:authentication/authentication.dart';
 import 'package:common/common.dart';
 import 'package:common_blocs/common_blocs.dart';
 import 'package:equatable/equatable.dart';
@@ -16,14 +16,13 @@ part 'list_tx_event.dart';
 part 'list_tx_state.dart';
 
 class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
-  final AuthRepo _authRepo;
   late final NewBlockWatcherCubit _blockWatcherCubit;
   late final StreamSubscription<NewBlockWatcherState> _blockWatcherSub;
   late final StreamSubscription<Map<String, dynamic>>? _lnSub;
 
   bool _isLoading = false;
 
-  ListTxBloc(this._authRepo) : super(const ListTxState()) {
+  ListTxBloc() : super(const ListTxState()) {
     on<LoadMoreTx>(_onLoadMoreTx);
     on<_NewBlocAppended>((event, emit) async {
       final txs = <Transaction>[];
@@ -91,12 +90,13 @@ class ListTxBloc extends Bloc<ListTxEvent, ListTxState> {
   }
 
   Future<List<Transaction>> _fetchTransactions(LoadMoreTx event) async {
+    final authRepo = AuthRepo.instanceChecked();
     _isLoading = true;
     var i = state.txs.isEmpty ? 0 : state.txs.last.index + 1;
     try {
       final url =
-          '${_authRepo.baseUrl()}/latest/lightning/list-all-tx?index_offset=$i&max_tx=${event.maxTx}&reversed=true';
-      final response = await fetch(Uri.parse(url), _authRepo.token());
+          '${authRepo.baseUrl()}/latest/lightning/list-all-tx?index_offset=$i&max_tx=${event.maxTx}&reversed=true';
+      final response = await fetch(Uri.parse(url), authRepo.token());
       final js = jsonDecode(response.body);
       final txs = <Transaction>[for (final tx in js) Transaction.fromJson(tx)];
       return txs;

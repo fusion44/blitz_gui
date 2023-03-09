@@ -60,9 +60,10 @@ class SmallScreenApp extends StatefulWidget {
   static const String _routeName = 'dashboard';
   static final String _initialLocation = '/dashboard/${_pages.first.id}';
 
-  static GoRouter buildRouter(AuthRepo authRepo) {
+  static GoRouter buildRouter() {
     return GoRouter(
       redirect: (context, state) {
+        final authRepo = AuthRepo.instanceChecked();
         var isLoggedIn = authRepo.isLoggedIn;
         var isLogging = state.location == LoginPage.path;
 
@@ -77,7 +78,7 @@ class SmallScreenApp extends StatefulWidget {
           path: LoginPage.path,
           builder: (context, state) {
             return BlocProvider(
-              create: (c) => AuthBloc(authRepository: authRepo),
+              create: (c) => AuthBloc(),
               child: LoginPage(
                 () => context.goNamed(_initialLocation, params: {}),
               ),
@@ -178,15 +179,15 @@ class _SmallScreenAppState extends State<SmallScreenApp> {
   }
 
   void _initBlocs() async {
-    final authRepo = RepositoryProvider.of<AuthRepo>(context);
+    final authRepo = AuthRepo.instanceChecked();
     _subRepo = SubscriptionRepository.instanceChecked();
 
     _walletLockedChecker = WalletLockedCheckerBloc(_subRepo);
     _hardwareBloc = HardwareInfoBloc(_subRepo, authRepo);
-    _systemBloc = SystemInfoBloc(_subRepo);
+    _systemBloc = SystemInfoBloc();
     _btcInfoBloc = BitcoinInfoBloc(_subRepo);
-    _lnInfoBloc = LightningInfoBloc(authRepo);
-    _listTxBloc = ListTxBloc(authRepo);
+    _lnInfoBloc = LightningInfoBloc();
+    _listTxBloc = ListTxBloc();
 
     _walletLockedChecker.add(StartCheckWalletLocked());
     _hardwareBloc.add(StartListenHardwareInfo());

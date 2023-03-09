@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_login_lite/flutter_login.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 
@@ -43,7 +42,7 @@ class LoginPage extends StatelessWidget {
   }
 
   Future<String> onLogin(LoginData data, BuildContext context) async {
-    final authRepo = RepositoryProvider.of<AuthRepo>(context);
+    final authRepo = AuthRepo.instanceChecked();
     try {
       // TODO: use a login bloc instead
       await SettingsRepository.instance().addEndpoint(data.url);

@@ -9,11 +9,11 @@ part 'system_info_event.dart';
 part 'system_info_state.dart';
 
 class SystemInfoBloc extends Bloc<SystemInfoBaseEvent, SystemInfoBaseState> {
-  final SubscriptionRepository _repo;
+  final SubscriptionRepository _repo = SubscriptionRepository.instanceChecked();
 
   late final StreamSubscription<Map<String, dynamic>>? _sub;
 
-  SystemInfoBloc(this._repo) : super(SystemInfoInitial()) {
+  SystemInfoBloc() : super(SystemInfoInitial()) {
     on<StartListenSystemInfo>((event, emit) {
       _sub = _repo.filteredStream([SseEventTypes.systemInfo])?.listen((event) {
         final i = SystemInfo.fromJson(event['data']);
@@ -29,6 +29,7 @@ class SystemInfoBloc extends Bloc<SystemInfoBaseEvent, SystemInfoBaseState> {
       await _sub?.cancel();
     });
   }
+
   @override
   Future<void> close() async {
     await _sub?.cancel();

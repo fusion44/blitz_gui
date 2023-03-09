@@ -12,9 +12,7 @@ import 'package:small_screen/small_screen.dart';
 import 'package:subscription_repository/subscription_repository.dart';
 
 class BlitzApp extends StatefulWidget {
-  final AuthRepo authRepo;
-
-  const BlitzApp({required this.authRepo, Key? key}) : super(key: key);
+  const BlitzApp({Key? key}) : super(key: key);
 
   @override
   State<BlitzApp> createState() => _BlitzAppState();
@@ -31,8 +29,8 @@ class _BlitzAppState extends State<BlitzApp> {
   @override
   void initState() {
     super.initState();
-
-    if (!widget.authRepo.isLoggedIn) {
+    final authRepo = AuthRepo.instanceChecked();
+    if (!authRepo.isLoggedIn) {
       _router = _buildLoginRouter();
       _goLogin = true;
       _initialized = true;
@@ -47,9 +45,9 @@ class _BlitzAppState extends State<BlitzApp> {
         1024;
 
     if (_big) {
-      _router = BigScreenApp.buildRouter(widget.authRepo);
+      _router = BigScreenApp.buildRouter();
     } else {
-      _router = SmallScreenApp.buildRouter(widget.authRepo);
+      _router = SmallScreenApp.buildRouter();
     }
   }
 
@@ -64,7 +62,7 @@ class _BlitzAppState extends State<BlitzApp> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
-      bloc: AuthBloc(authRepository: widget.authRepo),
+      bloc: AuthBloc(),
       builder: (context, AuthState state) {
         if (state.status == AuthStatus.authenticated) {
           return _wrap(_buildLoggedInState(context));
@@ -91,27 +89,24 @@ class _BlitzAppState extends State<BlitzApp> {
     }
 
     var localizationDelegate = LocalizedApp.of(context).delegate;
-    return RepositoryProvider.value(
-      value: widget.authRepo,
-      child: BlocBuilder<SettingsBloc, SettingsBaseState>(
-        bloc: _sBloc,
-        builder: (context, state) {
-          return MaterialApp.router(
-            routeInformationProvider: _router.routeInformationProvider,
-            routeInformationParser: _router.routeInformationParser,
-            routerDelegate: _router.routerDelegate,
-            title: tr('app.title'),
-            theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              localizationDelegate
-            ],
-            supportedLocales: localizationDelegate.supportedLocales,
-            locale: localizationDelegate.currentLocale,
-          );
-        },
-      ),
+    return BlocBuilder<SettingsBloc, SettingsBaseState>(
+      bloc: _sBloc,
+      builder: (context, state) {
+        return MaterialApp.router(
+          routeInformationProvider: _router.routeInformationProvider,
+          routeInformationParser: _router.routeInformationParser,
+          routerDelegate: _router.routerDelegate,
+          title: tr('app.title'),
+          theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            localizationDelegate
+          ],
+          supportedLocales: localizationDelegate.supportedLocales,
+          locale: localizationDelegate.currentLocale,
+        );
+      },
     );
   }
 
@@ -132,47 +127,39 @@ class _BlitzAppState extends State<BlitzApp> {
 
         return true;
       },
-      child: MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider.value(value: widget.authRepo),
-          RepositoryProvider.value(value: _subRepo),
-        ],
-        child: SizeChangedLayoutNotifier(child: child),
-      ),
+      child: SizeChangedLayoutNotifier(child: child),
     );
   }
 
   Widget _buildLoggedOutState() {
     var localizationDelegate = LocalizedApp.of(context).delegate;
-    return RepositoryProvider.value(
-      value: widget.authRepo,
-      child: BlocBuilder<SettingsBloc, SettingsBaseState>(
-        bloc: _sBloc,
-        builder: (context, state) {
-          return MaterialApp.router(
-            routeInformationProvider: _router.routeInformationProvider,
-            routeInformationParser: _router.routeInformationParser,
-            routerDelegate: _router.routerDelegate,
-            title: tr('app.title'),
-            theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              localizationDelegate
-            ],
-            supportedLocales: localizationDelegate.supportedLocales,
-            locale: localizationDelegate.currentLocale,
-          );
-        },
-      ),
+    return BlocBuilder<SettingsBloc, SettingsBaseState>(
+      bloc: _sBloc,
+      builder: (context, state) {
+        return MaterialApp.router(
+          routeInformationProvider: _router.routeInformationProvider,
+          routeInformationParser: _router.routeInformationParser,
+          routerDelegate: _router.routerDelegate,
+          title: tr('app.title'),
+          theme: state.darkTheme ? ThemeData.dark() : ThemeData.light(),
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            localizationDelegate
+          ],
+          supportedLocales: localizationDelegate.supportedLocales,
+          locale: localizationDelegate.currentLocale,
+        );
+      },
     );
   }
 
   void _initSubRepo() async {
     _subRepo = SubscriptionRepository.instance();
+    final authRepo = AuthRepo.instanceChecked();
     await _subRepo.init(
-      widget.authRepo.baseUrl(),
-      widget.authRepo.token(),
+      authRepo.baseUrl(),
+      authRepo.token(),
     );
     setState(() => _initialized = true);
   }

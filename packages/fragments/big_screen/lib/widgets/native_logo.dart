@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
 
-class RaspiBlitzLogo extends StatelessWidget {
+class NativeLogo extends StatelessWidget {
   final String version;
-  const RaspiBlitzLogo({Key? key, required this.version}) : super(key: key);
+  const NativeLogo({Key? key, required this.version}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Row(
       children: [
-        SizedBox(
+        const SizedBox(
           height: 36,
-          child: Image.asset('assets/RaspiBlitz_Logo_Icon_Negative.png'),
+          child: Text(
+            'Na',
+            style: TextStyle(
+              color: Colors.orangeAccent,
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         const SizedBox(width: 8.0),
         Column(
           children: [
             Text(
-              'RaspiBlitz',
+              'NativeAPI',
               style: theme.textTheme.titleLarge!
                   .copyWith(fontWeight: FontWeight.bold),
             ),

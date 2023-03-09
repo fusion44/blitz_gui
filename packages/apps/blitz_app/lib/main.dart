@@ -28,14 +28,14 @@ void main() async {
     supportedLocales: ['en'],
   );
 
-  final authRepo = AuthRepo();
+  final authRepo = AuthRepo.instance();
   await authRepo.init();
 
   runApp(
     LocalizedApp(
       delegate,
-      RestartWidget(
-        child: BlitzApp(authRepo: authRepo),
+      const RestartWidget(
+        child: BlitzApp(),
       ),
     ),
   );
