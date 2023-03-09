@@ -1,24 +1,23 @@
 import 'dart:async';
 
 import 'package:common/common.dart';
+import 'package:common_blocs/src/system_info/repository/system_info_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:subscription_repository/subscription_repository.dart';
 
 part 'system_info_event.dart';
 part 'system_info_state.dart';
 
 class SystemInfoBloc extends Bloc<SystemInfoBaseEvent, SystemInfoBaseState> {
-  final SubscriptionRepository _repo = SubscriptionRepository.instanceChecked();
-
-  late final StreamSubscription<Map<String, dynamic>>? _sub;
+  late final StreamSubscription? _sub;
 
   SystemInfoBloc() : super(SystemInfoInitial()) {
+    final repo = SystemInfoRepo.instance();
     on<StartListenSystemInfo>((event, emit) {
-      _sub = _repo.filteredStream([SseEventTypes.systemInfo])?.listen((event) {
-        final i = SystemInfo.fromJson(event['data']);
-        add(_SystemInfoUpdate(i));
-      });
+      repo.latest != null ? emit(SystemInfoState(repo.latest!)) : null;
+
+      _sub = repo.systemInfoStream
+          .listen((event) => add(_SystemInfoUpdate(event)));
     });
 
     on<_SystemInfoUpdate>((event, emit) {

@@ -57,21 +57,21 @@ class SystemInfo {
     }
 
     return SystemInfo(
-      json['alias'],
-      json['color'],
+      json['alias'] ?? '',
+      json['color'] ?? '',
       json['platform'] == 'raspiblitz'
           ? APIPlatform.raspiblitz
           : APIPlatform.native,
-      json['platform_version'],
-      json['api_version'],
-      json['health'],
+      json['platform_version'] ?? '',
+      json['api_version'] ?? '',
+      json['health'] ?? '',
       messages,
-      json['tor_web_ui'],
-      json['tor_api'],
-      json['lan_web_ui'],
-      json['lan_api'],
-      json['ssh_address'],
-      json['chain'],
+      json['tor_web_ui'] ?? '',
+      json['tor_api'] ?? '',
+      json['lan_web_ui'] ?? '',
+      json['lan_api'] ?? '',
+      json['ssh_address'] ?? '',
+      json['chain'] ?? '',
     );
   }
 }
