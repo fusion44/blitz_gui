@@ -20,6 +20,9 @@ class BigScreenApp extends StatefulWidget {
       BlocProvider<AuthBloc>(
         create: (context) => AuthBloc(),
       ),
+      BlocProvider<SystemInfoBloc>(
+        create: (_) => SystemInfoBloc()..add(StartListenSystemInfo()),
+      ),
       if (page == Pages.transactions || page == Pages.dashboard)
         BlocProvider<LightningInfoBloc>(
           create: (context) => LightningInfoBloc(),
@@ -103,8 +106,8 @@ class BigScreenApp extends StatefulWidget {
           name: Pages.channels.name,
           pageBuilder: (context, state) {
             return NoTransitionPage(
-              child: BlocProvider(
-                create: (context) => AuthBloc(),
+              child: BigScreenApp._provide(
+                Pages.channels,
                 child: BigScreenApp(Pages.channels, key: state.pageKey),
               ),
             );

@@ -22,6 +22,7 @@ const blitzBlue700 = Color(0xff0082fb);
 const blitzBlue200 = Color(0xff72deff);
 const blitzBlue100 = Color(0xffb2f2ff);
 const blitzErrorColor = blitzOrange300;
+const blitzHeaderTextColor = Colors.white60;
 
 const blitzConfirmedBalance = blitzPrimaryGreen700;
 const blitzUnconfirmedBalance = blitzPrimaryGreen500;

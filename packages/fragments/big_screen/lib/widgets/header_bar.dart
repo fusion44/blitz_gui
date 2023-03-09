@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+import 'package:big_screen/widgets/native_logo.dart';
 import 'package:common/common.dart';
+import 'package:common_blocs/common_blocs.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'menu_button.dart';
 import 'raspiblitz_logo.dart';
@@ -33,7 +36,7 @@ class HeaderBar extends StatelessWidget {
           children: [
             ConstrainedBox(
               constraints: const BoxConstraints(minWidth: 200),
-              child: const RaspiBlitzLogo(),
+              child: _buildLogo(),
             ),
             MenuButton(
               onPressed: () => onPressed(Pages.dashboard),
@@ -114,6 +117,24 @@ class HeaderBar extends StatelessWidget {
             ),
           ],
         );
+      },
+    );
+  }
+
+  Widget _buildLogo() {
+    return BlocBuilder<SystemInfoBloc, SystemInfoBaseState>(
+      builder: (context, state) {
+        if (state is SystemInfoState &&
+            state.info.platform == APIPlatform.raspiblitz) {
+          return RaspiBlitzLogo(version: state.info.platformVersion);
+        }
+
+        if (state is SystemInfoState &&
+            state.info.platform == APIPlatform.native) {
+          return NativeLogo(version: state.info.platformVersion);
+        }
+
+        return const Text('Unknown platform');
       },
     );
   }
