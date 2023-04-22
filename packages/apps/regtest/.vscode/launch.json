@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "headless",
+            "request": "launch",
+            "type": "dart",
+            "console": "terminal",
+            "program": "headless/bin/test_api.dart"
+        },
+        {
+            "name": "gui",
+            "request": "launch",
+            "type": "dart",
+            "program": "gui/lib/main.dart"
+        },
+        {
+            "name": "gui (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "program": "gui/lib/main.dart"
+        },
+        {
+            "name": "gui (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "program": "gui/lib/main.dart"
+        }
+    ]
+}

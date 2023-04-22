@@ -1,0 +1,165 @@
+version: "3.7"
+services:
+  # REDIS
+  # ================================
+  redis:
+    image: redis:7.0.5
+    restart: on-failure
+    expose:
+      - 6379
+
+  # BITCOIND
+  # ================================
+  bitcoind:
+    image: boltz/bitcoin-core:24.0.1
+    command: "-regtest -fallbackfee=0.00000253 -zmqpubrawtx=tcp://0.0.0.0:29000 -zmqpubrawblock=tcp://0.0.0.0:29001 -txindex -rpcallowip=0.0.0.0/0 -rpcbind=0.0.0.0 -rpcuser=regtester -rpcpassword=regtester"
+    expose:
+      - 18443
+    ports:
+      - 18443:18443
+      
+  # LND 1
+  # ================================
+  lnd1:
+    depends_on:
+      - bitcoind
+    image: boltz/lnd:0.16.0-beta
+    restart: on-failure
+    entrypoint: "sh -c 'sleep 20; lnd --alias=lnd1 --listen=lnd1:9735 --rpclisten=lnd1:10009 --restlisten=lnd1:8081 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.zmqpubrawtx=bitcoind:29000 --bitcoind.zmqpubrawblock=bitcoind:29001 --bitcoind.rpcuser=regtester --bitcoind.rpcpass=regtester --noseedbackup --protocol.wumbo-channels --tlsextraip=127.0.0.1 --tlsextraip=0.0.0.0 --tlsextradomain=localhost --tlsextradomain=lnd1'"
+    ports:
+      - 8081:8081
+      - 10009:10009
+    volumes:
+      - /tmp/regtest-data/lnd1:/root/.lnd/
+
+  lnd1-blitz:
+    depends_on:
+      - redis
+      - lnd1
+    image: blitz_api:latest
+    restart: on-failure
+    entrypoint: "sh /code/entrypoint.sh"
+    ports:
+      - 8822:80
+    volumes:
+      - /tmp/regtest-data:/root/data
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      LN_BACKEND: lnd1
+
+  # LND 2
+  # ================================
+  lnd2:
+    depends_on:
+      - bitcoind
+    image: boltz/lnd:0.16.0-beta
+    restart: on-failure
+    entrypoint: "sh -c 'sleep 20; lnd --alias=lnd2 --listen=lnd2:9735 --rpclisten=lnd2:10009 --restlisten=lnd2:8081 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.zmqpubrawtx=bitcoind:29000 --bitcoind.zmqpubrawblock=bitcoind:29001 --bitcoind.rpcuser=regtester --bitcoind.rpcpass=regtester --noseedbackup --protocol.wumbo-channels --tlsextraip=127.0.0.1 --tlsextraip=0.0.0.0 --tlsextradomain=localhost --tlsextradomain=lnd2'"
+    volumes:
+      - /tmp/regtest-data/lnd2:/root/.lnd/
+
+  lnd2-blitz:
+    depends_on:
+      - redis
+      - lnd2
+    image: blitz_api:latest
+    restart: on-failure
+    entrypoint: "sh /code/entrypoint.sh"
+    ports:
+      - 8823:80
+    volumes:
+      - /tmp/regtest-data:/root/data
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 1
+      LN_BACKEND: lnd2
+
+  # LND 3
+  # ================================
+  lnd3:
+    depends_on:
+      - bitcoind
+    image: boltz/lnd:0.16.0-beta
+    restart: on-failure
+    entrypoint: "sh -c 'sleep 20; lnd --alias=lnd3 --listen=lnd3:9735 --rpclisten=lnd3:10009 --restlisten=lnd3:8081 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.zmqpubrawtx=bitcoind:29000 --bitcoind.zmqpubrawblock=bitcoind:29001 --bitcoind.rpcuser=regtester --bitcoind.rpcpass=regtester --noseedbackup --protocol.wumbo-channels --tlsextraip=127.0.0.1 --tlsextraip=0.0.0.0 --tlsextradomain=localhost --tlsextradomain=lnd3'"
+    volumes:
+      - /tmp/regtest-data/lnd3:/root/.lnd/
+
+  lnd3-blitz:
+    depends_on:
+      - redis
+      - lnd3
+    image: blitz_api:latest
+    restart: on-failure
+    entrypoint: "sh /code/entrypoint.sh"
+    ports:
+      - 8824:80
+    volumes:
+      - /tmp/regtest-data:/root/data
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 2
+      LN_BACKEND: lnd3
+
+  # CLN 1 - gRPC
+  # ================================
+  cln1:
+    depends_on:
+      - bitcoind
+    image: boltz/c-lightning:23.02.2
+    entrypoint: "sh -c 'sleep 15 && lightningd --alias cln1 --large-channels --network regtest --bind-addr=0.0.0.0:9735 --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=18443 --bitcoin-rpcuser=regtester --bitcoin-rpcpassword=regtester --grpc-port=11109'"
+    ports:
+      - 11109:11109
+    volumes:
+      - /tmp/regtest-data/cln1:/root/.lightning/
+    environment:
+      RUST_BACKTRACE: 1
+
+  cln1-blitz:
+    depends_on:
+      - redis
+      - cln1
+    image: blitz_api:latest
+    restart: on-failure
+    entrypoint: "sh /code/entrypoint.sh"
+    ports:
+      - 8825:80
+    volumes:
+      - /tmp/regtest-data:/root/data
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 3
+      LN_BACKEND: cln1
+
+  # CLN 2 - JSON RPC
+  # ================================
+  cln2:
+    depends_on:
+      - bitcoind
+    image: boltz/c-lightning:23.02.2
+    entrypoint: "sh -c 'sleep 15 && lightningd --alias cln2 --large-channels --network regtest --bind-addr=0.0.0.0:9735 --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=18443 --bitcoin-rpcuser=regtester --bitcoin-rpcpassword=regtester'"
+    volumes:
+      - /tmp/regtest-data/cln2:/root/.lightning/
+
+  cln2-blitz:
+    depends_on:
+      - redis
+      - cln2
+    image: blitz_api:latest
+    restart: on-failure
+    entrypoint: "sh /code/entrypoint.sh"
+    ports:
+      - 8826:80
+    volumes:
+      - /tmp/regtest-data:/root/data
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 4
+      LN_BACKEND: cln2
+
