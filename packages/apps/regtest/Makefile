@@ -14,7 +14,7 @@ refresh-api-image:
 	sh ./core/scripts/refresh_blitz_api_image.sh
 
 run-gui-linux:
-	flutter run
+	flutter run -d linux -t ./gui/lib/main.dart
 
 test-headless:
 	env REGTEST-HEADLESS=1 dart ./headless/bin/test_api.dart
