@@ -1,0 +1,43 @@
+name: blitz_gui
+repository: https://github.com/fusion44/blitz_gui
+
+packages:
+  - "."
+  - "apps/*"
+  - "packages/*"
+  - "regtest/*"
+
+ide:
+  intellij: false
+
+command:
+  version:
+    # Only allow versioning to happen on main branch.
+    branch: main
+    # Generates a link to a prefilled GitHub release creation page.
+    releaseUrl: true
+
+scripts:
+  clean:
+    exec: flutter clean && melos clean
+    description: Run `flutter clean` for all packages.
+
+  upgrade-deps:
+    exec: flutter pub upgrade
+    description: Run `flutter upgrade` for all packages.
+
+  lint:all:
+    run: melos run analyze && melos run format
+    description: Run all static analysis checks.
+
+  analyze:
+    run: flutter analyze --fatal-infos
+    exec:
+      concurrency: 5
+    description: Run `flutter analyze` for all packages.
+
+  generate:
+    exec: flutter pub run build_runner build --delete-conflicting-outputs
+    description: Run a build_runner build.
+    packageFilters:
+      scope: '*list_transactions*'

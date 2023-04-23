@@ -1,123 +1,15 @@
-name: blitz_gui
-description: A new Flutter project.
-
-# The following line prevents the package from being accidentally published to
-# pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: "none" # Remove this line if you wish to publish to pub.dev
-
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.0.0+1
+name: blitz_gui_workspace
 
 environment:
-  sdk: ">=2.15.0 <3.0.0"
-
-dependencies:
-  flutter:
-    sdk: flutter
-  
-  
-  authentication:
-    path: packages/authentication
-  big_screen:
-    path: packages/fragments/big_screen
-  small_screen:
-    path: packages/fragments/small_screen
+  sdk: '>=2.18.0 <3.0.0'
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^2.0.1
-  dart_console: ^1.0.0
-  watcher: ^1.0.1
+  melos: ^3.0.1
   import_sorter:
     git: https://github.com/fusion44/import_sorter
-
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter.
-flutter:
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
-  uses-material-design: true
-
-  assets:
-    - assets/i18n/
-
-    # flags
-    - assets/flags/de.png
-    - assets/flags/gb.png
-    - assets/flags/no.png
-
-    # icons
-    - assets/RaspiBlitz_Logo_Icon_Negative.png
-    - assets/icons/link.png
-    - assets/icons/lightning.png
-    - assets/icons/satoshi-v2.png
-
-  fonts:
-    - family: RobotoMono
-      fonts:
-        - asset: assets/fonts/RobotoMono/RobotoMono-Thin.ttf
-          weight: 100
-        - asset: assets/fonts/RobotoMono/RobotoMono-ThinItalic.ttf
-          weight: 100
-          style: italic
-        - asset: assets/fonts/RobotoMono/RobotoMono-ExtraLight.ttf
-          weight: 200
-        - asset: assets/fonts/RobotoMono/RobotoMono-ExtraLightItalic.ttf
-          weight: 200
-          style: italic
-        - asset: assets/fonts/RobotoMono/RobotoMono-Light.ttf
-          weight: 300
-        - asset: assets/fonts/RobotoMono/RobotoMono-LightItalic.ttf
-          weight: 300
-          style: italic
-        - asset: assets/fonts/RobotoMono/RobotoMono-Italic.ttf
-          weight: 400
-          style: italic
-        - asset: assets/fonts/RobotoMono/RobotoMono-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/RobotoMono/RobotoMono-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/RobotoMono/RobotoMono-MediumItalic.ttf
-          weight: 500
-          style: italic
-        - asset: assets/fonts/RobotoMono/RobotoMono-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/RobotoMono/RobotoMono-SemiBoldItalic.ttf
-          weight: 600
-          style: italic
-        - asset: assets/fonts/RobotoMono/RobotoMono-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/RobotoMono/RobotoMono-BoldItalic.ttf
-          weight: 700
-          style: italic
-
-    - family: Eczar
-      fonts:
-        - asset: assets/fonts/eczar/Eczar-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/eczar/Eczar-ExtraBold.ttf
-          weight: 800
-        - asset: assets/fonts/eczar/Eczar-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/eczar/Eczar-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/eczar/Eczar-SemiBold.ttf
-          weight: 600
 
 import_sorter:
   comments: false
   additional-paths:
+    - apps
     - packages

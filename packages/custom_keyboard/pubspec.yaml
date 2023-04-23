@@ -1,5 +1,6 @@
 name: custom_keyboard
 description: A software keyboard for IOT devices.
+version: 0.5.1
 publish_to: "none"
 
 environment:

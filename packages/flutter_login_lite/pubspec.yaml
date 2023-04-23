@@ -1,5 +1,6 @@
 name: flutter_login_lite
 description: A login widget with simple login functionalities (based on https://github.com/NearHuscarl/flutter_login)
+version: 0.5.1
 publish_to: "none"
 
 environment:
@@ -14,11 +15,10 @@ dependencies:
   flutter_signin_button: ^2.0.0
   quiver: ^3.2.1
   url_launcher: ^6.1.9
-  
-  common:
-    path: ../common
-  settings_fragment:
-    path: ../fragments/settings
+
+  # locals  
+  common: ^0.5.1
+  settings_fragment: ^0.5.1
     
 dev_dependencies:
   flutter_test:

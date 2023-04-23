@@ -1,5 +1,6 @@
 name: authentication
 description: Blitz GUI authentication package
+version: 0.5.1
 publish_to: "none"
 
 environment:
@@ -13,12 +14,10 @@ dependencies:
   formz: ^0.4.1
   equatable: ^2.0.5
 
-  common:
-    path: ../common
-  flutter_login_lite:
-    path: ../flutter_login_lite
-  settings_fragment:
-    path: ../fragments/settings
+  # locals
+  common: ^0.5.1 
+  flutter_login_lite: ^0.5.1 
+  settings_fragment: ^0.5.1 
 
 dev_dependencies:
   flutter_test:

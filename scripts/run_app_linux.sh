@@ -4,11 +4,12 @@ app_name="$1"
 mode="$2"
 
 if [ -z "$app_name" ]; then
-    echo "Please provide an app name: 'blitz_app' or 'setup_app'"
+    echo "Please provide an app name: 'blitz_app', 'setup_app' or 'regtest_app'"
     exit 1
 fi
 
-if [ "$app_name" != "blitz_app" ] && [ "$app_name" != "setup_app" ]; then
+
+if [ "$app_name" != "blitz_app" ] && [ "$app_name" != "setup_app" ] && [ "$app_name" != "regtest_app" ]; then
     echo "App name $app_name not found"
     exit 1
 fi
@@ -17,7 +18,14 @@ if [ -z "$mode" ]; then
     mode="debug"
 fi
 
-cd "packages/apps/$app_name"
+path="apps/$app_name"
+if [ "$app_name" == "regtest_app" ]; then
+    path="regtest/app"
+fi
+
+echo "Running $app_name in $path in $mode mode"
+
+cd $path
 
 # switch for mode variable with three options: null, profile, release
 if [ "$mode" == "profile" ]; then

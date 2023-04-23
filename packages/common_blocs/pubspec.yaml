@@ -1,5 +1,6 @@
 name: common_blocs
 description: Blitz GUI package which contains all less specialized Blocs that can be used in many places.
+version: 0.5.1
 publish_to: "None"
 
 environment:
@@ -13,12 +14,10 @@ dependencies:
   flutter_bloc: ^8.1.2
   bloc_concurrency: ^0.2.1
 
-  authentication:
-    path: ../authentication
-  common:
-    path: ../common
-  subscription_repository:
-    path: ../subscription_repository
+  # locals
+  authentication: ^0.5.1
+  common: ^0.5.1
+  subscription_repository: ^0.5.1
 
 dev_dependencies:
   flutter_test:

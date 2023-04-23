@@ -1,5 +1,6 @@
 name: sse_client
 description: An sse client based on https://pub.dev/packages/flutter_client_sse
+version: 0.5.1
 publish_to: "none"
 
 environment:
@@ -10,8 +11,8 @@ dependencies:
     sdk: flutter
   http: ^0.13.5
 
-  common:
-    path: ../common
+  # locals
+  common: ^0.5.1
 
 dev_dependencies:
   flutter_test:
