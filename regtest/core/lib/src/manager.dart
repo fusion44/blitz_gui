@@ -276,10 +276,10 @@ class NetworkManager {
 
         iterations++;
       }
-      print("Funds arrived at all nodes after $iterations iterations");
+      logMessage("Funds arrived at all nodes after $iterations iterations");
     }
 
-    print("Funding done");
+    logMessage("Funding done");
   }
 
   Future<void> applyNetwork([String fileName = 'net-1.json']) async {
@@ -369,6 +369,8 @@ class NetworkManager {
         await Future.delayed(Duration(seconds: delayBetweenBlocks));
         await doMineBlocks(1);
       }
+
+      return;
     }
 
     if (printStatus) print("Mining $numBlocks blocks");
