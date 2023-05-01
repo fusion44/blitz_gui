@@ -8,8 +8,6 @@ import 'manager.dart';
 import 'model_extensions.dart';
 import 'utils.dart';
 
-export 'btc_value.dart';
-
 class WalletBalances {
   Map<LnNode, WalletBalance> balances = {};
 

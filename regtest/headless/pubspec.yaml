@@ -12,6 +12,7 @@ dependencies:
   path: ^1.8.3
 
   # locals
+  common: ^0.5.1
   regtest_core: ^0.5.1
   blitz_api_client: ^0.5.1
 

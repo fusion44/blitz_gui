@@ -149,6 +149,8 @@ Future<void> _validateChanIsOpen({
 
 Future<void> validateOpenChannel(NetworkManager manager) async {
   printGroupHeader("open-channel opens a channel with sufficient funds");
+  // make sure all funds are confirmed
+  await manager.waitOnchainConfirmed();
 
   final before = await manager.getWalletBalances();
 

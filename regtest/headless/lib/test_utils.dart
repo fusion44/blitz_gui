@@ -3,6 +3,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:common/common.dart' show BtcValue;
 import 'package:regtest_core/core.dart';
 
 enum TerminalColors { red, green, yellow, blue, magenta, cyan, white }
@@ -62,11 +63,15 @@ class N {
   static LnNode? CLNgRPC;
   static LnNode? CLNjRPC;
   static LnNode? LNDgRPC;
+  static LnNode? LND2gRPC;
+  static LnNode? LND3gRPC;
 
   static void set(Map<NodeId, LnNode> nodeMap) {
     N.CLNgRPC = nodeMap[NodeId.cln1];
     N.CLNjRPC = nodeMap[NodeId.cln2];
     N.LNDgRPC = nodeMap[NodeId.lnd1];
+    N.LND2gRPC = nodeMap[NodeId.lnd2];
+    N.LND3gRPC = nodeMap[NodeId.lnd3];
   }
 }
 
@@ -174,13 +179,13 @@ void printWalletBalanceComparison(WalletBalances before, WalletBalances after) {
 
     print("Node: ${k.id}");
     print(
-      "  total:  ${formatAmount(b.onchainTotalBalance, Denomination.btc)} -> ${formatAmount(a.onchainTotalBalance, Denomination.btc)}",
+      "  total:  ${BtcValue.fromSats(b.onchainTotalBalance).formatted()} -> ${BtcValue.fromSats(a.onchainTotalBalance).formatted()}",
     );
     print(
-      "  confi:   ${formatAmount(b.onchainConfirmedBalance, Denomination.btc)} -> ${formatAmount(a.onchainConfirmedBalance, Denomination.btc)}",
+      "  confi:   ${BtcValue.fromSats(b.onchainConfirmedBalance).formatted()} -> ${BtcValue.fromSats(a.onchainConfirmedBalance).formatted()}",
     );
     print(
-      "  unconfi: ${formatAmount(b.onchainUnconfirmedBalance, Denomination.btc)} -> ${formatAmount(a.onchainUnconfirmedBalance, Denomination.btc)}",
+      "  unconfi: ${BtcValue.fromSats(b.onchainUnconfirmedBalance).formatted()} -> ${BtcValue.fromSats(a.onchainUnconfirmedBalance).formatted()}",
     );
   }
 }

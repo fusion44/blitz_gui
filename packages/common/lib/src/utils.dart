@@ -11,6 +11,26 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import 'constants.dart';
 
+extension StringExtensions on String {
+  /// Inserts a character into the string at the specified position.
+  ///
+  /// If [pos] is negative, the character is inserted from the end of the string.
+  ///
+  /// Throws a [RangeError] if the [pos] is out of bounds of the original string.
+  insertCharAtPosition(int pos, String char) {
+    int length = this.length;
+    if (pos < -length - 1 || pos > length) {
+      throw RangeError("Position is out of bounds of the original string");
+    }
+
+    if (pos < 0) {
+      pos = length + pos;
+    }
+
+    return substring(0, pos) + char + substring(pos);
+  }
+}
+
 /// Translates a string with the given [key] and the [args].
 String tr(String key, [Map<String, dynamic> args = const <String, dynamic>{}]) {
   return translate(key, args: args);

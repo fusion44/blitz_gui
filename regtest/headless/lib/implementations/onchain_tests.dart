@@ -1,4 +1,5 @@
 import 'package:blitz_api_client/blitz_api_client.dart';
+import 'package:common/common.dart' show BtcValue;
 import 'package:dio/dio.dart';
 import 'package:regtest_core/core.dart';
 

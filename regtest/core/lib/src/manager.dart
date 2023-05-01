@@ -4,7 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:blitz_api_client/blitz_api_client.dart';
+import 'package:blitz_api_client/blitz_api_client.dart' as client;
 
 import 'commands/bitcoind.dart';
 import 'commands/docker.dart';
@@ -261,6 +261,17 @@ class NetworkManager {
     }
 
     if (autoMine) {
+      try {
+        await compareAndWaitForFunds(before: before);
+      } catch (e) {
+        logMessage("Unable to fund Nodes: ${e.toString()}");
+        return;
+      }
+    }
+
+    logMessage("Funding done");
+  }
+
   /// Wait until all nodes have all funds confirmed
   Future<int> waitOnchainConfirmed({int maxIterations = 30}) async {
     var balances = await getWalletBalances();
@@ -282,18 +293,28 @@ class NetworkManager {
     return iterations;
   }
 
-
-        await mineBlocks(1);
-        await Future.delayed(const Duration(seconds: 2));
-        final after = await getWalletBalances();
-        isHigher = after.areAllHigherThan(before, confirmedOnly: true);
-
-        iterations++;
+  /// Wait until all nodes have all funds confirmed by comparing
+  /// to a previous balance
+  Future<void> compareAndWaitForFunds({
+    required WalletBalances before,
+    int maxIterations = 25,
+  }) async {
+    int iterations = 0;
+    bool isHigher = false;
+    while (!isHigher) {
+      if (iterations > maxIterations) {
+        throw StateError("Nodes not funded after $maxIterations iterations");
       }
-      logMessage("Funds arrived at all nodes after $iterations iterations");
+
+      await mineBlocks(1);
+      await Future.delayed(const Duration(seconds: 2));
+      final after = await getWalletBalances();
+      isHigher = after.areAllHigherThan(before, confirmedOnly: true);
+
+      iterations++;
     }
 
-    logMessage("Funding done");
+    logMessage("Funds arrived at all nodes after $iterations iterations");
   }
 
   Future<void> applyNetwork([String fileName = 'net-1.json']) async {
@@ -334,12 +355,42 @@ class NetworkManager {
   Future<int> sweepAllChannels({bool autoMine = false}) async {
     print("Sweeping all channels");
 
+    final Map<LnNode, List<RegtestChannel>> channels = {};
     int numClosed = 0;
-    for (final n in nodeList) {
+    for (var n in nodeList) {
+      // get all channels before closing
+      channels[n] = await n.fetchChannels();
+
+      // close the channels
       numClosed += await n.sweepChannels();
+
+      // We need to wait a bit for the nodes to catch up
+      await Future.delayed(Duration(seconds: 10));
     }
 
-    if (autoMine && numClosed > 0) await mineBlocks(15, delayBetweenBlocks: 1);
+    for (var n in nodeList) {
+      if (channels.containsKey(n)) {
+        for (var x in channels[n]!) {
+          print("active: ${x.channel.active}");
+        }
+      }
+    }
+
+    if (autoMine && numClosed > 0) {
+      await mineBlocks(1);
+      await Future.delayed(const Duration(seconds: 2));
+
+      for (final n in nodeList) {
+        final newState = await n.fetchChannels();
+        final olsState = channels[n]!;
+        final diff = newState.length - olsState.length;
+        if (diff != numClosed) {
+          print(
+            "Node ${n.id} has ${newState.length} channels, but $numClosed were closed",
+          );
+        }
+      }
+    }
 
     return numClosed;
   }
@@ -393,14 +444,14 @@ class NetworkManager {
   }
 
   Future<WalletBalances> getWalletBalances() async {
-    final futures = <Future<WalletBalance>>[];
+    final futures = <Future<client.WalletBalance>>[];
     for (final n in nodeList) {
       futures.add(n.walletBalance());
     }
 
-    final b = await Future.wait<WalletBalance>(futures);
+    final b = await Future.wait<client.WalletBalance>(futures);
 
-    final balances = <LnNode, WalletBalance>{};
+    final balances = <LnNode, client.WalletBalance>{};
     for (var i = 0; i < b.length; i++) {
       balances[nodeList[i]] = b[i];
     }
