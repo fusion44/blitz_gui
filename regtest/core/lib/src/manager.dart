@@ -261,13 +261,27 @@ class NetworkManager {
     }
 
     if (autoMine) {
-      int iterations = 0;
-      bool isHigher = false;
-      while (!isHigher) {
-        if (iterations > 25) {
-          print("Nodes not funded after 25 iterations");
-          return;
-        }
+  /// Wait until all nodes have all funds confirmed
+  Future<int> waitOnchainConfirmed({int maxIterations = 30}) async {
+    var balances = await getWalletBalances();
+    var iterations = 0;
+
+    while (balances.haveUnconfirmedFunds) {
+      await mineBlocks(1);
+      await Future.delayed(Duration(seconds: 1));
+      balances = await getWalletBalances();
+
+      if (iterations > maxIterations) {
+        throw StateError(
+            "Wallet balances not confirmed after $maxIterations iterations");
+      }
+
+      iterations++;
+    }
+
+    return iterations;
+  }
+
 
         await mineBlocks(1);
         await Future.delayed(const Duration(seconds: 2));

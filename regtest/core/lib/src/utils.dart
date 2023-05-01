@@ -3,18 +3,12 @@
 library utils;
 
 import 'dart:async';
-import 'dart:io' show Directory, File, Platform;
+import 'dart:io' show Platform;
 import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:english_words/english_words.dart';
-import 'package:intl/intl.dart';
-import 'package:path/path.dart' as path;
-
-import 'commands/bitcoind.dart';
-import 'constants.dart';
-import 'manager.dart';
-import 'models.dart';
+import 'package:regtest_core/core.dart';
 
 int validIntOrZero(String text) {
   final val = int.tryParse(text.replaceAll(",", ""));
@@ -169,18 +163,6 @@ ${e.response?.data}
 ${e.stackTrace}
 $footer''',
   );
-}
-
-String formatAmount(int amount, [Denomination d = Denomination.msats]) {
-  if (d == Denomination.btc) {
-    final f = NumberFormat("##,##0.00000000", "en").format(amount);
-    return "$f BTC";
-    // return NumberFormat("##,##0.00000000", "en").format(amount);
-  } else if (d == Denomination.sats) {
-    return NumberFormat("#,###,###,###,###", "en").format(amount);
-  }
-
-  return NumberFormat('#,##0.000', 'en_US').format(amount);
 }
 
 Map<String, String> envVars = Platform.environment;

@@ -30,6 +30,7 @@ extension WalletBalanceExtensions on WalletBalance {
   bool get hasNoOnchainFunds => onchainTotalBalance == 0;
   bool get hasChannelFunds => totalChannelBalance > 0;
   bool get hasNoChannelFunds => totalChannelBalance == 0;
+  bool get hasUnconfirmedFunds => onchainUnconfirmedBalance > 0;
 
   // returns true if balances are higher than the other balance object
   bool isHigherThan(WalletBalance other, {bool confirmedOnly = false}) {

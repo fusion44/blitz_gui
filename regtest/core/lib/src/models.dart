@@ -8,6 +8,8 @@ import 'manager.dart';
 import 'model_extensions.dart';
 import 'utils.dart';
 
+export 'btc_value.dart';
+
 class WalletBalances {
   Map<LnNode, WalletBalance> balances = {};
 
@@ -83,6 +85,14 @@ class WalletBalances {
     return false;
   }
 
+  bool get haveUnconfirmedFunds {
+    for (final balance in balances.values) {
+      if (balance.hasUnconfirmedFunds) return true;
+    }
+
+    return false;
+  }
+
   bool get haveNoOnchainFunds {
     for (final balance in balances.values) {
       if (balance.hasOnchainFunds) return false;
@@ -114,7 +124,7 @@ class LnNode {
   Implementation implementation = Implementation.empty;
   bool singleChild = false;
   bool multiParent = false;
-  List<Channel> channels = [];
+  List<RegtestChannel> channels = [];
   late BlitzApiClient _api;
   String? _token;
   bool _bootstrapped = false;
@@ -202,7 +212,7 @@ class LnNode {
       }
 
       lnInfo = lnInfoResp.data!;
-      await _updateChannelData();
+      await fetchChannels();
       _bootstrapped = true;
     } on DioError catch (e) {
       printDioError(
@@ -300,7 +310,7 @@ class LnNode {
     return '';
   }
 
-  Future<void> closeChannel(Channel c) async {
+  Future<void> closeChannel(RegtestChannel c) async {
     try {
       final res = await _api
           .getLightningApi()
@@ -362,7 +372,7 @@ class LnNode {
     return false;
   }
 
-  Future<List<Channel>> fetchChannels() async {
+  Future<List<RegtestChannel>> fetchChannels() async {
     try {
       final res = await _api
           .getLightningApi()
@@ -380,16 +390,18 @@ class LnNode {
             );
           }
 
-          return Channel(
+          return RegtestChannel(
             e.channelId!,
             this,
             e.balanceLocal!,
             r,
             e.balanceRemote!,
+            channel: e,
           );
         },
       ).toList();
 
+      channels = d;
       return d;
     } catch (e) {
       if (e is DioError) {
@@ -431,7 +443,7 @@ class LnNode {
   }
 
   Future<int> sweepChannels() async {
-    await _updateChannelData();
+    await fetchChannels();
 
     var numClosed = 0;
     for (var c in channels) {
@@ -444,30 +456,42 @@ class LnNode {
 
     return numClosed;
   }
-
-  Future<void> _updateChannelData() async => channels = await fetchChannels();
 }
 
-class Channel {
+class RegtestChannel {
   final String id;
   final LnNode from;
   final int ourFunds;
   final LnNode to;
   final int otherFunds;
+  final Channel channel;
 
-  Channel(this.id, this.from, this.ourFunds, this.to, this.otherFunds);
+  RegtestChannel(
+    this.id,
+    this.from,
+    this.ourFunds,
+    this.to,
+    this.otherFunds, {
+    required this.channel,
+  });
 
-  Channel.fromCLN(
-      this.from, Map<String, LnNode> nodes, Map<String, dynamic> json)
-      : id = json["id"],
+  RegtestChannel.fromCLN(
+    this.from,
+    Map<String, LnNode> nodes,
+    Map<String, dynamic> json, {
+    required this.channel,
+  })  : id = json["id"],
         to = nodes[json["peer_id"]]!,
         ourFunds = clnParseMSatOrZero(json["our_amount_msat"]),
         otherFunds = clnParseMSatOrZero(json["amount_msat"]) -
             clnParseMSatOrZero(json["our_amount_msat"]);
 
-  Channel.fromLND(
-      this.from, Map<String, LnNode> nodes, Map<String, dynamic> json)
-      : id = json["channel_point"],
+  RegtestChannel.fromLND(
+    this.from,
+    Map<String, LnNode> nodes,
+    Map<String, dynamic> json, {
+    required this.channel,
+  })  : id = json["channel_point"],
         to = nodes[json["remote_pubkey"]]!,
         ourFunds = validIntOrZero(json["local_balance"]),
         otherFunds = validIntOrZero(json["remote_balance"]);

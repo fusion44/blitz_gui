@@ -43,7 +43,9 @@ Future<void> test() async {
   // fund the nodes with 15 BTC each
   await manager.fundNodes(autoMine: true);
 
-  await validateOpenChannel(manager);
+  await validateSendOnchainFunds(manager);
+
+  // await validateOpenChannel(manager);
 
   await reset();
 
