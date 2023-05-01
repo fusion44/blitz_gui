@@ -387,11 +387,11 @@ class LnNode {
           }
 
           return RegtestChannel(
-            e.channelId!,
+            e.channelId ?? "",
             this,
-            e.balanceLocal!,
+            e.balanceLocal ?? 0,
             r,
-            e.balanceRemote!,
+            e.balanceRemote ?? 0,
             channel: e,
           );
         },
