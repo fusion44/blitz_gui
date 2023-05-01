@@ -23,7 +23,7 @@ services:
   lnd1:
     depends_on:
       - bitcoind
-    image: boltz/lnd:0.16.0-beta
+    image: boltz/lnd:0.16.2-beta
     restart: on-failure
     entrypoint: "sh -c 'sleep 20; lnd --alias=lnd1 --listen=lnd1:9735 --rpclisten=lnd1:10009 --restlisten=lnd1:8081 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.zmqpubrawtx=bitcoind:29000 --bitcoind.zmqpubrawblock=bitcoind:29001 --bitcoind.rpcuser=regtester --bitcoind.rpcpass=regtester --noseedbackup --protocol.wumbo-channels --tlsextraip=127.0.0.1 --tlsextraip=0.0.0.0 --tlsextradomain=localhost --tlsextradomain=lnd1'"
     ports:
@@ -54,7 +54,7 @@ services:
   lnd2:
     depends_on:
       - bitcoind
-    image: boltz/lnd:0.16.0-beta
+    image: boltz/lnd:0.16.2-beta
     restart: on-failure
     entrypoint: "sh -c 'sleep 20; lnd --alias=lnd2 --listen=lnd2:9735 --rpclisten=lnd2:10009 --restlisten=lnd2:8081 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.zmqpubrawtx=bitcoind:29000 --bitcoind.zmqpubrawblock=bitcoind:29001 --bitcoind.rpcuser=regtester --bitcoind.rpcpass=regtester --noseedbackup --protocol.wumbo-channels --tlsextraip=127.0.0.1 --tlsextraip=0.0.0.0 --tlsextradomain=localhost --tlsextradomain=lnd2'"
     volumes:
@@ -82,7 +82,7 @@ services:
   lnd3:
     depends_on:
       - bitcoind
-    image: boltz/lnd:0.16.0-beta
+    image: boltz/lnd:0.16.2-beta
     restart: on-failure
     entrypoint: "sh -c 'sleep 20; lnd --alias=lnd3 --listen=lnd3:9735 --rpclisten=lnd3:10009 --restlisten=lnd3:8081 --bitcoin.active --bitcoin.regtest --bitcoin.node=bitcoind --bitcoind.rpchost=bitcoind --bitcoind.zmqpubrawtx=bitcoind:29000 --bitcoind.zmqpubrawblock=bitcoind:29001 --bitcoind.rpcuser=regtester --bitcoind.rpcpass=regtester --noseedbackup --protocol.wumbo-channels --tlsextraip=127.0.0.1 --tlsextraip=0.0.0.0 --tlsextradomain=localhost --tlsextradomain=lnd3'"
     volumes:
