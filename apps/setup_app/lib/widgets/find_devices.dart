@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:common/common.dart';
+import 'package:common_widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
@@ -62,7 +62,7 @@ class FindDevicesWidget extends StatelessWidget {
       );
     }
 
-    final _headerRow = Row(
+    final headerRow = Row(
       children: [
         const SizedBox(width: 12.0),
         icon,
@@ -81,7 +81,7 @@ class FindDevicesWidget extends StatelessWidget {
           ),
         ),
         children: [
-          _headerRow,
+          headerRow,
           for (final device in devices)
             ListTile(
               leading: const Icon(MdiIcons.lightningBoltCircle),

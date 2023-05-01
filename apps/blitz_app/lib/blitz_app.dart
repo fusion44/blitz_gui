@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:authentication/authentication.dart';
 import 'package:big_screen/big_screen.dart';
-import 'package:common/common.dart';
+import 'package:common_widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_translate/flutter_translate.dart';

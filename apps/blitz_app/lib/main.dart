@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 
 import 'package:authentication/authentication.dart';
 import 'package:common/common.dart';
+import 'package:common_widgets/common_widgets.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 

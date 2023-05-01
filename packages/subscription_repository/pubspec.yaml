@@ -7,16 +7,9 @@ environment:
   sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
   http: ^0.13.5
  
   # locals
   common: ^0.5.1
   sse_client: ^0.5.1
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^2.0.1
 

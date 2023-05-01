@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 import 'package:common/common.dart' as utils;
+import 'package:common_widgets/common_widgets.dart';
 import 'package:settings_fragment/settings_fragment.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated }
@@ -104,7 +105,7 @@ class AuthRepo {
     } on SocketException catch (e) {
       _controller.add(AuthStatus.authenticated);
       utils.BlitzLog().e(e.osError?.toString());
-      throw AuthStateError(utils.tr('errors.unable_to_connect_reach_node'));
+      throw AuthStateError(tr('errors.unable_to_connect_reach_node'));
     }
   }
 

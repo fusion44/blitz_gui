@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:authentication/authentication.dart';
 import 'package:big_screen/widgets/widgets.dart';
-import 'package:common/common.dart';
 import 'package:common_blocs/common_blocs.dart';
+import 'package:common_widgets/common_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:list_transactions_fragment/list_transactions.dart';

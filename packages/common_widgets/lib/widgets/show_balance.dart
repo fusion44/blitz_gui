@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:common/common.dart';
 
+import '../utils.dart';
+import 'sats_display.dart';
+import 'translated_text.dart';
+
 class ShowBalanceWidget extends StatelessWidget {
   final WalletBalance balance;
 

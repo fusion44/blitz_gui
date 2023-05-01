@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../common.dart';
+import 'translated_text.dart';
 
 class DataItem extends StatelessWidget {
   final String text;

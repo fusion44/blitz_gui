@@ -109,6 +109,13 @@ packages:
       relative: true
     source: path
     version: "0.5.1"
+  common_widgets:
+    dependency: "direct main"
+    description:
+      path: "../../packages/common_widgets"
+      relative: true
+    source: path
+    version: "0.0.1"
   crypto:
     dependency: transitive
     description:
@@ -209,7 +216,7 @@ packages:
     source: hosted
     version: "2.0.1"
   flutter_localizations:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -250,7 +257,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_translate:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_translate
       sha256: edf2f39603fc9dfbe8f27b90445352f15582a3f39143b0e340e872fb0c0bfebb
@@ -258,7 +265,7 @@ packages:
     source: hosted
     version: "4.0.3"
   flutter_web_plugins:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -287,7 +294,7 @@ packages:
     source: hosted
     version: "2.2.0"
   go_router:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: go_router
       sha256: "99c7fbd4f73da5268046374576af2f6fef970088038d626c5c689a359479af40"
@@ -303,7 +310,7 @@ packages:
     source: hosted
     version: "3.0.0-dev"
   hive_flutter:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: hive_flutter
       sha256: a9f07cabf8fa205cde01cc782f56804987bbd164dc02b07fd9b30ed0426267da
@@ -437,7 +444,7 @@ packages:
     source: hosted
     version: "1.8.2"
   path_provider:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: path_provider
       sha256: c7edf82217d4b2952b2129a61d3ad60f1075b9299e629e149a8d2e39c2e6aad4

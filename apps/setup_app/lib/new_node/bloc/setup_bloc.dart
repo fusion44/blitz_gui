@@ -81,7 +81,7 @@ class NewNodeSetupBloc extends Bloc<SetupEvent, SetupState> {
       return;
     }
 
-    final request = http.Request('get', Uri.parse(url + '/sse/subscribe'));
+    final request = http.Request('get', Uri.parse('$url/sse/subscribe'));
     request.headers['Cache-Control'] = 'no-cache';
     request.headers['Accept'] = 'text/event-stream';
     // request.headers['Cookie'] = 'token';

@@ -16,6 +16,7 @@ dependencies:
 
   # locals
   common: ^0.5.1
+  common_widgets: ^0.5.1
 
 dev_dependencies:
   flutter_test:

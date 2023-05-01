@@ -14,7 +14,6 @@ import 'package:flutter_login_lite/src/paddings.dart';
 import 'package:flutter_login_lite/src/widget_helper.dart';
 import 'package:provider/provider.dart';
 
-import '../../../flutter_login.dart';
 import '../animated_button.dart';
 import '../animated_text_form_field.dart';
 import '../custom_page_transformer.dart';

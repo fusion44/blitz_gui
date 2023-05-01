@@ -206,6 +206,13 @@ packages:
       relative: true
     source: path
     version: "0.5.1"
+  common_widgets:
+    dependency: "direct main"
+    description:
+      path: "../common_widgets"
+      relative: true
+    source: path
+    version: "0.0.1"
   convert:
     dependency: transitive
     description:

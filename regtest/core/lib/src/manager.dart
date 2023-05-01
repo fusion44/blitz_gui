@@ -353,7 +353,7 @@ class NetworkManager {
   }
 
   Future<int> sweepAllChannels({bool autoMine = false}) async {
-    print("Sweeping all channels");
+    logMessage("Sweeping all channels");
 
     final Map<LnNode, List<RegtestChannel>> channels = {};
     int numClosed = 0;
@@ -385,7 +385,7 @@ class NetworkManager {
         final olsState = channels[n]!;
         final diff = newState.length - olsState.length;
         if (diff != numClosed) {
-          print(
+          logMessage(
             "Node ${n.id} has ${newState.length} channels, but $numClosed were closed",
           );
         }
@@ -484,7 +484,7 @@ class NetworkManager {
     // change ownership from root to current user
 
     final su = isHeadless() ? 'sudo' : 'pkexec';
-    final modRes = await Process.run(
+    await Process.run(
       su,
       ["chmod" "-R", "777", Directory("/tmp/regtest-data").absolute.path],
       workingDirectory: dataDir,

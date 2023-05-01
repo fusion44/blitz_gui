@@ -22,6 +22,7 @@ dependencies:
   authentication: ^0.5.1
   common: ^0.5.1
   common_blocs: ^0.5.1
+  common_widgets: ^0.5.1
   custom_keyboard: ^0.5.1
   info_screen_plus_plus: ^0.5.1
   list_transactions_fragment: ^0.5.1

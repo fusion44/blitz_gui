@@ -20,6 +20,7 @@ dependencies:
   authentication: ^0.5.1
   common: ^0.5.1
   common_blocs: ^0.5.1
+  common_widgets: ^0.5.1
   subscription_repository: ^0.5.1
 
 dev_dependencies:

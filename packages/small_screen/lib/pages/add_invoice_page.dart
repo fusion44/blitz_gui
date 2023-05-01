@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:common/common.dart';
 import 'package:common_blocs/common_blocs.dart';
+import 'package:common_widgets/common_widgets.dart';
 import 'package:custom_keyboard/custom_keyboard.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qr_flutter/qr_flutter.dart';

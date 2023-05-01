@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:common/common.dart';
+import 'package:common_widgets/common_widgets.dart';
 
 class BitcoinInfoWidget extends StatelessWidget {
   final BitcoinInfo info;

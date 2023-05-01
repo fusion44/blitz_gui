@@ -25,8 +25,8 @@ class SSEClient {
         final stream = await establishSSEConnection(url, token);
         stream.listen((dataLine) {
           if (dataLine.isEmpty) {
-            //This means that the complete event set has been read.
-            //We then add the event to the stream
+            // This means that the complete event set has been read.
+            // We then add the event to the stream
 
             if (currentSSEModel.event != 'ping') {
               streamController.add(currentSSEModel);

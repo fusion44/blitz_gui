@@ -1,5 +1,5 @@
 name: common
-description: A new Flutter package project.
+description: The base package with common functionality that is not dependant on Flutter.
 version: 0.5.1
 publish_to: "none"
 
@@ -7,18 +7,6 @@ environment:
   sdk: ">=2.15.0 <3.0.0"
 
 dependencies:
-  auto_size_text: ^3.0.0
-  flutter:
-    sdk: flutter
-  flutter_staggered_animations: ^1.1.1
-  flutter_translate: ^4.0.3
   http: ^0.13.5
-  intl: ^0.17.0
   logger: ^1.1.0
-  timeago: ^3.3.0
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^2.0.1
 

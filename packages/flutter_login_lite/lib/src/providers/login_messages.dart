@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:common/common.dart';
+import 'package:common_widgets/common_widgets.dart';
 
 class LoginMessages with ChangeNotifier {
   final passwordHint = tr('auth.password_label');

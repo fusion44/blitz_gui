@@ -352,9 +352,7 @@ class LnNode {
 
   Future<bool> payInvoice(PayInvoiceData i) async {
     try {
-      final res = await _api
-          .getLightningApi()
-          .lightningSendPaymentLightningSendPaymentPost(
+      await _api.getLightningApi().lightningSendPaymentLightningSendPaymentPost(
             payReq: i.bolt11,
             amountMsat: i.amt,
           );

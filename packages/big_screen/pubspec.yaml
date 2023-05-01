@@ -20,6 +20,7 @@ dependencies:
   authentication: ^0.5.1
   common: ^0.5.1
   common_blocs: ^0.5.1
+  common_widgets: ^0.5.1
   list_transactions_fragment: ^0.5.1
   fee_revenue_fragment: ^0.5.1
   settings_fragment: ^0.5.1

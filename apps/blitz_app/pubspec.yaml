@@ -10,12 +10,21 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   authentication: ^0.5.1
   flutter_bloc: ^8.1.2
+  flutter_translate: ^4.0.3
+  hive_flutter: ^2.0.0-dev
+  path_provider: ^2.0.14
+  go_router: ^6.0.6
 
   # locals
   common: ^0.5.1
   common_blocs: ^0.5.1
+  common_widgets: ^0.5.1
   info_screen_plus_plus: ^0.5.1
   list_transactions_fragment: ^0.5.1
   settings_fragment: ^0.5.1

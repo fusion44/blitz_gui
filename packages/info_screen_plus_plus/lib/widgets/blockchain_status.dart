@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:common/common.dart';
+import 'package:common_widgets/common_widgets.dart';
 
 class BlockchainStatus extends StatefulWidget {
   final BitcoinInfo info;
