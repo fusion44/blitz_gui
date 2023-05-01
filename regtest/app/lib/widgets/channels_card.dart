@@ -13,7 +13,7 @@ class ChannelsCard extends StatefulWidget {
 }
 
 class _ChannelsCardState extends State<ChannelsCard> {
-  List<Channel> _channels = [];
+  List<RegtestChannel> _channels = [];
 
   @override
   void initState() {
@@ -90,11 +90,11 @@ class _ChannelsCardState extends State<ChannelsCard> {
     return null;
   }
 
-  _closeChannel(Channel c) {
+  _closeChannel(RegtestChannel c) {
     widget.node.closeChannel(c);
   }
 
-  _drainChannel(Channel c) {}
+  _drainChannel(RegtestChannel c) {}
 
   PopupMenuItem _buildMenuItem(String text, Function() param1) {
     return PopupMenuItem(

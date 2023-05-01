@@ -1,3 +1,4 @@
+import 'package:common/common.dart' show BtcValue;
 import 'package:flutter/material.dart';
 
 import 'package:blitz_api_client/blitz_api_client.dart';
@@ -60,12 +61,7 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                   children: [
                     const Text('Onchain'),
                     const Spacer(),
-                    Text(
-                      formatAmount(
-                        b.onchainTotalBalance ~/ 100000000,
-                        Denomination.btc,
-                      ),
-                    ),
+                    Text(BtcValue.fromSats(b.onchainTotalBalance).formatted()),
                   ],
                 ),
                 Row(
@@ -74,10 +70,7 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                     const Icon(Icons.check, size: 16.0),
                     const Spacer(),
                     Text(
-                      formatAmount(
-                        b.onchainConfirmedBalance ~/ 100000000,
-                        Denomination.btc,
-                      ),
+                      BtcValue.fromSats(b.onchainConfirmedBalance).formatted(),
                     ),
                   ],
                 ),
@@ -87,10 +80,8 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                     const Icon(Icons.hourglass_bottom_rounded, size: 16.0),
                     const Spacer(),
                     Text(
-                      formatAmount(
-                        b.onchainUnconfirmedBalance ~/ 100000000,
-                        Denomination.btc,
-                      ),
+                      BtcValue.fromSats(b.onchainUnconfirmedBalance)
+                          .formatted(),
                     ),
                   ],
                 ),
@@ -100,9 +91,9 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                     const Text('Channel'),
                     const Spacer(),
                     Text(
-                      formatAmount(
-                        b.channelLocalBalance + b.channelRemoteBalance,
-                      ),
+                      BtcValue.fromMilliSat(
+                              b.channelLocalBalance + b.channelRemoteBalance)
+                          .formatted(),
                     ),
                   ],
                 ),
@@ -111,7 +102,9 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                     const SizedBox(width: 8.0),
                     const Icon(Icons.home, size: 16.0),
                     const Spacer(),
-                    Text(formatAmount(b.channelLocalBalance)),
+                    Text(
+                      BtcValue.fromMilliSat(b.channelLocalBalance).formatted(),
+                    ),
                   ],
                 ),
                 Row(
@@ -119,7 +112,9 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                     const SizedBox(width: 8.0),
                     const Icon(Icons.airline_stops, size: 16.0),
                     const Spacer(),
-                    Text(formatAmount(b.channelRemoteBalance)),
+                    Text(
+                      BtcValue.fromMilliSat(b.channelRemoteBalance).formatted(),
+                    ),
                   ],
                 ),
               ],
