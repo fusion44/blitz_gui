@@ -1,0 +1,10 @@
+{
+    "[dart]": {
+        "editor.codeActionsOnSave": {
+            "source.fixAll": false
+        }
+    },
+    "cSpell.words": [
+        "polb"
+    ]
+}

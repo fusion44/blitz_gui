@@ -8,49 +8,65 @@
             "name": "blitz_gui",
             "request": "launch",
             "type": "dart",
-            "program": "packages/apps/blitz_app/lib/main.dart"
+            "program": "apps/blitz_app/lib/main.dart"
         },
         {
             "name": "blitz_gui (profile mode)",
             "request": "launch",
             "type": "dart",
-            "program": "packages/apps/blitz_app/lib/main.dart",
+            "program": "apps/blitz_app/lib/main.dart",
             "flutterMode": "profile"
         },
         {
             "name": "blitz_gui (release mode)",
             "request": "launch",
             "type": "dart",
-            "program": "packages/apps/blitz_app/lib/main.dart",
+            "program": "apps/blitz_app/lib/main.dart",
             "flutterMode": "release"
         },
         {
             "name": "setup_app",
             "request": "launch",
             "type": "dart",
-            "program": "packages/apps/setup_app/lib/main.dart"
+            "program": "apps/setup_app/lib/main.dart"
         },
         {
             "name": "setup_app (profile mode)",
             "request": "launch",
             "type": "dart",
-            "program": "packages/apps/setup_app/lib/main.dart",
+            "program": "apps/setup_app/lib/main.dart",
             "flutterMode": "profile"
         },
         {
             "name": "setup_app (release mode)",
             "request": "launch",
             "type": "dart",
-            "program": "packages/apps/setup_app/lib/main.dart",
+            "program": "apps/setup_app/lib/main.dart",
             "flutterMode": "release"
         },
         {
             "name": "Blitz GUI Remote on PI",
             "request": "attach",
             "deviceId": "flutter-tester",
-            "observatoryUri": "http://192.168.1.254:41059/WaxjVi4CTFI=/",
+            "vmServiceUri": "http://192.168.1.254:41059/WaxjVi4CTFI=/",
             "type": "dart",
             "program": "lib/main.dart"
-        }
+        },
+        {
+            "name": "regtest-headless",
+            "request": "launch",
+            "type": "dart",
+            "console": "terminal",
+            "env": {
+                "REGTEST-PRINT-RESULTS": true
+            },
+            "program": "regtest/headless/bin/test_api.dart"
+        },
+        {
+            "name": "regtest-gui",
+            "request": "launch",
+            "type": "dart",
+            "program": "regtest/app/lib/main.dart"
+        },
     ]
 }
