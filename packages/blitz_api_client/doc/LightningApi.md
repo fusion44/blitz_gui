@@ -630,7 +630,7 @@ final api = BlitzApiClient().getLightningApi();
 final int localFundingAmount = 56; // int | The amount of satoshis to commit to the channel.
 final String nodeURI = nodeURI_example; // String | The URI of the peer to open a channel with. Format: <pubkey>@<host>:<port>
 final int targetConfs = 56; // int | The block target for the funding transaction.
-final int pushAmountSat = 56; // int | The amount of sats to push to the peer
+final int pushAmountSat = 56; // int | The amount of sats to push to the peer.
 
 try {
     final response = api.lightningOpenChannelLightningOpenChannelPost(localFundingAmount, nodeURI, targetConfs, pushAmountSat);
@@ -647,7 +647,7 @@ Name | Type | Description  | Notes
  **localFundingAmount** | **int**| The amount of satoshis to commit to the channel. | 
  **nodeURI** | **String**| The URI of the peer to open a channel with. Format: <pubkey>@<host>:<port> | 
  **targetConfs** | **int**| The block target for the funding transaction. | [optional] [default to 3]
- **pushAmountSat** | **int**| The amount of sats to push to the peer | [optional] 
+ **pushAmountSat** | **int**| The amount of sats to push to the peer. | [optional] 
 
 ### Return type
 
@@ -669,7 +669,7 @@ Name | Type | Description  | Notes
 
 Attempt to send on-chain funds.
 
-__send-coins__ executes a request to send coins to a particular address.  ### LND: If neither __target_conf__, or __sat_per_vbyte__ are set, then the internal wallet will consult its fee model to determine a fee for the default confirmation target.  > 👉 See [https://api.lightning.community/?shell#sendcoins](https://api.lightning.community/?shell#sendcoins)  ### c-lightning: * Set __target_conf__ ==1: interpreted as urgent (aim for next block) * Set __target_conf__ >=2: interpreted as normal (next 4 blocks or so, **default**) * Set __target_cont__ >=10: interpreted as slow (next 100 blocks or so) * If __sat_per_vbyte__ is set then __target_conf__ is ignored and vbytes (sipabytes) will be used.  > 👉 See [https://lightning.readthedocs.io/lightning-txprepare.7.html](https://lightning.readthedocs.io/lightning-txprepare.7.html)  ### Sending all onchain funds > ℹ️ Keep the following points in mind when sending all onchain funds:  * If __send_all__ is set to __true__, the __amount__ field must be set to __0__. * If the __amount__ field is greater than __0__, the __send_all__ field must be __false__.   * The API will return an error if neither or both conditions are met at the same time. * If __send_all__ is set to __true__ the amount of satoshis to send will be calculated by subtracting the fee from the wallet balance. * If the wallet balance is not sufficient to cover the fee, the call will fail. * The call will __not__ close any channels. * The implementation may keep a reserve of funds if there are still open channels.
+__send-coins__ executes a request to send coins to a particular address.  ### LND: If neither __target_conf__, or __sat_per_vbyte__ are set, then the internal wallet will consult its fee model to determine a fee for the default confirmation target.  > 👉 See [https://api.lightning.community/?shell#sendcoins](https://api.lightning.community/?shell#sendcoins)  ### c-lightning: * Set __target_conf__ ==1: interpreted as urgent (aim for next block) * Set __target_conf__ >=2: interpreted as normal (next 4 blocks or so, **default**) * Set __target_cont__ >=10: interpreted as slow (next 100 blocks or so) * If __sat_per_vbyte__ is set then __target_conf__ is ignored and vbytes (sipabytes) will be used.  > 👉 See [https://lightning.readthedocs.io/lightning-txprepare.7.html](https://lightning.readthedocs.io/lightning-txprepare.7.html)  ### Sending all onchain funds > ℹ️ Keep the following points in mind when sending all onchain funds:  * The response object currently will state __\"amount\": 0__ even if __send_all__ is set to __true__ and the transaction was successfully submitted to the mempool. [GitHub issue](https://github.com/fusion44/blitz_api/issues/196) * If __send_all__ is set to __true__, the __amount__ field must be set to __0__. * If the __amount__ field is greater than __0__, the __send_all__ field must be __false__.   * The API will return an error if neither or both conditions are met at the same time. * If __send_all__ is set to __true__ the amount of satoshis to send will be calculated by subtracting the fee from the wallet balance. * If the wallet balance is not sufficient to cover the fee, the call will fail. * The call will __not__ close any channels. * The implementation may keep a reserve of funds if there are still open channels.
 
 ### Example
 ```dart

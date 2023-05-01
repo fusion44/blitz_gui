@@ -15,6 +15,7 @@ part 'send_coins_response.g.dart';
 /// * [amount] - The number of bitcoin denominated in satoshis which where sent
 /// * [fees] - The number of bitcoin denominated in satoshis which where paid as fees
 /// * [label] - The label used for the transaction. Ignored by CLN backend.
+/// * [sendAll] - If this transaction was a `send_all` transaction.
 abstract class SendCoinsResponse
     implements Built<SendCoinsResponse, SendCoinsResponseBuilder> {
   /// The transaction ID for this onchain payment
@@ -37,10 +38,16 @@ abstract class SendCoinsResponse
   @BuiltValueField(wireName: r'label')
   String? get label;
 
+  /// If this transaction was a `send_all` transaction.
+  @BuiltValueField(wireName: r'send_all')
+  bool? get sendAll;
+
   SendCoinsResponse._();
 
   @BuiltValueHook(initializeBuilder: true)
-  static void _defaults(SendCoinsResponseBuilder b) => b..label = '';
+  static void _defaults(SendCoinsResponseBuilder b) => b
+    ..label = ''
+    ..sendAll = false;
 
   factory SendCoinsResponse([void updates(SendCoinsResponseBuilder b)]) =
       _$SendCoinsResponse;
@@ -86,6 +93,12 @@ class _$SendCoinsResponseSerializer
         ..add(serializers.serialize(object.label,
             specifiedType: const FullType(String)));
     }
+    if (object.sendAll != null) {
+      result
+        ..add(r'send_all')
+        ..add(serializers.serialize(object.sendAll,
+            specifiedType: const FullType(bool)));
+    }
     return result;
   }
 
@@ -126,6 +139,11 @@ class _$SendCoinsResponseSerializer
           final valueDes = serializers.deserialize(value,
               specifiedType: const FullType(String)) as String;
           result.label = valueDes;
+          break;
+        case r'send_all':
+          final valueDes = serializers.deserialize(value,
+              specifiedType: const FullType(bool)) as bool;
+          result.sendAll = valueDes;
           break;
       }
     }

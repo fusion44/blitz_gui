@@ -17,6 +17,8 @@ class _$SendCoinsResponse extends SendCoinsResponse {
   final int? fees;
   @override
   final String? label;
+  @override
+  final bool? sendAll;
 
   factory _$SendCoinsResponse(
           [void Function(SendCoinsResponseBuilder)? updates]) =>
@@ -27,7 +29,8 @@ class _$SendCoinsResponse extends SendCoinsResponse {
       required this.address,
       required this.amount,
       this.fees,
-      this.label})
+      this.label,
+      this.sendAll})
       : super._() {
     BuiltValueNullFieldError.checkNotNull(txid, r'SendCoinsResponse', 'txid');
     BuiltValueNullFieldError.checkNotNull(
@@ -52,7 +55,8 @@ class _$SendCoinsResponse extends SendCoinsResponse {
         address == other.address &&
         amount == other.amount &&
         fees == other.fees &&
-        label == other.label;
+        label == other.label &&
+        sendAll == other.sendAll;
   }
 
   @override
@@ -63,6 +67,7 @@ class _$SendCoinsResponse extends SendCoinsResponse {
     _$hash = $jc(_$hash, amount.hashCode);
     _$hash = $jc(_$hash, fees.hashCode);
     _$hash = $jc(_$hash, label.hashCode);
+    _$hash = $jc(_$hash, sendAll.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -74,7 +79,8 @@ class _$SendCoinsResponse extends SendCoinsResponse {
           ..add('address', address)
           ..add('amount', amount)
           ..add('fees', fees)
-          ..add('label', label))
+          ..add('label', label)
+          ..add('sendAll', sendAll))
         .toString();
   }
 }
@@ -103,6 +109,10 @@ class SendCoinsResponseBuilder
   String? get label => _$this._label;
   set label(String? label) => _$this._label = label;
 
+  bool? _sendAll;
+  bool? get sendAll => _$this._sendAll;
+  set sendAll(bool? sendAll) => _$this._sendAll = sendAll;
+
   SendCoinsResponseBuilder() {
     SendCoinsResponse._defaults(this);
   }
@@ -115,6 +125,7 @@ class SendCoinsResponseBuilder
       _amount = $v.amount;
       _fees = $v.fees;
       _label = $v.label;
+      _sendAll = $v.sendAll;
       _$v = null;
     }
     return this;
@@ -144,7 +155,8 @@ class SendCoinsResponseBuilder
             amount: BuiltValueNullFieldError.checkNotNull(
                 amount, r'SendCoinsResponse', 'amount'),
             fees: fees,
-            label: label);
+            label: label,
+            sendAll: sendAll);
     replace(_$result);
     return _$result;
   }

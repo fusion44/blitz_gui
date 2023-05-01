@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **amount** | **int** | The number of bitcoin denominated in satoshis which where sent | 
 **fees** | **int** | The number of bitcoin denominated in satoshis which where paid as fees | [optional] 
 **label** | **String** | The label used for the transaction. Ignored by CLN backend. | [optional] [default to '']
+**sendAll** | **bool** | If this transaction was a `send_all` transaction. | [optional] [default to false]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

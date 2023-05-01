@@ -36,5 +36,11 @@ void main() {
     test('to test the property `label`', () async {
       // TODO
     });
+
+    // If this transaction was a `send_all` transaction.
+    // bool sendAll (default value: false)
+    test('to test the property `sendAll`', () async {
+      // TODO
+    });
   });
 }
