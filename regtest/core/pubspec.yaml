@@ -12,6 +12,7 @@ dependencies:
   intl: ^0.17.0
 
   # local
+  common: ^0.5.1
   blitz_api_client: ^0.5.1
   
 dev_dependencies:
