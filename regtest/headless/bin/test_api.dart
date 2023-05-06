@@ -45,20 +45,17 @@ Future<void> test() async {
 
   await validateSendOnchainFunds(manager);
 
-  // await validateOpenChannel(manager);
+  await manager.fundNodes(autoMine: true);
+  await validateOpenChannelNoPush(manager);
 
   await reset();
-
   printSectionFooter();
   printSummary();
 }
 
 Future<void> reset() async {
   final before = await manager.getWalletBalances();
-  if (before.areEmpty) {
-    print("No funds to sweep");
-    return;
-  }
+  if (before.areEmpty) return;
 
   await manager.sweepAllChannels(autoMine: true);
   await manager.sweepOnchain(autoMine: true);

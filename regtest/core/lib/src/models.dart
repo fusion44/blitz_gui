@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:blitz_api_client/blitz_api_client.dart';
+import 'package:common/common.dart' show BtcValue;
 import 'package:dio/dio.dart';
 
 import 'constants.dart';
@@ -389,9 +390,9 @@ class LnNode {
           return RegtestChannel(
             e.channelId ?? "",
             this,
-            e.balanceLocal ?? 0,
+            BtcValue.fromMilliSat(e.balanceLocal ?? 0),
             r,
-            e.balanceRemote ?? 0,
+            BtcValue.fromMilliSat(e.balanceRemote ?? 0),
             channel: e,
           );
         },
@@ -457,9 +458,9 @@ class LnNode {
 class RegtestChannel {
   final String id;
   final LnNode from;
-  final int ourFunds;
+  final BtcValue ourFunds;
   final LnNode to;
-  final int otherFunds;
+  final BtcValue otherFunds;
   final Channel channel;
 
   RegtestChannel(
@@ -478,9 +479,13 @@ class RegtestChannel {
     required this.channel,
   })  : id = json["id"],
         to = nodes[json["peer_id"]]!,
-        ourFunds = clnParseMSatOrZero(json["our_amount_msat"]),
-        otherFunds = clnParseMSatOrZero(json["amount_msat"]) -
-            clnParseMSatOrZero(json["our_amount_msat"]);
+        ourFunds = BtcValue.fromMilliSat(
+          clnParseMSatOrZero(json["our_amount_msat"]),
+        ),
+        otherFunds = BtcValue.fromMilliSat(
+          clnParseMSatOrZero(json["amount_msat"]) -
+              clnParseMSatOrZero(json["our_amount_msat"]),
+        );
 
   RegtestChannel.fromLND(
     this.from,
@@ -489,8 +494,8 @@ class RegtestChannel {
     required this.channel,
   })  : id = json["channel_point"],
         to = nodes[json["remote_pubkey"]]!,
-        ourFunds = validIntOrZero(json["local_balance"]),
-        otherFunds = validIntOrZero(json["remote_balance"]);
+        ourFunds = BtcValue.fromSats(validIntOrZero(json["local_balance"])),
+        otherFunds = BtcValue.fromSats(validIntOrZero(json["remote_balance"]));
 
   @override
   String toString() => "Channel from ${from.id} to ${to.id}";

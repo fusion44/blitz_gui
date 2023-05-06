@@ -62,6 +62,12 @@ class BtcValue {
     );
   }
 
+  factory BtcValue.zero() => BtcValue._(
+        satsTotal: 0,
+        msatTotal: 0,
+        btcTotal: 0,
+      );
+
   /// The btc part only of the value.
   ///
   /// For example, if the value is 11btc 12,345,678sats
