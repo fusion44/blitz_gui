@@ -27,6 +27,8 @@ export 'package:blitz_api_client/src/model/btc_local_address.dart';
 export 'package:blitz_api_client/src/model/btc_network.dart';
 export 'package:blitz_api_client/src/model/chain.dart';
 export 'package:blitz_api_client/src/model/channel.dart';
+export 'package:blitz_api_client/src/model/channel_initiator.dart';
+export 'package:blitz_api_client/src/model/channel_state.dart';
 export 'package:blitz_api_client/src/model/channel_update.dart';
 export 'package:blitz_api_client/src/model/connection_info.dart';
 export 'package:blitz_api_client/src/model/custom_records_entry.dart';

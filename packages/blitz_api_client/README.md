@@ -84,7 +84,7 @@ Class | Method | HTTP request | Description
 [*LightningApi*](doc/LightningApi.md) | [**lightningGetInfoLightningGetInfoGet**](doc/LightningApi.md#lightninggetinfolightninggetinfoget) | **GET** /lightning/get-info | Request information about the currently running lightning node.
 [*LightningApi*](doc/LightningApi.md) | [**lightningGetInfoLiteLightningGetInfoLiteGet**](doc/LightningApi.md#lightninggetinfolitelightninggetinfoliteget) | **GET** /lightning/get-info-lite | Get lightweight current lightning info. Less verbose version of /lightning/get-info
 [*LightningApi*](doc/LightningApi.md) | [**lightningListAllTxLightningListAllTxGet**](doc/LightningApi.md#lightninglistalltxlightninglistalltxget) | **GET** /lightning/list-all-tx | Lists all on-chain transactions, payments and invoices in the wallet
-[*LightningApi*](doc/LightningApi.md) | [**lightningListChannelsLightningListChannelsGet**](doc/LightningApi.md#lightninglistchannelslightninglistchannelsget) | **GET** /lightning/list-channels | Returns a list of open channels
+[*LightningApi*](doc/LightningApi.md) | [**lightningListChannelsLightningListChannelsGet**](doc/LightningApi.md#lightninglistchannelslightninglistchannelsget) | **GET** /lightning/list-channels | Returns a list of all channels
 [*LightningApi*](doc/LightningApi.md) | [**lightningListInvoicesLightningListInvoicesGet**](doc/LightningApi.md#lightninglistinvoiceslightninglistinvoicesget) | **GET** /lightning/list-invoices | Lists all invoices from the wallet. Modeled after LND implementation.
 [*LightningApi*](doc/LightningApi.md) | [**lightningListOnchainTxLightningListOnchainTxGet**](doc/LightningApi.md#lightninglistonchaintxlightninglistonchaintxget) | **GET** /lightning/list-onchain-tx | Lists all onchain transactions from the wallet
 [*LightningApi*](doc/LightningApi.md) | [**lightningListPaymentsLightningListPaymentsGet**](doc/LightningApi.md#lightninglistpaymentslightninglistpaymentsget) | **GET** /lightning/list-payments | Returns a list of all outgoing payments. Modeled after LND implementation.
@@ -120,6 +120,8 @@ Class | Method | HTTP request | Description
  - [BtcNetwork](doc/BtcNetwork.md)
  - [Chain](doc/Chain.md)
  - [Channel](doc/Channel.md)
+ - [ChannelInitiator](doc/ChannelInitiator.md)
+ - [ChannelState](doc/ChannelState.md)
  - [ChannelUpdate](doc/ChannelUpdate.md)
  - [ConnectionInfo](doc/ConnectionInfo.md)
  - [CustomRecordsEntry](doc/CustomRecordsEntry.md)

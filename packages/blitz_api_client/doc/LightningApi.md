@@ -17,7 +17,7 @@ Method | HTTP request | Description
 [**lightningGetInfoLightningGetInfoGet**](LightningApi.md#lightninggetinfolightninggetinfoget) | **GET** /lightning/get-info | Request information about the currently running lightning node.
 [**lightningGetInfoLiteLightningGetInfoLiteGet**](LightningApi.md#lightninggetinfolitelightninggetinfoliteget) | **GET** /lightning/get-info-lite | Get lightweight current lightning info. Less verbose version of /lightning/get-info
 [**lightningListAllTxLightningListAllTxGet**](LightningApi.md#lightninglistalltxlightninglistalltxget) | **GET** /lightning/list-all-tx | Lists all on-chain transactions, payments and invoices in the wallet
-[**lightningListChannelsLightningListChannelsGet**](LightningApi.md#lightninglistchannelslightninglistchannelsget) | **GET** /lightning/list-channels | Returns a list of open channels
+[**lightningListChannelsLightningListChannelsGet**](LightningApi.md#lightninglistchannelslightninglistchannelsget) | **GET** /lightning/list-channels | Returns a list of all channels
 [**lightningListInvoicesLightningListInvoicesGet**](LightningApi.md#lightninglistinvoiceslightninglistinvoicesget) | **GET** /lightning/list-invoices | Lists all invoices from the wallet. Modeled after LND implementation.
 [**lightningListOnchainTxLightningListOnchainTxGet**](LightningApi.md#lightninglistonchaintxlightninglistonchaintxget) | **GET** /lightning/list-onchain-tx | Lists all onchain transactions from the wallet
 [**lightningListPaymentsLightningListPaymentsGet**](LightningApi.md#lightninglistpaymentslightninglistpaymentsget) | **GET** /lightning/list-payments | Returns a list of all outgoing payments. Modeled after LND implementation.
@@ -387,9 +387,9 @@ Name | Type | Description  | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **lightningListChannelsLightningListChannelsGet**
-> BuiltList<Channel> lightningListChannelsLightningListChannelsGet()
+> BuiltList<Channel> lightningListChannelsLightningListChannelsGet(includeClosed, peerAliasLookup)
 
-Returns a list of open channels
+Returns a list of all channels
 
 ### Example
 ```dart
@@ -399,9 +399,11 @@ import 'package:blitz_api_client/api.dart';
 //defaultApiClient.getAuthentication<HttpBasicAuth>('JWTBearer').password = 'YOUR_PASSWORD';
 
 final api = BlitzApiClient().getLightningApi();
+final bool includeClosed = true; // bool | If true, then include closed channels.
+final bool peerAliasLookup = true; // bool | If true, then include the peer alias of the channel. ⚠️ Enabling this flag does come with a performance cost in the form of another roundtrip to the node.
 
 try {
-    final response = api.lightningListChannelsLightningListChannelsGet();
+    final response = api.lightningListChannelsLightningListChannelsGet(includeClosed, peerAliasLookup);
     print(response);
 } catch on DioError (e) {
     print('Exception when calling LightningApi->lightningListChannelsLightningListChannelsGet: $e\n');
@@ -409,7 +411,11 @@ try {
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **includeClosed** | **bool**| If true, then include closed channels. | [optional] [default to true]
+ **peerAliasLookup** | **bool**| If true, then include the peer alias of the channel. ⚠️ Enabling this flag does come with a performance cost in the form of another roundtrip to the node. | [optional] [default to false]
 
 ### Return type
 

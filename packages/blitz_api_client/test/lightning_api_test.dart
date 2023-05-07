@@ -70,9 +70,9 @@ void main() {
       // TODO
     });
 
-    // Returns a list of open channels
+    // Returns a list of all channels
     //
-    //Future<BuiltList<Channel>> lightningListChannelsLightningListChannelsGet() async
+    //Future<BuiltList<Channel>> lightningListChannelsLightningListChannelsGet({ bool includeClosed, bool peerAliasLookup }) async
     test('test lightningListChannelsLightningListChannelsGet', () async {
       // TODO
     });

@@ -713,10 +713,12 @@ class LightningApi {
     );
   }
 
-  /// Returns a list of open channels
+  /// Returns a list of all channels
   ///
   ///
   /// Parameters:
+  /// * [includeClosed] - If true, then include closed channels.
+  /// * [peerAliasLookup] - If true, then include the peer alias of the channel. ⚠️ Enabling this flag does come with a performance cost in the form of another roundtrip to the node.
   /// * [cancelToken] - A [CancelToken] that can be used to cancel the operation
   /// * [headers] - Can be used to add additional headers to the request
   /// * [extras] - Can be used to add flags to the request
@@ -728,6 +730,8 @@ class LightningApi {
   /// Throws [DioError] if API call or serialization fails
   Future<Response<BuiltList<Channel>>>
       lightningListChannelsLightningListChannelsGet({
+    bool? includeClosed = true,
+    bool? peerAliasLookup = false,
     CancelToken? cancelToken,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -754,9 +758,19 @@ class LightningApi {
       validateStatus: validateStatus,
     );
 
+    final _queryParameters = <String, dynamic>{
+      if (includeClosed != null)
+        r'include_closed': encodeQueryParameter(
+            _serializers, includeClosed, const FullType(bool)),
+      if (peerAliasLookup != null)
+        r'peer_alias_lookup': encodeQueryParameter(
+            _serializers, peerAliasLookup, const FullType(bool)),
+    };
+
     final _response = await _dio.request<Object>(
       _path,
       options: _options,
+      queryParameters: _queryParameters,
       cancelToken: cancelToken,
       onSendProgress: onSendProgress,
       onReceiveProgress: onReceiveProgress,

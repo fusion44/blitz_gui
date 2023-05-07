@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:regtest_core/core.dart';
 
+import 'toolbox_buttons/open_channel_button.dart';
 import 'widget_utils.dart';
 
 class ChannelsCard extends StatefulWidget {
@@ -49,11 +50,7 @@ class _ChannelsCardState extends State<ChannelsCard> {
               ],
             ),
             const SizedBox(height: 8.0),
-            buildColoredButton(
-              Colors.blueGrey,
-              "Open",
-              () => _openChannel(),
-            ),
+            OpenChannelButton(widget.node),
             const SizedBox(height: 8.0),
             for (final c in _channels)
               Padding(

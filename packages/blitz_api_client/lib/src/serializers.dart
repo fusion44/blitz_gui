@@ -18,6 +18,8 @@ import 'package:blitz_api_client/src/model/btc_local_address.dart';
 import 'package:blitz_api_client/src/model/btc_network.dart';
 import 'package:blitz_api_client/src/model/chain.dart';
 import 'package:blitz_api_client/src/model/channel.dart';
+import 'package:blitz_api_client/src/model/channel_initiator.dart';
+import 'package:blitz_api_client/src/model/channel_state.dart';
 import 'package:blitz_api_client/src/model/channel_update.dart';
 import 'package:blitz_api_client/src/model/connection_info.dart';
 import 'package:blitz_api_client/src/model/custom_records_entry.dart';
@@ -88,6 +90,8 @@ part 'serializers.g.dart';
   BtcNetwork,
   Chain,
   Channel,
+  ChannelInitiator,
+  ChannelState,
   ChannelUpdate,
   ConnectionInfo,
   CustomRecordsEntry,
