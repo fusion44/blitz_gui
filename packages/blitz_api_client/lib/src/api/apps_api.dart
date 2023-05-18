@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:blitz_api_client/src/model/http_validation_error.dart';
 import 'package:blitz_api_client/src/model/uninstall_data.dart';
 import 'package:built_value/json_object.dart';
 import 'package:built_value/serializer.dart';

@@ -152,13 +152,13 @@ Future<void> validateOpenChannel(NetworkManager manager) async {
   // make sure all funds are confirmed
   await manager.waitOnchainConfirmed();
 
-  final before = await manager.getWalletBalances();
+  await manager.getWalletBalances();
 
   await _validateOpensChan(from: N.CLNgRPC!, to: N.LNDgRPC!, pushSat: 250000);
   await _validateOpensChan(from: N.CLNjRPC!, to: N.LNDgRPC!, pushSat: 350000);
   await _validateOpensChan(from: N.LNDgRPC!, to: N.CLNjRPC!, pushSat: 500000);
 
-  final after = await manager.getWalletBalances();
+  await manager.getWalletBalances();
 
   await manager.mineBlocks(10, delayBetweenBlocks: 2);
 

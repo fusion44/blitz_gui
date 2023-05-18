@@ -6,7 +6,6 @@ import 'dart:async';
 
 import 'package:blitz_api_client/src/api_util.dart';
 import 'package:blitz_api_client/src/model/connection_info.dart';
-import 'package:blitz_api_client/src/model/http_validation_error.dart';
 import 'package:blitz_api_client/src/model/login_input.dart';
 import 'package:blitz_api_client/src/model/raw_debug_log_data.dart';
 import 'package:blitz_api_client/src/model/system_info.dart';

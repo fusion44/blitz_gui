@@ -14,7 +14,7 @@ dependencies:
     sdk: flutter
 
   go_router: ^6.0.6
-  qr_flutter: ^4.0.0
+  qr_flutter: ^4.1.0
   flutter_bloc: ^8.1.2
   flutter_translate: ^4.0.2
 

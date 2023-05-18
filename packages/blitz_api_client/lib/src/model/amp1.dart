@@ -2,7 +2,6 @@
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
 
-import 'package:blitz_api_client/src/model/amp.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
 
