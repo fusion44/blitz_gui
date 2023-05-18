@@ -68,14 +68,39 @@ class _ToolsColumnsState extends State<ToolsColumns> {
         ),
         const Spacer(),
         PopupMenuButton<String>(
-          onSelected: (String text) =>
-              copyToClipboardWithNotification(context, text),
+          onSelected: (String text) {
+            if (text == 'logs' || text == 'logs_blitz') {
+              getLogs(text, n);
+              return;
+            }
+            copyToClipboardWithNotification(context, text);
+          },
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
             _buildPopupItem(
               header: 'hostname',
               body: n.hostname,
               value: n.hostname,
               showDivider: true,
+            ),
+            PopupMenuItem<String>(
+              value: 'logs',
+              child: Column(
+                children: const [
+                  Padding(
+                      padding: EdgeInsets.all(8.0), child: Text('Node Logs')),
+                  Divider(),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'logs_blitz',
+              child: Column(
+                children: const [
+                  Padding(
+                      padding: EdgeInsets.all(8.0), child: Text('Blitz Logs')),
+                  Divider(),
+                ],
+              ),
             ),
             _buildPopupItem(
               header: 'token',
@@ -121,5 +146,31 @@ class _ToolsColumnsState extends State<ToolsColumns> {
         ],
       ),
     );
+  }
+
+  getLogs(String type, LnNode n) async {
+    try {
+      List<String> logs = [];
+      switch (type) {
+        case 'logs':
+          logs.addAll(await n.getLogs());
+          break;
+        case 'logs_blitz':
+          logs.addAll(await n.getLogsBlitz());
+          break;
+        default:
+          buildSnackbar(
+            context,
+            title: 'Failed to get logs',
+            msg: 'Log type $type not found',
+          );
+
+          return;
+      }
+
+      print(logs);
+    } on DockerException catch (e) {
+      buildSnackbar(context, title: 'Failed to get logs', msg: e.message);
+    }
   }
 }

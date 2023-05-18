@@ -3,6 +3,7 @@
 import 'package:blitz_api_client/blitz_api_client.dart';
 import 'package:dio/dio.dart';
 
+import 'commands/docker.dart';
 import 'constants.dart';
 import 'manager.dart';
 import 'model_extensions.dart';
@@ -166,6 +167,8 @@ class LnNode {
   String get hostname => id.name;
   String get fullUri => "$pubKey@$hostname:9735";
   String? get token => _token;
+  String get containerName => 'regtest-${id.name}-1';
+  String get containerNameBlitz => 'regtest-${id.name}-blitz-1';
   BlitzApiClient get api {
     if (!_bootstrapped) throw Exception("Node $id not bootstrapped");
 
@@ -452,6 +455,24 @@ class LnNode {
 
     return numClosed;
   }
+
+  Future<List<String>> getLogs({int tail = 0}) async {
+    final logs = await getLogsFromDocker(containerName, tail: tail);
+
+    return logs;
+  }
+
+  Future<List<String>> getLogsBlitz({int tail = 0}) async {
+    final logs = await getLogsFromDocker(containerNameBlitz, tail: tail);
+
+    return logs;
+  }
+
+  Future<Stream<String>> followLogs({int tail = 0}) async =>
+      await followDockerLogs(containerName, tail: tail);
+
+  Future<Stream<String>> followLogsBlitz({int tail = 0}) async =>
+      await followDockerLogs(containerNameBlitz, tail: tail);
 }
 
 class RegtestChannel {
