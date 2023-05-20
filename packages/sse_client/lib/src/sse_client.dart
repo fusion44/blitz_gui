@@ -36,10 +36,15 @@ class SSEClient {
             return;
           }
 
-          int fistIndex = dataLine.indexOf(':');
+          int firstIndex = dataLine.indexOf(':');
+          if (firstIndex == -1) {
+            BlitzLog().w('Received a malformed SSE message:\n$dataLine');
+            return;
+          }
+
           List spl = [
-            dataLine.substring(0, fistIndex).trim(),
-            dataLine.substring(fistIndex + 1).trim()
+            dataLine.substring(0, firstIndex).trim(),
+            dataLine.substring(firstIndex + 1).trim()
           ];
           if (spl.length != 2) {
             BlitzLog().w('Received a malformed SSE message:\n$dataLine');

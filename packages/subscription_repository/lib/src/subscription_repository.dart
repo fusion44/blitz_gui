@@ -51,33 +51,48 @@ class SubscriptionRepository {
   Stream<dynamic>? get rawStream => _stream;
 
   Stream<Map<String, dynamic>>? filteredStream(List<SseEventTypes> eventsIds) {
+    if (eventsIds.isEmpty) {
+      eventsIds = allSSETypesExcept(<SseEventTypes>[]);
+    }
+
+    var id;
     return _stream?.where((event) {
       try {
-        final id = _getEventId(event.event);
+        id = _getEventId(event.event);
         if (eventsIds.contains(id)) return true;
+
         return false;
       } on UnknownSseTypeException {
         return false;
       }
-    }).map<Map<String, dynamic>>((event) {
-      try {
-        return {
-          'data': jsonDecode(event.data),
-          'event': event.event,
-        };
-      } on FormatException catch (e) {
-        // Ping message?
-        BlitzLog().e(e);
-        return <String, dynamic>{};
-      }
-    });
+    }).map<Map<String, dynamic>>(
+      (event) => _parseEvent(event, id),
+    );
+  }
+
+  Map<String, dynamic> _parseEvent(event, id) {
+    try {
+      return {
+        'data': jsonDecode(event.data),
+        'event': event.event,
+        'id': id,
+      };
+    } on FormatException catch (e) {
+      // Ping message?
+      BlitzLog().e(e);
+      return <String, dynamic>{};
+    }
   }
 
   SseEventTypes _getEventId(String? eventId) {
     if (eventId == 'system_info') {
       return SseEventTypes.systemInfo;
+    } else if (eventId == 'system_startup_info') {
+      return SseEventTypes.systemStartupInfo;
     } else if (eventId == 'hardware_info') {
       return SseEventTypes.hardwareInfo;
+    } else if (eventId == 'install') {
+      return SseEventTypes.install;
     } else if (eventId == 'installed_app_status') {
       return SseEventTypes.installedAppStatus;
     } else if (eventId == 'btc_info') {
@@ -105,7 +120,7 @@ class SubscriptionRepository {
     } else if (eventId == 'wallet_lock_status') {
       return SseEventTypes.walletLockStatus;
     } else {
-      throw UnknownSseTypeException.withDefaultMessage(eventId);
+      return SseEventTypes.unknown;
     }
   }
 
