@@ -143,20 +143,14 @@ Future<void> _validateOpensChan(
           id = "${id.substring(0, 10)}...${id.substring(id.length - 12)}";
         }
 
-        if (active != null &&
-            active &&
-            id.isNotEmpty &&
-            c.otherFunds == pushSat) {
+        if (active && id.isNotEmpty && c.otherFunds == pushSat) {
           return printResult(
             "${from.lnInfo.implementation}: channel with id $id open after $numBlocks blocks. Push amount of $pushSat is correct",
             res: ResultType.ok,
           );
         }
 
-        if (active != null &&
-            active &&
-            id.isNotEmpty &&
-            c.otherFunds != pushSat) {
+        if (active && id.isNotEmpty && c.otherFunds != pushSat) {
           return printResult(
               "${from.lnInfo.implementation}: channel with id $id open after $numBlocks blocks, but push amount is wrong",
               res: ResultType.nok,

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:regtest_core/core.dart';
 
 import 'toolbox_buttons/open_channel_button.dart';
-import 'widget_utils.dart';
 
 class ChannelsCard extends StatefulWidget {
   final LnNode node;
