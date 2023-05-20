@@ -8,7 +8,6 @@ import 'package:blitz_api_client/src/api_util.dart';
 import 'package:blitz_api_client/src/model/channel.dart';
 import 'package:blitz_api_client/src/model/fee_revenue.dart';
 import 'package:blitz_api_client/src/model/generic_tx.dart';
-import 'package:blitz_api_client/src/model/http_validation_error.dart';
 import 'package:blitz_api_client/src/model/invoice.dart';
 import 'package:blitz_api_client/src/model/lightning_info_lite.dart';
 import 'package:blitz_api_client/src/model/ln_info.dart';

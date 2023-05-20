@@ -183,7 +183,19 @@ Future<void> validateOpenChannelNoPush(NetworkManager manager) async {
   await manager.sweepAllChannels();
   await manager.waitOnchainConfirmed();
 
-  await _validateOpensChan(manager, N.CLNgRPC!, N.LND3gRPC!);
-  await _validateOpensChan(manager, N.CLNjRPC!, N.LND3gRPC!);
-  await _validateOpensChan(manager, N.LNDgRPC!, N.LND3gRPC!);
+  await manager.getWalletBalances();
+
+  await _validateOpensChan(from: N.CLNgRPC!, to: N.LNDgRPC!, pushSat: 250000);
+  await _validateOpensChan(from: N.CLNjRPC!, to: N.LNDgRPC!, pushSat: 350000);
+  await _validateOpensChan(from: N.LNDgRPC!, to: N.CLNjRPC!, pushSat: 500000);
+
+  await manager.getWalletBalances();
+
+  await manager.mineBlocks(10, delayBetweenBlocks: 2);
+
+  // channels should be open and be listed
+  printGroupHeader("Channel should be open after 10 new blocks");
+  await _validateChanIsOpen(from: N.CLNgRPC!, to: N.LNDgRPC!, pushSat: 250000);
+  await _validateChanIsOpen(from: N.CLNjRPC!, to: N.LNDgRPC!, pushSat: 350000);
+  await _validateChanIsOpen(from: N.LNDgRPC!, to: N.CLNjRPC!, pushSat: 500000);
 }

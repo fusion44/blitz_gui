@@ -8,7 +8,6 @@ import 'package:blitz_api_client/src/api_util.dart';
 import 'package:blitz_api_client/src/model/blockchain_info.dart';
 import 'package:blitz_api_client/src/model/btc_info.dart';
 import 'package:blitz_api_client/src/model/fee_estimation_mode.dart';
-import 'package:blitz_api_client/src/model/http_validation_error.dart';
 import 'package:blitz_api_client/src/model/network_info.dart';
 import 'package:blitz_api_client/src/model/raw_transaction.dart';
 import 'package:built_value/json_object.dart';

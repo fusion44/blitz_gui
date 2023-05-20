@@ -2,7 +2,6 @@
 // AUTO-GENERATED FILE, DO NOT MODIFY!
 //
 
-import 'package:blitz_api_client/src/model/bip9_data.dart';
 import 'package:blitz_api_client/src/model/statistics.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';

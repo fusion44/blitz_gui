@@ -90,7 +90,7 @@ class _AddInvoicePageState extends State<AddInvoicePage> {
           return const Center(child: Text('Yay! Paid!!'));
         }
         return Center(
-          child: QrImage(
+          child: QrImageView(
             backgroundColor: Colors.grey[300]!,
             data: payReq,
             version: QrVersions.auto,

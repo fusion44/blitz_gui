@@ -35,4 +35,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - ../../../assets/RaspiBlitz_Logo_Icon_Negative.png
+    - ../../assets/RaspiBlitz_Logo_Icon_Negative.png
