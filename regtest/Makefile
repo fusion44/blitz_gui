@@ -2,10 +2,7 @@ clean:
 	flutter clean
 
 down:
-	docker compose -p regtest down --volumes
-
-up:
-	docker compose -p regtest up
+	docker rm -f $(docker ps -a -q --filter "name=regtest*")
 
 del-data:
 	sudo rm -rf /tmp/regtest-data

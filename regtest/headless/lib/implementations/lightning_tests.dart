@@ -130,7 +130,7 @@ Future<void> _validateOpensChan(
         );
       }
 
-      await mgr.mineBlocks(1);
+      await mgr.btcc.mineBlocks(1);
       await Future.delayed(Duration(seconds: 2));
       numBlocks++;
 
@@ -206,7 +206,7 @@ Future<void> validateOpenChannelNoPush(NetworkManager manager) async {
 
   await manager.getWalletBalances();
 
-  await manager.mineBlocks(10, delayBetweenBlocks: 2);
+  await manager.btcc.mineBlocks(10, delayBetweenBlocks: 2);
 
   // channels should be open and be listed
   printGroupHeader("Channel should be open after 10 new blocks");

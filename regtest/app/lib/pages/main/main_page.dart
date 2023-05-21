@@ -269,13 +269,13 @@ class _MyHomePageState extends State<MyHomePage> {
       while (_currentBlock < blockData.value.numBlocks) {
         final delay = from != to ? Random().nextInt(to) + from : from;
         await Future.delayed(Duration(seconds: delay));
-        await doMineBlocks(1);
+        await _mgr.btcc.mineBlocks(1);
         setState(() => _currentBlock += 1);
       }
 
       debugPrint('Done mining');
     } else {
-      await doMineBlocks(blockData.value.numBlocks);
+      await _mgr.btcc.mineBlocks(blockData.value.numBlocks);
     }
 
     setState(() => _miningBlocks = false);

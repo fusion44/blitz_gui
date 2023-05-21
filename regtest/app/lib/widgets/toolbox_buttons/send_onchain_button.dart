@@ -101,7 +101,7 @@ ${data.numBlocks - x} blocks left
         }
 
         try {
-          await doMineBlocks(1);
+          await NetworkManager().btcc.mineBlocks(1);
         } catch (e) {
           debugPrint(e.toString());
         }

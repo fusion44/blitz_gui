@@ -9,5 +9,4 @@ export 'src/utils.dart';
 export 'src/models.dart';
 export 'src/model_extensions.dart';
 export 'src/manager.dart';
-export 'src/commands/bitcoind.dart';
-export 'src/commands/docker.dart';
+export 'src/docker/docker.dart';

@@ -1,43 +1,68 @@
-[
-    {
-        "from": "lnd1",
-        "channels": [
-            {
-                "to": "lnd2"
-            },
-            {
-                "to": "lnd3"
-            },
-            {
-                "to": "cln1"
-            }
-        ]
-    },
-    {
-        "from": "lnd2",
-        "channels": [
-            {
-                "to": "cln2"
-            }
-        ]
-    },
-    {
-        "from": "lnd3",
-        "channels": [
-            {
-                "to": "cln1"
-            },
-            {
-                "to": "cln2"
-            }
-        ]
-    },
-    {
-        "from": "cln1",
-        "channels": [
-            {
-                "to": "cln2"
-            }
-        ]
-    }
-]
+{
+    "name": "net-1",
+    "nodes": [
+        {
+            "name": "lnd1",
+            "type": "lnd"
+        },
+        {
+            "name": "lnd2",
+            "type": "lnd"
+        },
+        {
+            "name": "lnd3",
+            "type": "lnd"
+        },
+        {
+            "name": "cln1",
+            "type": "cln"
+        },
+        {
+            "name": "cln2",
+            "type": "cln"
+        }
+    ],
+    "channels": [
+        {
+            "from": "lnd1",
+            "channels": [
+                {
+                    "to": "lnd2"
+                },
+                {
+                    "to": "lnd3"
+                },
+                {
+                    "to": "cln1"
+                }
+            ]
+        },
+        {
+            "from": "lnd2",
+            "channels": [
+                {
+                    "to": "cln2"
+                }
+            ]
+        },
+        {
+            "from": "lnd3",
+            "channels": [
+                {
+                    "to": "cln1"
+                },
+                {
+                    "to": "cln2"
+                }
+            ]
+        },
+        {
+            "from": "cln1",
+            "channels": [
+                {
+                    "to": "cln2"
+                }
+            ]
+        }
+    ]
+}

@@ -1,4 +1,9 @@
-const projectName = "regtest";
+const projectName = 'regtest';
+const projectNetwork = '${projectName}_network';
+const dockerDataDir = '/tmp/regtest-data';
+
+const defaultRedisName = '${projectName}_redis';
+const defaultBitcoinCoreName = '${projectName}_bitcoind';
 
 const currentNumContainers = 12;
 
@@ -16,8 +21,9 @@ enum NodeId {
 
 enum Implementation {
   empty,
-  lnd,
-  cln,
+  lndGRPC,
+  clnJRPC,
+  clnGRPC,
 }
 
 enum Denomination { btc, sats, msats }

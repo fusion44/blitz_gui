@@ -1,19 +1,18 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:blitz_api_client/blitz_api_client.dart' as client;
+import 'package:regtest_core/src/docker/containers/bitcoin_core.dart';
+import 'package:regtest_core/src/docker/containers/cln.dart';
+import 'package:regtest_core/src/docker/containers/lnd.dart';
 
-import 'commands/bitcoind.dart';
-import 'commands/docker.dart';
+import 'docker/containers/redis.dart';
+import 'docker/docker.dart';
 import 'constants.dart';
 import 'model_extensions.dart';
 import 'models.dart';
 import 'utils.dart';
-
-const dataDir = "/tmp/regtest-data";
 
 enum NetworkState {
   down,
@@ -36,16 +35,19 @@ class NetworkStateMessage {
 
 class NetworkManager {
   bool _isInitialized = false;
-  final Map<NodeId, LnNode> _nodeMap = {};
+  final Map<String, LnNode> _nodeMap = {};
 
   static final NetworkManager _instance = NetworkManager._internal();
 
   bool _bootstrapped = false;
+
+  late RedisContainer _redisContainer;
+  late BitcoinCoreContainer _btcc;
+
   factory NetworkManager() => _instance;
 
   final StreamController<NetworkStateMessage> _controller =
       StreamController<NetworkStateMessage>();
-  late final Stream<NetworkStateMessage> _broadcastStream;
 
   NetworkManager._internal();
 
@@ -54,18 +56,18 @@ class NetworkManager {
       logMessage("NetworkManager already initialized");
       return;
     }
-
     _isInitialized = true;
-    _broadcastStream = _controller.stream.asBroadcastStream();
     await _checkIfRunning();
   }
 
   bool get initialized => _isInitialized;
 
-  Stream<NetworkStateMessage> get stream => _broadcastStream;
+  Stream<NetworkStateMessage> get stream =>
+      _controller.stream.asBroadcastStream();
 
-  Map<NodeId, LnNode> get nodeMap => _nodeMap;
+  Map<String, LnNode> get nodeMap => _nodeMap;
   List<LnNode> get nodeList => _nodeMap.values.toList();
+  BitcoinCoreContainer get btcc => _btcc;
 
   LnNode? nodeByPubKey(String key) =>
       _nodeMap.values.firstWhere((node) => node.pubKey == key);
@@ -83,17 +85,57 @@ class NetworkManager {
   }) async {
     _sendMessage(NetworkState.startingUp);
 
-    await _prepareDataDir(dataDir, getComposeString());
+    await _prepareDataDir(dockerDataDir);
 
-    final args = ["compose", "-p", projectName, "up", "-d", "--remove-orphans"];
-    final output = await _command(args, dataDir);
+    await _ensureDockerNetwork();
+
+    _redisContainer = RedisContainer();
+    await _redisContainer.start();
+
+    _btcc = BitcoinCoreContainer();
+    await _btcc.start();
+
+    final lnd = LNDContainer(
+      alias: 'lnd1',
+      id: 0,
+      btcContainerName: _btcc.name,
+    );
+
+    try {
+      await lnd.start();
+    } on DockerException catch (e) {
+      print(e.message);
+    }
+
+    final cln = CLNContainer(
+      alias: 'cln1',
+      id: 0,
+      btcContainerName: _btcc.name,
+    );
+
+    lnd.logStream.listen(
+      (event) {
+        print('CLN $event');
+      },
+      onError: (line) {
+        print('CLN error: $line');
+      },
+      onDone: () {
+        print('CLN done');
+      },
+    );
+    try {
+      await cln.start();
+    } on DockerException catch (e) {
+      print(e.message);
+    }
 
     logMessage("Ensuring Bitcoin daemon wallet exists");
-    await ensureWalletLoaded();
+    await _btcc.ensureWalletLoaded();
     // Consensus mechanism requires 100 blocks to be mined
     // before reward can be spent
     logMessage("Mining 110 blocks to get and unlock block reward");
-    await mineBlocks(110);
+    await btcc.mineBlocks(110);
 
     for (var i = 25; i > 0; i--) {
       logMessage("Sleeping ${i * 5} s");
@@ -109,7 +151,7 @@ class NetworkManager {
     logMessage("Sleeping 10 s");
     await Future.delayed(const Duration(seconds: 10));
 
-    await mineBlocks(3);
+    await btcc.mineBlocks(3);
     await _bootstrapNodeData();
     if (exposeDataDirToHost) {
       await _makeDataDirsPublic();
@@ -117,14 +159,14 @@ class NetworkManager {
 
     await Future.delayed(const Duration(seconds: 10));
     _sendMessage(NetworkState.up);
-    logMessage(output);
+    // logMessage(output);
   }
 
   Future<void> stop() async {
     final args = ["compose", "-p", projectName, "down", "--volumes"];
     try {
       _sendMessage(NetworkState.shuttingDown);
-      final output = await _command(args, dataDir);
+      final output = await dockerCmd(args, dockerDataDir);
 
       await _cleanDataDirectories();
 
@@ -172,38 +214,6 @@ class NetworkManager {
     }
   }
 
-  Future<String> _command(List<String> args, String workDir) async {
-    final c = Completer<String>();
-    final p = await Process.start('docker', args, workingDirectory: workDir);
-
-    p.stdout.transform(utf8.decoder).listen(
-      (event) => logMessage(event),
-      onDone: () async {
-        logMessage("_command: onDone");
-        if (!c.isCompleted) c.complete("$args");
-      },
-      onError: (error) {
-        logMessage("_command: onError");
-
-        if (!c.isCompleted) c.completeError(error);
-      },
-    );
-
-    p.stderr.transform(utf8.decoder).listen((error) {
-      final message = error.toString().trim();
-      if (message.contains("Creating") ||
-          message.contains("Created") ||
-          message.contains("Starting") ||
-          message.contains("Started")) {
-        return logMessage(message);
-      }
-
-      logMessage(message);
-    });
-
-    return c.future;
-  }
-
   _sendMessage(NetworkState state, [String? message]) =>
       _controller.add(NetworkStateMessage(state, message));
 
@@ -226,7 +236,8 @@ class NetworkManager {
     for (final id in NodeId.values) {
       if (id != NodeId.empty) {
         final n = LnNode(id);
-        _nodeMap[id] = n;
+        // TODO: fixme
+        _nodeMap["id"] = n;
         futures.add(n.bootstrap());
       }
     }
@@ -241,7 +252,7 @@ class NetworkManager {
   }) async {
     logMessage("Funding nodes");
 
-    await ensureWalletLoaded();
+    await _btcc.ensureWalletLoaded();
 
     final futures = <Future>[];
     for (final n in nodeList) {
@@ -258,7 +269,7 @@ class NetworkManager {
 
     final addresses = await Future.wait(futures);
     for (var a in addresses) {
-      final res = await fundFromDaemonWallet(a, amountInBtc);
+      final res = await _btcc.sendFunds(a, amountInBtc);
       logMessage(res);
     }
 
@@ -280,7 +291,7 @@ class NetworkManager {
     var iterations = 0;
 
     while (balances.haveUnconfirmedFunds) {
-      await mineBlocks(1);
+      await btcc.mineBlocks(1);
       await Future.delayed(Duration(seconds: 1));
       balances = await getWalletBalances();
 
@@ -308,7 +319,7 @@ class NetworkManager {
         throw StateError("Nodes not funded after $maxIterations iterations");
       }
 
-      await mineBlocks(1);
+      await btcc.mineBlocks(1);
       await Future.delayed(const Duration(seconds: 2));
       final after = await getWalletBalances();
       isHigher = after.areAllHigherThan(before, confirmedOnly: true);
@@ -325,7 +336,7 @@ class NetworkManager {
     final json = jsonDecode(txt);
 
     for (var entry in json) {
-      final from = entry['from'];
+      final from = entry['from'] as String;
       final channels = entry['channels'];
 
       final fromNode = _nodeMap[NodeId.values.byName(from)];
@@ -342,7 +353,7 @@ class NetworkManager {
 
         for (var i = 0; i < 10; i++) {
           // mine every second to allow nodes to catch up timely
-          await mineBlocks(1);
+          await btcc.mineBlocks(1);
           await Future.delayed(const Duration(seconds: 1));
         }
         await Future.delayed(const Duration(seconds: 2));
@@ -363,20 +374,35 @@ class NetworkManager {
       // get all channels before closing
       channels[n] = await n.fetchChannels();
 
-      try {
-        // close the channels
-        numClosed += await n.sweepChannels();
-      } catch (e) {
-        logMessage("Error closing channels: ${e.toString()}");
-        continue;
+      // close the channels
+      numClosed += await n.sweepChannels();
+
+      // We need to wait a bit for the nodes to catch up
+      await Future.delayed(Duration(seconds: 10));
+    }
+
+    for (var n in nodeList) {
+      if (channels.containsKey(n)) {
+        for (var x in channels[n]!) {
+          print("active: ${x.channel.active}");
+        }
       }
     }
 
     if (autoMine && numClosed > 0) {
-      // brute force mine for now. CLN doesn't yet
-      // return the correct channel state
-      await mineBlocks(20);
-      await Future.delayed(const Duration(seconds: 35));
+      await btcc.mineBlocks(1);
+      await Future.delayed(const Duration(seconds: 2));
+
+      for (final n in nodeList) {
+        final newState = await n.fetchChannels();
+        final olsState = channels[n]!;
+        final diff = newState.length - olsState.length;
+        if (diff != numClosed) {
+          logMessage(
+            "Node ${n.id} has ${newState.length} channels, but $numClosed were closed",
+          );
+        }
+      }
     }
 
     return numClosed;
@@ -388,7 +414,7 @@ class NetworkManager {
     autoMine = false,
   }) async {
     print("Sweeping onchain funds");
-    await ensureWalletLoaded();
+    await _btcc.ensureWalletLoaded();
     final address =
         destAddress.isEmpty ? await getNewBitcoinDAddress() : destAddress;
 
@@ -402,32 +428,10 @@ class NetworkManager {
     }
 
     if (autoMine) {
-      await mineBlocks(10, delayBetweenBlocks: 1, printStatus: true);
+      await btcc.mineBlocks(10, delayBetweenBlocks: 1, printStatus: true);
     }
 
     return address;
-  }
-
-  Future<void> mineBlocks(
-    int numBlocks, {
-    int delayBetweenBlocks = 0,
-    bool printStatus = false,
-  }) async {
-    if (delayBetweenBlocks > 0) {
-      for (var i = 1; i < numBlocks + 1; i++) {
-        if (printStatus) {
-          print("Mining block $i of $numBlocks with delay $delayBetweenBlocks");
-        }
-        await Future.delayed(Duration(seconds: delayBetweenBlocks));
-        await doMineBlocks(1);
-      }
-
-      return;
-    }
-
-    if (printStatus) print("Mining $numBlocks blocks");
-
-    await doMineBlocks(numBlocks);
   }
 
   Future<WalletBalances> getWalletBalances() async {
@@ -446,9 +450,9 @@ class NetworkManager {
     return WalletBalances(balances);
   }
 
-  Future<String> getNewBitcoinDAddress() async => await getNewAddress();
+  Future<String> getNewBitcoinDAddress() async => await _btcc.newAddress();
 
-  Future<void> _prepareDataDir(String dir, String fileContents) async {
+  Future<void> _prepareDataDir(String dir) async {
     final directory = Directory(dir);
 
     if (await directory.exists()) {
@@ -459,10 +463,6 @@ class NetworkManager {
     logMessage("Creating data directory $dir");
 
     await directory.create(recursive: true);
-
-    final file = File('${directory.path}/docker-compose.yml');
-
-    await file.writeAsString(fileContents);
   }
 
   Future<void> _makeDataDirsPublic() async {
@@ -474,14 +474,14 @@ class NetworkManager {
     await Process.run(
       su,
       ["chmod" "-R", "777", Directory("/tmp/regtest-data").absolute.path],
-      workingDirectory: dataDir,
+      workingDirectory: dockerDataDir,
     );
 
     // TODO: unhardcodify the username
     await Process.run(
       su,
       ["chown", "-R", "f44", Directory("/tmp/regtest-data").absolute.path],
-      workingDirectory: dataDir,
+      workingDirectory: dockerDataDir,
     );
   }
 
@@ -489,5 +489,16 @@ class NetworkManager {
     for (var d in dataDirs) {
       await Directory(d).delete(recursive: true);
     }
+  }
+
+  Future<void> _ensureDockerNetwork() async {
+    final networkArgs = [
+      'network',
+      'create',
+      '--driver',
+      'bridge',
+      projectNetwork
+    ];
+    await dockerCmd(networkArgs, dockerDataDir);
   }
 }

@@ -4,12 +4,13 @@ version: 0.5.1
 publish_to: 'none' 
 
 environment:
-  sdk: '>=2.19.3 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   dio: ^4.0.6
   english_words: ^4.0.0
   intl: ^0.18.0
+  meta: ^1.9.1
 
   # local
   common: ^0.5.1

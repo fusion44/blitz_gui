@@ -4,11 +4,7 @@ import 'package:blitz_api_client/blitz_api_client.dart';
 import 'package:common/common.dart' show BtcValue;
 import 'package:dio/dio.dart';
 
-import 'commands/docker.dart';
-import 'constants.dart';
-import 'manager.dart';
-import 'model_extensions.dart';
-import 'utils.dart';
+import '../core.dart';
 
 class WalletBalances {
   Map<LnNode, WalletBalance> balances = {};
@@ -132,21 +128,21 @@ class LnNode {
 
   LnNode([this.id = NodeId.empty]) {
     if (id == NodeId.cln1) {
-      implementation = Implementation.cln;
+      implementation = Implementation.clnGRPC;
       _api = BlitzApiClient(basePathOverride: 'http://localhost:8825/latest');
     } else if (id == NodeId.cln2) {
-      implementation = Implementation.cln;
+      implementation = Implementation.clnJRPC;
       _api = BlitzApiClient(basePathOverride: 'http://localhost:8826/latest');
     } else if (id == NodeId.lnd1) {
-      implementation = Implementation.lnd;
+      implementation = Implementation.lndGRPC;
       _api = BlitzApiClient(basePathOverride: 'http://localhost:8822/latest');
     } else if (id == NodeId.lnd2) {
-      implementation = Implementation.lnd;
+      implementation = Implementation.lndGRPC;
       _api = BlitzApiClient(basePathOverride: 'http://localhost:8823/latest');
     } else if (id == NodeId.lnd3) {
-      implementation = Implementation.lnd;
+      implementation = Implementation.lndGRPC;
       _api = BlitzApiClient(basePathOverride: 'http://localhost:8824/latest');
-    } else if (id == Implementation.empty) {
+    } else if (id == NodeId.empty) {
       implementation = Implementation.empty;
       _api = BlitzApiClient();
     } else {
@@ -232,8 +228,10 @@ class LnNode {
     );
   }
 
-  bool get isCln => implementation == Implementation.cln;
-  bool get isLnd => implementation == Implementation.lnd;
+  bool get isCln =>
+      implementation == Implementation.clnGRPC ||
+      implementation == Implementation.clnJRPC;
+  bool get isLnd => implementation == Implementation.lndGRPC;
 
   Future<String> genInvoice(GenInvoiceDialogData i) async {
     final resp =
