@@ -290,7 +290,7 @@ class LnNode {
   Future<String> openChannel(
     LnNode to, {
     int localFundingAmount = defaultChannelSize,
-    int pushAmountMsat = 0,
+    int pushAmountSat = 0,
   }) async {
     try {
       final res = await _api
@@ -298,7 +298,7 @@ class LnNode {
           .lightningOpenChannelLightningOpenChannelPost(
             localFundingAmount: localFundingAmount,
             nodeURI: to.fullUri,
-            pushAmountSat: (defaultChannelSize ~/ 2),
+            pushAmountSat: pushAmountSat,
           );
       return res.data ?? '';
     } catch (e) {
@@ -372,17 +372,21 @@ class LnNode {
     return false;
   }
 
-  Future<List<RegtestChannel>> fetchChannels() async {
+  Future<List<RegtestChannel>> fetchChannels([
+    bool includeClosed = false,
+  ]) async {
     try {
       final res = await _api
           .getLightningApi()
-          .lightningListChannelsLightningListChannelsGet();
+          .lightningListChannelsLightningListChannelsGet(
+            includeClosed: includeClosed,
+          );
       final data = res.data;
       if (data == null) return [];
 
       final d = data.toList().map(
         (e) {
-          final r = NetworkManager().nodeByPubKey(e.peerPublickey!);
+          final r = NetworkManager().nodeByPubKey(e.peerPublickey);
           if (r == null) {
             logMessage("Failed to find node for pubkey ${e.peerPublickey}");
             throw StateError(
@@ -449,6 +453,7 @@ class LnNode {
     for (var c in channels) {
       try {
         await c.from.closeChannel(c);
+        numClosed++;
       } catch (e) {
         print("sweepChannels($id): Failed to close channel ${c.id}: $e");
       }
@@ -560,6 +565,34 @@ class PayInvoiceResult {
   @override
   String toString() =>
       "PayInvoiceResult{success: $success, processOut: $error}";
+}
+
+class OpenChannelDialogData {
+  final int numSats;
+  final int numPushSats;
+  final bool autoMine;
+  final LnNode? destination;
+  final bool delayBroadcast;
+  final int broadcastDelay;
+  final int mineDelay;
+  final int numBlocks;
+
+  OpenChannelDialogData({
+    this.numSats = 5000000,
+    this.numPushSats = 0,
+    this.autoMine = false,
+    this.destination,
+    this.delayBroadcast = false,
+    this.broadcastDelay = 0,
+    this.mineDelay = 0,
+    this.numBlocks = 3,
+  });
+
+  @override
+  String toString() =>
+      "OpenChannelDialogData{numSats: $numSats, numPushSats: $numPushSats, autoMine: $autoMine, destination: $destination}";
+
+  factory OpenChannelDialogData.empty() => OpenChannelDialogData(numSats: 0);
 }
 
 class SendOnchainDialogData {

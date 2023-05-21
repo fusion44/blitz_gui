@@ -45,6 +45,7 @@ class NetworkManager {
 
   final StreamController<NetworkStateMessage> _controller =
       StreamController<NetworkStateMessage>();
+  late final Stream<NetworkStateMessage> _broadcastStream;
 
   NetworkManager._internal();
 
@@ -53,14 +54,15 @@ class NetworkManager {
       logMessage("NetworkManager already initialized");
       return;
     }
+
     _isInitialized = true;
+    _broadcastStream = _controller.stream.asBroadcastStream();
     await _checkIfRunning();
   }
 
   bool get initialized => _isInitialized;
 
-  Stream<NetworkStateMessage> get stream =>
-      _controller.stream.asBroadcastStream();
+  Stream<NetworkStateMessage> get stream => _broadcastStream;
 
   Map<NodeId, LnNode> get nodeMap => _nodeMap;
   List<LnNode> get nodeList => _nodeMap.values.toList();
@@ -361,35 +363,20 @@ class NetworkManager {
       // get all channels before closing
       channels[n] = await n.fetchChannels();
 
-      // close the channels
-      numClosed += await n.sweepChannels();
-
-      // We need to wait a bit for the nodes to catch up
-      await Future.delayed(Duration(seconds: 10));
-    }
-
-    for (var n in nodeList) {
-      if (channels.containsKey(n)) {
-        for (var x in channels[n]!) {
-          print("active: ${x.channel.active}");
-        }
+      try {
+        // close the channels
+        numClosed += await n.sweepChannels();
+      } catch (e) {
+        logMessage("Error closing channels: ${e.toString()}");
+        continue;
       }
     }
 
     if (autoMine && numClosed > 0) {
-      await mineBlocks(1);
-      await Future.delayed(const Duration(seconds: 2));
-
-      for (final n in nodeList) {
-        final newState = await n.fetchChannels();
-        final olsState = channels[n]!;
-        final diff = newState.length - olsState.length;
-        if (diff != numClosed) {
-          logMessage(
-            "Node ${n.id} has ${newState.length} channels, but $numClosed were closed",
-          );
-        }
-      }
+      // brute force mine for now. CLN doesn't yet
+      // return the correct channel state
+      await mineBlocks(20);
+      await Future.delayed(const Duration(seconds: 35));
     }
 
     return numClosed;
