@@ -12,7 +12,7 @@ dependencies:
   flutter_bloc: ^8.1.2
   bloc_concurrency: ^0.2.1
   hive_flutter: ^2.0.0-dev
-  intl: ^0.17.0
+  intl: ^0.18.0
 
   # locals
   common: ^0.5.1
