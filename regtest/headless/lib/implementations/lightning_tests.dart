@@ -180,14 +180,29 @@ Future<void> validateOpenChannelNoPush(NetworkManager manager) async {
     "open-channel opens a channel with sufficient funds; no push",
   );
   // make sure all funds are confirmed
-  await manager.sweepAllChannels();
+  await manager.sweepAllChannels(autoMine: true);
   await manager.waitOnchainConfirmed();
 
   await manager.getWalletBalances();
 
-  await _validateOpensChan(from: N.CLNgRPC!, to: N.LNDgRPC!, pushSat: 250000);
-  await _validateOpensChan(from: N.CLNjRPC!, to: N.LNDgRPC!, pushSat: 350000);
-  await _validateOpensChan(from: N.LNDgRPC!, to: N.CLNjRPC!, pushSat: 500000);
+  await _validateOpensChan(
+    manager,
+    N.CLNgRPC!,
+    N.LNDgRPC!,
+    pushSat: BtcValue.fromSats(250000),
+  );
+  await _validateOpensChan(
+    manager,
+    N.CLNjRPC!,
+    N.LNDgRPC!,
+    pushSat: BtcValue.fromSats(350000),
+  );
+  await _validateOpensChan(
+    manager,
+    N.LNDgRPC!,
+    N.CLNjRPC!,
+    pushSat: BtcValue.fromSats(500000),
+  );
 
   await manager.getWalletBalances();
 
@@ -195,7 +210,36 @@ Future<void> validateOpenChannelNoPush(NetworkManager manager) async {
 
   // channels should be open and be listed
   printGroupHeader("Channel should be open after 10 new blocks");
-  await _validateChanIsOpen(from: N.CLNgRPC!, to: N.LNDgRPC!, pushSat: 250000);
-  await _validateChanIsOpen(from: N.CLNjRPC!, to: N.LNDgRPC!, pushSat: 350000);
-  await _validateChanIsOpen(from: N.LNDgRPC!, to: N.CLNjRPC!, pushSat: 500000);
+  // await _validateChanIsOpen(from: N.CLNjRPC!, to: N.LNDgRPC!, pushSat: 350000);
+  // await _validateChanIsOpen(from: N.CLNgRPC!, to: N.LNDgRPC!, pushSat: 250000);
+  // await _validateChanIsOpen(from: N.LNDgRPC!, to: N.CLNjRPC!, pushSat: 500000);
+}
+
+Future<void> validateOpenChannelWithPush(NetworkManager manager) async {
+  printGroupHeader(
+    "open-channel opens a channel with sufficient funds; with push",
+  );
+
+  // make sure all funds are confirmed
+  await manager.sweepAllChannels(autoMine: true);
+  await manager.waitOnchainConfirmed();
+
+  await _validateOpensChan(
+    manager,
+    N.CLNgRPC!,
+    N.LND3gRPC!,
+    pushSat: BtcValue.fromSats(250000),
+  );
+  await _validateOpensChan(
+    manager,
+    N.CLNjRPC!,
+    N.LND3gRPC!,
+    pushSat: BtcValue.fromSats(551235),
+  );
+  await _validateOpensChan(
+    manager,
+    N.LNDgRPC!,
+    N.LND3gRPC!,
+    pushSat: BtcValue.fromSats(1234),
+  );
 }

@@ -47,6 +47,7 @@ Future<void> test() async {
 
   await manager.fundNodes(autoMine: true);
   await validateOpenChannelNoPush(manager);
+  await validateOpenChannelWithPush(manager);
 
   await reset();
   printSectionFooter();
