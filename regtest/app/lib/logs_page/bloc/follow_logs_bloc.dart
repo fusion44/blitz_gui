@@ -28,8 +28,8 @@ class FollowLogsBloc extends Bloc<FollowLogsEvent, FollowLogsState> {
 
   void dispose() => sub?.cancel();
 
-  Future<void> _init() async {
-    sub = (await node.followLogs()).listen((event) {
+  void _init() {
+    sub = node.logStream.listen((event) {
       add(_NewLogEntry(event));
     });
   }

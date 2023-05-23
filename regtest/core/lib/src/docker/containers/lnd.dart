@@ -7,24 +7,27 @@ import 'dart:io';
 import 'package:regtest_core/core.dart';
 
 import '../arg_builder.dart';
-import 'base.dart';
+import '../exceptions.dart';
 
-class LNDContainer extends DockerContainer {
-  final int id;
-  final String alias;
-  final String btcContainerName;
+class LNDContainer extends LnNode {
   final int _gRPCPort;
   final int _restPort;
 
   LNDContainer({
+    btcContainerName = defaultBitcoinCoreName,
+    alias = '',
+    int id = 0,
     image = 'boltz/lnd:0.16.2-beta',
-    this.alias = '',
-    required this.id,
-    this.btcContainerName = defaultBitcoinCoreName,
   })  : assert(id >= 0),
         _gRPCPort = 11109 + id,
         _restPort = 8081 + id,
-        super('${projectName}_lnd_$id', image);
+        super(
+          '${projectName}_cln_$id',
+          image,
+          id,
+          alias,
+          btcContainerName,
+        );
 
   int get gRPCPort => _gRPCPort;
   int get restPort => _restPort;
@@ -43,13 +46,13 @@ class LNDContainer extends DockerContainer {
         .addArg('--publish-all')
         .addOption('--volume', '$dataPath:/root/.lnd/')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addArg('--detach')
         .addArg(image)
         .addArg('--alias=$alias')
-        .addArg('--listen=$name:9735')
-        .addArg('--rpclisten=$name:$_gRPCPort')
-        .addArg('--restlisten=$name:$_restPort')
+        .addArg('--listen=$containerName:9735')
+        .addArg('--rpclisten=$containerName:$_gRPCPort')
+        .addArg('--restlisten=$containerName:$_restPort')
         .addArg('--bitcoin.active')
         .addArg('--bitcoin.regtest')
         .addArg('--bitcoin.node=bitcoind')
@@ -63,7 +66,7 @@ class LNDContainer extends DockerContainer {
         .addArg('--tlsextraip=127.0.0.1')
         .addArg('--tlsextraip=0.0.0.0')
         .addArg('--tlsextradomain=localhost')
-        .addArg('--tlsextradomain=$name');
+        .addArg('--tlsextradomain=$containerName');
 
     print(argBuilder.debugCommand());
 

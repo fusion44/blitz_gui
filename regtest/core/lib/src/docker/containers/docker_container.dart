@@ -32,7 +32,7 @@ class StatusMessage {
 
 abstract class DockerContainer {
   final String workDir;
-  final String name;
+  final String containerName;
   final String image;
   String? containerId;
 
@@ -49,9 +49,10 @@ abstract class DockerContainer {
   @protected
   final statusCtrl = StreamController<StatusMessage>.broadcast();
 
-  DockerContainer(this.name, this.image, {this.workDir = dockerDataDir});
+  DockerContainer(this.containerName, this.image,
+      {this.workDir = dockerDataDir});
 
-  String get dataPath => '$workDir/$name';
+  String get dataPath => '$workDir/$containerName';
   Stream<StatusMessage> get statusStream => statusCtrl.stream;
   Stream<String> get logStream => logCtrl.stream;
 
@@ -73,7 +74,7 @@ abstract class DockerContainer {
 
   @override
   String toString() {
-    return "DockerContainer($name, $image)";
+    return "DockerContainer($containerName, $image)";
   }
 
   @protected

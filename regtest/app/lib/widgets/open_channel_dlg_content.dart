@@ -69,7 +69,7 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
               items: _destinationNodes
                   .map((e) => DropdownMenuItem(
                         value: e,
-                        child: Text(e.id.name),
+                        child: Text(e.alias),
                       ))
                   .toList(),
               onChanged: ((value) {

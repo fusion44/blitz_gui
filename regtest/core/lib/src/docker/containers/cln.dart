@@ -7,22 +7,25 @@ import 'dart:io';
 import 'package:regtest_core/core.dart';
 
 import '../arg_builder.dart';
-import 'base.dart';
+import '../exceptions.dart';
 
-class CLNContainer extends DockerContainer {
-  final int id;
-  final String alias;
-  final String btcContainerName;
+class CLNContainer extends LnNode {
   final int _gRPCPort;
 
   CLNContainer({
+    btcContainerName = defaultBitcoinCoreName,
+    alias = '',
+    int id = 0,
     image = 'boltz/c-lightning:23.02.2',
-    this.alias = '',
-    this.id = 0,
-    this.btcContainerName = defaultBitcoinCoreName,
   })  : assert(id >= 0),
         _gRPCPort = 11109 + id,
-        super('${projectName}_cln_$id', image);
+        super(
+          '${projectName}_cln_$id',
+          image,
+          id,
+          alias,
+          btcContainerName,
+        );
 
   int get gRPCPort => _gRPCPort;
   String get gRPCCert => '$dataPath/regtest/client.pem';
@@ -41,7 +44,7 @@ class CLNContainer extends DockerContainer {
         .addArg('--publish-all')
         .addOption('--volume', '$dataPath:/root/.lightning/')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addArg('--detach')
         .addArg(image)
         .addArg('--alias=$alias')

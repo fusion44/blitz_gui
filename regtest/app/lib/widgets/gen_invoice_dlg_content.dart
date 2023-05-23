@@ -86,7 +86,7 @@ class _GenInvoiceDlgContentState extends State<GenInvoiceDlgContent> {
             items: NetworkManager()
                 .nodeList
                 .where((element) => element.id != widget.payeeNode.id)
-                .map((e) => DropdownMenuItem(value: e, child: Text(e.id.name)))
+                .map((e) => DropdownMenuItem(value: e, child: Text(e.alias)))
                 .toList(),
             onChanged: ((value) {
               setState(() {

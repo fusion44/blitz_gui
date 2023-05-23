@@ -6,7 +6,7 @@ import 'dart:io';
 import '../../constants.dart';
 import '../arg_builder.dart';
 import '../docker.dart';
-import 'base.dart';
+import '../exceptions.dart';
 
 class RedisContainer extends DockerContainer {
   RedisContainer({
@@ -22,7 +22,7 @@ class RedisContainer extends DockerContainer {
         .addOption('--restart', 'on-failure')
         .addOption('--expose', '6379')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addOption('--detach')
         .addArg(image);
 
@@ -34,7 +34,7 @@ class RedisContainer extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to start container $name. Error: ${result.stderr.toString()}",
+        "Failed to start container $containerName. Error: ${result.stderr.toString()}",
       );
     }
 

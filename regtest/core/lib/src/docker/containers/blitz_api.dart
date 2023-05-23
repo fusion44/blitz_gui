@@ -5,29 +5,25 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:regtest_core/core.dart';
-import 'package:regtest_core/src/docker/containers/cln.dart';
-import 'package:regtest_core/src/docker/containers/lnd.dart';
 
 import '../arg_builder.dart';
-import 'base.dart';
+import '../exceptions.dart';
 
 class BlitzAPIContainer extends DockerContainer {
   String btcContainerName = '';
   String redisHost;
   int redisPort;
   int redisDB;
-  Implementation implementation;
-  DockerContainer node;
+  LnNode node;
 
   BlitzAPIContainer({
     image = 'blitz_api:latest',
-    required this.implementation,
     required this.node,
     this.btcContainerName = defaultBitcoinCoreName,
     this.redisHost = 'redis',
     this.redisPort = 6379,
     this.redisDB = 0,
-  }) : super('${projectName}_${node.name}_api', image);
+  }) : super('${projectName}_${node.containerName}_api', image);
 
   @override
   Future<void> start() async {
@@ -45,7 +41,7 @@ class BlitzAPIContainer extends DockerContainer {
         .addOption('--entrypoint', 'sh /code/entrypoint.sh')
         .addOption('--volume', '/tmp/regtest-data:/root/data')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addOption('--environment', 'REDIS_HOST=$redisHost')
         .addOption('--environment', 'REDIS_PORT=$redisPort')
         .addOption('--environment', 'REDIS_DB=$redisDB')
@@ -54,48 +50,33 @@ class BlitzAPIContainer extends DockerContainer {
         .addOption('--environment', 'bitcoind_user=regtester')
         .addOption('--environment', 'bitcoind_pw=regtester');
 
-    int id = -1;
-    if (node.runtimeType is CLNContainer &&
-        implementation == Implementation.clnGRPC) {
+    if (node.runtimeType is CLNContainer) {
       final n = node as CLNContainer;
-      id = n.id;
-
       argBuilder
           .addOption('--environment', 'ln_node=cln_grpc')
           .addOption('--environment', 'cln_grpc_cert=${n.gRPCCert}')
           .addOption('--environment', 'cln_grpc_key=${n.gRPCClientKey}')
           .addOption('--environment', 'cln_grpc_ca=${n.gRPCCACert}')
-          .addOption('--environment', 'cln_grpc_ip=${n.name}')
-          .addOption('--environment', 'cln_grpc_port=${n.gRPCPort}');
-    }
-
-    if (node.runtimeType is CLNContainer &&
-        implementation == Implementation.clnJRPC) {
-      final n = node as CLNContainer;
-      id = n.id;
-
-      argBuilder
+          .addOption('--environment', 'cln_grpc_ip=${n.containerName}')
+          .addOption('--environment', 'cln_grpc_port=${n.gRPCPort}')
           .addOption('--environment', 'ln_node=cln_jrpc')
           .addOption('--environment', 'cln_jrpc_path=${n.jRPCFilePath}');
     }
 
-    if (runtimeType is LNDContainer &&
-        implementation == Implementation.lndGRPC) {
+    if (node.runtimeType is LNDContainer) {
       final n = node as LNDContainer;
-      id = n.id;
-
       argBuilder
           .addOption('--environment', 'ln_node=lnd_grpc')
           .addOption('--environment', 'lnd_macaroon="${n.adminMacaroonPath}')
           .addOption('--environment', 'lnd_cert="${n.tlsCertPath}')
-          .addOption('--environment', 'lnd_grpc_ip="${n.name}')
+          .addOption('--environment', 'lnd_grpc_ip="${n.containerName}')
           .addOption('--environment', 'lnd_grpc_port="${n.gRPCPort}')
           .addOption('--environment', 'lnd_rest_port="${n.restPort}');
     }
 
     argBuilder
         .addArg('--detach')
-        .addOption('--publish', '${8820 + id}:80')
+        .addOption('--publish', '${8820 + node.id}:80')
         .addArg(image);
 
     print(argBuilder.debugCommand());

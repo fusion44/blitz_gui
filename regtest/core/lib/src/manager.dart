@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:blitz_api_client/blitz_api_client.dart' as client;
-import 'package:regtest_core/src/docker/containers/bitcoin_core.dart';
-import 'package:regtest_core/src/docker/containers/cln.dart';
-import 'package:regtest_core/src/docker/containers/lnd.dart';
 
-import 'docker/containers/redis.dart';
 import 'docker/docker.dart';
 import 'constants.dart';
+import 'docker/exceptions.dart';
 import 'model_extensions.dart';
 import 'models.dart';
 import 'utils.dart';
@@ -98,7 +94,7 @@ class NetworkManager {
     final lnd = LNDContainer(
       alias: 'lnd1',
       id: 0,
-      btcContainerName: _btcc.name,
+      btcContainerName: _btcc.containerName,
     );
 
     try {
@@ -110,7 +106,7 @@ class NetworkManager {
     final cln = CLNContainer(
       alias: 'cln1',
       id: 0,
-      btcContainerName: _btcc.name,
+      btcContainerName: _btcc.containerName,
     );
 
     lnd.logStream.listen(
@@ -232,17 +228,18 @@ class NetworkManager {
     if (_bootstrapped) return;
     logMessage("Bootstrapping node data");
 
-    final futures = <Future>[];
-    for (final id in NodeId.values) {
-      if (id != NodeId.empty) {
-        final n = LnNode(id);
-        // TODO: fixme
-        _nodeMap["id"] = n;
-        futures.add(n.bootstrap());
-      }
-    }
+    // TODO: fixme
+    print('TODO: FIXME!!!');
+    // final futures = <Future>[];
+    // for (final id in NodeId.values) {
+    //   if (id != NodeId.empty) {
+    //     final n = LnNode(id);
+    //     _nodeMap["id"] = n;
+    //     futures.add(n.bootstrap());
+    //   }
+    // }
 
-    await Future.wait(futures);
+    // await Future.wait(futures);
     _bootstrapped = true;
   }
 
@@ -331,38 +328,38 @@ class NetworkManager {
   }
 
   Future<void> applyNetwork([String fileName = 'net-1.json']) async {
-    final file = File(fileName);
-    final txt = await file.readAsString();
-    final json = jsonDecode(txt);
+    // final file = File(fileName);
+    // final txt = await file.readAsString();
+    // final json = jsonDecode(txt);
 
-    for (var entry in json) {
-      final from = entry['from'] as String;
-      final channels = entry['channels'];
+    // for (var entry in json) {
+    //   final from = entry['from'] as String;
+    //   final channels = entry['channels'];
 
-      final fromNode = _nodeMap[NodeId.values.byName(from)];
+    //   final fromNode = _nodeMap[NodeId.values.byName(from)];
 
-      for (var c in channels) {
-        final to = c['to'];
-        final toNode = _nodeMap[NodeId.values.byName(to)];
-        if (fromNode == null || toNode == null) {
-          logMessage("Can't find node $from or $to");
-          continue;
-        }
+    //   for (var c in channels) {
+    //     final to = c['to'];
+    //     final toNode = _nodeMap[NodeId.values.byName(to)];
+    //     if (fromNode == null || toNode == null) {
+    //       logMessage("Can't find node $from or $to");
+    //       continue;
+    //     }
 
-        final txid = await fromNode.openChannel(toNode);
+    //     final txid = await fromNode.openChannel(toNode);
 
-        for (var i = 0; i < 10; i++) {
-          // mine every second to allow nodes to catch up timely
-          await btcc.mineBlocks(1);
-          await Future.delayed(const Duration(seconds: 1));
-        }
-        await Future.delayed(const Duration(seconds: 2));
+    //     for (var i = 0; i < 10; i++) {
+    //       // mine every second to allow nodes to catch up timely
+    //       await btcc.mineBlocks(1);
+    //       await Future.delayed(const Duration(seconds: 1));
+    //     }
+    //     await Future.delayed(const Duration(seconds: 2));
 
-        logMessage(
-          "Opened channel from ${fromNode.id} to ${toNode.id}, txid: $txid",
-        );
-      }
-    }
+    //     logMessage(
+    //       "Opened channel from ${fromNode.id} to ${toNode.id}, txid: $txid",
+    //     );
+    //   }
+    // }
   }
 
   Future<int> sweepAllChannels({bool autoMine = false}) async {

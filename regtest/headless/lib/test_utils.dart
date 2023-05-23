@@ -6,6 +6,8 @@ import 'dart:io';
 import 'package:common/common.dart' show BtcValue;
 import 'package:regtest_core/core.dart';
 
+import 'constants.dart';
+
 enum TerminalColors { red, green, yellow, blue, magenta, cyan, white }
 
 String colorize(String text, TerminalColors? color) {

@@ -8,7 +8,7 @@ import '../../constants.dart';
 import '../../utils.dart';
 import '../arg_builder.dart';
 import '../docker.dart';
-import 'base.dart';
+import '../exceptions.dart';
 
 class BitcoinCoreContainer extends DockerContainer {
   BitcoinCoreContainer({
@@ -27,7 +27,7 @@ class BitcoinCoreContainer extends DockerContainer {
         .addOption('--expose', '29001')
         .addOption('--publish-all')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addOption('--detach')
         .addArg(image)
         .addArg('-regtest')
@@ -48,7 +48,7 @@ class BitcoinCoreContainer extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to start container $name. Error: ${result.stderr.toString()}",
+        "Failed to start container $containerName. Error: ${result.stderr.toString()}",
       );
     }
 

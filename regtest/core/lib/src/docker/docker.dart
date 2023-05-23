@@ -3,13 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../constants.dart';
+import 'exceptions.dart';
 
-// custom exception called DockerException
-class DockerException implements Exception {
-  final String message;
-
-  DockerException(this.message);
-}
+export 'containers/containers.dart';
 
 Future<List<String>> getRunningContainerNames() async {
   final proc = await Process.run('docker', ['ps']);

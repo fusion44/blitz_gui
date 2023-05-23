@@ -87,7 +87,7 @@ void setup() async {
     }
     if (event.state == NetworkState.up) {
       // TODO: fixme
-      N.set(manager.nodeMap);
+      // N.set({});
       return await test();
     }
     if (event.state == NetworkState.error) {
