@@ -21,7 +21,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   awesome_snackbar_content: ^0.0.8
   ndialog: ^4.1.1+1
-  flow_graph: ^0.0.9
   flutter_local_notifications: ^9.8.0+1
   pattern_formatter: ^3.0.0
   flutter_spinkit: ^5.1.0
@@ -39,6 +38,7 @@ dependencies:
   regtest_core: ^0.5.1
   blitz_api_client: ^0.5.1
   subscription_repository: ^0.5.1
+  graph_network_canvas: ^0.5.1
   
 dev_dependencies:
   flutter_test:

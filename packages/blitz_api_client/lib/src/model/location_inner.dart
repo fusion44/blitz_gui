@@ -48,9 +48,7 @@ class _$LocationInnerSerializer implements StructuredSerializer<LocationInner> {
       final key = iterator.current as String;
       iterator.moveNext();
 
-      switch (key) {
-        
-      }
+      switch (key) {}
     }
     return result.build();
   }
