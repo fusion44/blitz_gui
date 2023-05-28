@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:graph_network_canvas/src/constants.dart';
+
 import 'connection_line_painter.dart';
 import 'data.dart';
 import 'theme/theme.dart';
@@ -81,34 +83,32 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
   GraphCanvasTheme _buildCanvas() {
     return GraphCanvasTheme(
       frame: widget.themeData,
-      child: GestureDetector(
-        onTapUp: (TapUpDetails details) {
-          addNode(
-            Node(details.localPosition)
-              ..addSocket(SocketSide.left)
-              ..addSocket(SocketSide.right)
-              ..addSocket(SocketSide.top)
-              ..addSocket(SocketSide.bottom),
-          );
-        },
-        child: ValueListenableBuilder<Offset>(
-          valueListenable: _positionNotifier,
-          builder: (context, pos, child) {
-            return CustomPaint(
-              painter: ConnectionLinePainter(_connections, 0.7),
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraints) {
-                  return _buildStack(context);
-                },
-              ),
+      child: LayoutBuilder(
+        builder: (context, constraints) => GestureDetector(
+          onTapUp: (TapUpDetails details) {
+            addNode(
+              Node(_constrain(details.localPosition, constraints))
+                ..addSocket(SocketSide.left)
+                ..addSocket(SocketSide.right)
+                ..addSocket(SocketSide.top)
+                ..addSocket(SocketSide.bottom),
             );
           },
+          child: ValueListenableBuilder<Offset>(
+            valueListenable: _positionNotifier,
+            builder: (context, pos, child) {
+              return CustomPaint(
+                painter: ConnectionLinePainter(_connections, 0.7),
+                child: _buildStack(context, constraints),
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  Stack _buildStack(BuildContext context) {
+  Widget _buildStack(BuildContext context, BoxConstraints constraints) {
     return Stack(
       children: _nodes.asMap().entries.map((entry) {
         int index = entry.key;
@@ -118,8 +118,10 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
           index,
           node,
           onDragEnd: (DraggableDetails details) {
-            setState(() =>
-                _nodes[index].position = details.offset + const Offset(0, -55));
+            setState(() {
+              final p = details.offset + const Offset(-110, -55);
+              _nodes[index].position = _constrain(p, constraints);
+            });
           },
           onSocketDragStarted: (Socket socket) {
             _sourceSocket = socket;
@@ -140,6 +142,13 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
           onNodeHovered: (Node? node) => _hoveredNode = node,
         );
       }).toList(),
+    );
+  }
+
+  Offset _constrain(Offset p, BoxConstraints constraints) {
+    return Offset(
+      p.dx.clamp(0, constraints.maxWidth - defaultNodeSize.width),
+      p.dy.clamp(0, constraints.maxHeight - defaultNodeSize.height),
     );
   }
 }
