@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:regtest_core/core.dart';
 
 import 'gui_constants.dart';
+import 'pages/containers/containers_page.dart';
 import 'pages/main/main_page.dart';
 import 'pages/sse_inspector/sse_inspector_page.dart';
 
@@ -37,11 +38,28 @@ class MyApp extends StatelessWidget {
     routes: [
       GoRoute(
         path: '/',
-        name: RouteNames.home.name,
+        name: RouteNames.machineRoom.name,
         pageBuilder: (context, state) => CustomTransitionPage(
           transitionDuration: const Duration(milliseconds: 300),
           key: state.pageKey,
           child: const MyHomePage(title: 'Regtest UI'),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: CurveTween(
+                curve: Curves.easeInOutCirc,
+              ).animate(animation),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/containers',
+        name: RouteNames.containers.name,
+        pageBuilder: (context, state) => CustomTransitionPage(
+          transitionDuration: const Duration(milliseconds: 300),
+          key: state.pageKey,
+          child: const ContainersPage(title: 'Containers'),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
               opacity: CurveTween(
