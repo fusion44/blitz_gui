@@ -53,8 +53,11 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
       onPointerMove: (event) {
         if (!_addingConnection) return;
 
+        RenderBox renderBox = context.findRenderObject() as RenderBox;
+        Offset localPosition = renderBox.globalToLocal(event.position);
+
         if (_newConnection != null) {
-          _mouseSocket!.position = event.position + const Offset(0, -55);
+          _mouseSocket!.position = localPosition;
           _positionNotifier.value = event.position;
         }
       },
@@ -119,8 +122,9 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
           node,
           onDragEnd: (DraggableDetails details) {
             setState(() {
-              final p = details.offset + const Offset(-110, -55);
-              _nodes[index].position = _constrain(p, constraints);
+              RenderBox renderBox = context.findRenderObject() as RenderBox;
+              Offset localPosition = renderBox.globalToLocal(details.offset);
+              _nodes[index].position = _constrain(localPosition, constraints);
             });
           },
           onSocketDragStarted: (Socket socket) {
