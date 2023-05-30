@@ -18,7 +18,7 @@ class BitcoinCoreContainer extends DockerContainer {
 
   @override
   Future<void> start() async {
-    statusCtrl.add(StatusMessage(ContainerStatus.starting, ""));
+    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ""));
     final argBuilder = DockerArgBuilder()
         .addArg("run")
         .addOption('--restart', 'on-failure')
@@ -55,7 +55,7 @@ class BitcoinCoreContainer extends DockerContainer {
     containerId = result.stdout as String;
     containerId = containerId?.trim();
 
-    statusCtrl.add(StatusMessage(ContainerStatus.started, ''));
+    statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
 
     super.subscribeLogs();
   }

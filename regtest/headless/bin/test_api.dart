@@ -23,7 +23,7 @@ Future<void> _printImplementation(LnNode n) async {
 
 Future<void> getConfig() async {
   printSectionHeader("Config");
-  for (final n in manager.nodeMap.values) {
+  for (final n in manager.lnNodes) {
     await _printImplementation(n);
   }
 

@@ -18,11 +18,11 @@ enum ContainerStatus {
   deleted,
 }
 
-class StatusMessage {
+class ContainerStatusMessage {
   final ContainerStatus status;
   final String message;
 
-  StatusMessage(this.status, this.message);
+  ContainerStatusMessage(this.status, this.message);
 
   @override
   String toString() {
@@ -47,14 +47,23 @@ abstract class DockerContainer {
   @protected
   final logCtrl = StreamController<String>.broadcast();
   @protected
-  final statusCtrl = StreamController<StatusMessage>.broadcast();
+  final statusCtrl = StreamController<ContainerStatusMessage>.broadcast();
 
-  DockerContainer(this.containerName, this.image,
-      {this.workDir = dockerDataDir});
+  ContainerStatusMessage _currentStatus;
+
+  DockerContainer(
+    this.containerName,
+    this.image, {
+    this.workDir = dockerDataDir,
+  }) : _currentStatus = ContainerStatusMessage(
+          ContainerStatus.uninitialized,
+          '',
+        );
 
   String get dataPath => '$workDir/$containerName';
-  Stream<StatusMessage> get statusStream => statusCtrl.stream;
+  Stream<ContainerStatusMessage> get statusStream => statusCtrl.stream;
   Stream<String> get logStream => logCtrl.stream;
+  ContainerStatusMessage get status => _currentStatus;
 
   Future<void> start() async {
     throw UnimplementedError();
@@ -107,5 +116,10 @@ abstract class DockerContainer {
     stdErrSub = stdErr?.listen(
       (line) => logCtrl.addError(line),
     );
+  }
+
+  void setStatus(ContainerStatusMessage status) {
+    _currentStatus = status;
+    statusCtrl.add(status);
   }
 }

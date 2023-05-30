@@ -8,10 +8,10 @@ import '../arg_builder.dart';
 import '../docker.dart';
 import '../exceptions.dart';
 
-class RedisContainer extends DockerContainer {
-  RedisContainer({
-    name = defaultRedisName,
-    image = "redis:7.0.5",
+class CashuMintContainer extends DockerContainer {
+  CashuMintContainer({
+    name = defaultCashMintName,
+    image = "cashu:0.12.0",
   }) : super(name, image);
 
   @override
@@ -20,9 +20,11 @@ class RedisContainer extends DockerContainer {
     final argBuilder = DockerArgBuilder()
         .addArg("run")
         .addOption('--restart', 'on-failure')
-        .addOption('--expose', '6379')
+        .addOption('--expose', '3338')
+        .addOption('--publish-all')
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
+        .addOption('--volume', '$dataPath:/root/.cashu/')
         .addOption('--detach')
         .addArg(image);
 

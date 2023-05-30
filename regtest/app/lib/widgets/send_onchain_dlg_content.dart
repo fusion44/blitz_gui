@@ -35,7 +35,7 @@ class _SendOnchainDlgContentState extends State<SendOnchainDlgContent> {
   void initState() {
     super.initState();
 
-    _destinationNodes = NetworkManager().nodeList..remove(widget.from);
+    _destinationNodes = NetworkManager().lnNodes..remove(widget.from);
     _destinationNode = _destinationNodes.first;
     _amountCtrl.addListener(_updateNotifier);
     _amountCtrl.text = genRandomNumberAsFormattedText(min: 10000, max: 200000);

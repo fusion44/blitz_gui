@@ -4,6 +4,8 @@ const dockerDataDir = '/tmp/regtest-data';
 
 const defaultRedisName = '${projectName}_redis';
 const defaultBitcoinCoreName = '${projectName}_bitcoind';
+const defaultCashMintName = '${projectName}_cashu_mint';
+const defaultLNbitsName = '${projectName}_lnbits';
 
 const currentNumContainers = 12;
 
@@ -14,12 +16,4 @@ enum Implementation { empty, lnd, cln }
 
 enum Denomination { btc, sats, msats }
 
-final dataDirs = [
-  "data/cashu-1",
-  "data/cashu-2",
-  "data/clightning-1/",
-  "data/clightning-2/",
-  "data/lnd-1/",
-  "data/lnd-2/",
-  "data/lnd-3/",
-];
+enum ContainerType { bitcoinCore, lnd, cln, lnbits, cashuMint }

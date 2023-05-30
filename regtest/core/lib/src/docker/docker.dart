@@ -5,6 +5,7 @@ import 'dart:io';
 import '../constants.dart';
 import 'exceptions.dart';
 
+export 'blocs/blocs.dart';
 export 'containers/containers.dart';
 
 Future<List<String>> getRunningContainerNames() async {

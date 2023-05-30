@@ -3,7 +3,7 @@
 library utils;
 
 import 'dart:async';
-import 'dart:io' show Platform;
+import 'dart:io' show Directory, Platform, Process;
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -133,7 +133,7 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
 }
 
 LnNode getRandNode([LnNode? exclude]) {
-  final nodes = NetworkManager().nodeList;
+  final nodes = NetworkManager().lnNodes;
   if (exclude != null) nodes.remove(exclude);
   int rand = Random().nextInt(nodes.length - 1);
 
@@ -179,5 +179,50 @@ bool isHeadless() {
 void logMessage(String message) {
   if (!isHeadless()) {
     print(message);
+  }
+}
+
+Future<void> prepareDataDir([String dir = dockerDataDir]) async {
+  final directory = Directory(dir);
+
+  if (await directory.exists()) {
+    logMessage("$dir exists => deleting ...");
+
+    await directory.delete(recursive: true);
+  }
+  logMessage("Creating data directory $dir");
+
+  await directory.create(recursive: true);
+}
+
+Future<void> makeDataDirsPublic([String dir = dockerDataDir]) async {
+  // Docker is usually a root run application, so the data directories
+  // are owned by root. This makes it hard to access the data
+  // change ownership from root to current user
+
+  final su = isHeadless() ? 'sudo' : 'pkexec';
+  await Process.run(
+    su,
+    ["chmod" "-R", "777", Directory(dockerDataDir).absolute.path],
+    workingDirectory: dockerDataDir,
+  );
+
+  // TODO: unhardcodify the username
+  await Process.run(
+    su,
+    ["chown", "-R", "f44", Directory(dockerDataDir).absolute.path],
+    workingDirectory: dockerDataDir,
+  );
+}
+
+Future<void> cleanDataDirectories([String dir = dockerDataDir]) async {
+  final baseFolder = Directory(dir);
+
+  if (await baseFolder.exists()) {
+    baseFolder.list().forEach((element) async {
+      if (element is Directory) {
+        await element.delete(recursive: true);
+      }
+    });
   }
 }

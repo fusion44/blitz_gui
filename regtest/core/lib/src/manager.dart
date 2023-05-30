@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:blitz_api_client/blitz_api_client.dart' as client;
 
+import 'docker/containers/cashu_mint.dart';
+import 'docker/containers/lnbits.dart';
 import 'docker/docker.dart';
 import 'constants.dart';
 import 'docker/exceptions.dart';
@@ -31,7 +33,7 @@ class NetworkStateMessage {
 
 class NetworkManager {
   bool _isInitialized = false;
-  final Map<String, LnNode> _nodeMap = {};
+  final Map<ContainerType, DockerContainer> _containerMap = {};
 
   static final NetworkManager _instance = NetworkManager._internal();
 
@@ -61,18 +63,20 @@ class NetworkManager {
   Stream<NetworkStateMessage> get stream =>
       _controller.stream.asBroadcastStream();
 
-  Map<String, LnNode> get nodeMap => _nodeMap;
-  List<LnNode> get nodeList => _nodeMap.values.toList();
+  Map<ContainerType, DockerContainer> get nodeMap => _containerMap;
+  List<DockerContainer> get containers => _containerMap.values.toList();
   BitcoinCoreContainer get btcc => _btcc;
 
-  LnNode? nodeByPubKey(String key) =>
-      _nodeMap.values.firstWhere((node) => node.pubKey == key);
+  LnNode? nodeByPubKey(String key) => _containerMap.values
+      .whereType<LnNode>()
+      .firstWhere((node) => node.pubKey == key);
+
+  List<LnNode> get lnNodes => _containerMap.values.whereType<LnNode>().toList();
 
   /// Starts the network if down
   ///
   /// If [exposeDataDirToHost] is true, the data directory will not be made
-  /// public. ⚠️ This will ask for root password! The value is currently
-  /// hardcoded to /tmp/regtest-data
+  /// public. ⚠️ This will ask for root password!
   ///
   /// If [autoFundNodes] is true, the nodes will be funded with 15 rBTC each
   Future<void> start({
@@ -81,7 +85,7 @@ class NetworkManager {
   }) async {
     _sendMessage(NetworkState.startingUp);
 
-    await _prepareDataDir(dockerDataDir);
+    await prepareDataDir(dockerDataDir);
 
     await _ensureDockerNetwork();
 
@@ -150,7 +154,7 @@ class NetworkManager {
     await btcc.mineBlocks(3);
     await _bootstrapNodeData();
     if (exposeDataDirToHost) {
-      await _makeDataDirsPublic();
+      await makeDataDirsPublic(dockerDataDir);
     }
 
     await Future.delayed(const Duration(seconds: 10));
@@ -164,7 +168,7 @@ class NetworkManager {
       _sendMessage(NetworkState.shuttingDown);
       final output = await dockerCmd(args, dockerDataDir);
 
-      await _cleanDataDirectories();
+      await cleanDataDirectories(dockerDataDir);
 
       _sendMessage(NetworkState.down);
       logMessage(output.toString());
@@ -252,7 +256,7 @@ class NetworkManager {
     await _btcc.ensureWalletLoaded();
 
     final futures = <Future>[];
-    for (final n in nodeList) {
+    for (final n in lnNodes) {
       try {
         futures.add(n.newAddress());
       } catch (e) {
@@ -367,7 +371,7 @@ class NetworkManager {
 
     final Map<LnNode, List<RegtestChannel>> channels = {};
     int numClosed = 0;
-    for (var n in nodeList) {
+    for (var n in lnNodes) {
       // get all channels before closing
       channels[n] = await n.fetchChannels();
 
@@ -378,7 +382,7 @@ class NetworkManager {
       await Future.delayed(Duration(seconds: 10));
     }
 
-    for (var n in nodeList) {
+    for (var n in containers) {
       if (channels.containsKey(n)) {
         for (var x in channels[n]!) {
           print("active: ${x.channel.active}");
@@ -390,7 +394,7 @@ class NetworkManager {
       await btcc.mineBlocks(1);
       await Future.delayed(const Duration(seconds: 2));
 
-      for (final n in nodeList) {
+      for (final n in lnNodes) {
         final newState = await n.fetchChannels();
         final olsState = channels[n]!;
         final diff = newState.length - olsState.length;
@@ -413,12 +417,14 @@ class NetworkManager {
     print("Sweeping onchain funds");
     await _btcc.ensureWalletLoaded();
     final address =
-        destAddress.isEmpty ? await getNewBitcoinDAddress() : destAddress;
+        destAddress.isEmpty ? await getNewBitcoinCoreAddress() : destAddress;
 
     final balancesBefore = await getWalletBalances();
 
-    final l = nodes.isEmpty ? nodeList : nodes;
-    for (final LnNode n in l) {
+    final l = nodes.isEmpty ? containers : nodes;
+    for (final n in l) {
+      if (n is! LnNode) continue;
+
       if (balancesBefore.balances[n]!.hasOnchainFunds) {
         await n.sendOnChain(0, address, true);
       }
@@ -433,7 +439,7 @@ class NetworkManager {
 
   Future<WalletBalances> getWalletBalances() async {
     final futures = <Future<client.WalletBalance>>[];
-    for (final n in nodeList) {
+    for (final n in lnNodes) {
       futures.add(n.walletBalance());
     }
 
@@ -441,52 +447,13 @@ class NetworkManager {
 
     final balances = <LnNode, client.WalletBalance>{};
     for (var i = 0; i < b.length; i++) {
-      balances[nodeList[i]] = b[i];
+      balances[lnNodes[i]] = b[i];
     }
 
     return WalletBalances(balances);
   }
 
-  Future<String> getNewBitcoinDAddress() async => await _btcc.newAddress();
-
-  Future<void> _prepareDataDir(String dir) async {
-    final directory = Directory(dir);
-
-    if (await directory.exists()) {
-      logMessage("$dir exists => deleting ...");
-
-      await directory.delete(recursive: true);
-    }
-    logMessage("Creating data directory $dir");
-
-    await directory.create(recursive: true);
-  }
-
-  Future<void> _makeDataDirsPublic() async {
-    // Docker is usually a root run application, so the data directories
-    // are owned by root. This makes it hard to access the data
-    // change ownership from root to current user
-
-    final su = isHeadless() ? 'sudo' : 'pkexec';
-    await Process.run(
-      su,
-      ["chmod" "-R", "777", Directory("/tmp/regtest-data").absolute.path],
-      workingDirectory: dockerDataDir,
-    );
-
-    // TODO: unhardcodify the username
-    await Process.run(
-      su,
-      ["chown", "-R", "f44", Directory("/tmp/regtest-data").absolute.path],
-      workingDirectory: dockerDataDir,
-    );
-  }
-
-  Future<void> _cleanDataDirectories() async {
-    for (var d in dataDirs) {
-      await Directory(d).delete(recursive: true);
-    }
-  }
+  Future<String> getNewBitcoinCoreAddress() async => await _btcc.newAddress();
 
   Future<void> _ensureDockerNetwork() async {
     final networkArgs = [
@@ -497,5 +464,30 @@ class NetworkManager {
       projectNetwork
     ];
     await dockerCmd(networkArgs, dockerDataDir);
+  }
+
+  DockerContainer addContainer(ContainerType type) {
+    final DockerContainer container = switch (type) {
+      ContainerType.bitcoinCore => BitcoinCoreContainer(),
+      ContainerType.cashuMint => CashuMintContainer(),
+      ContainerType.cln => CLNContainer(),
+      ContainerType.lnbits => LNbitsContainer(),
+      ContainerType.lnd => LNDContainer()
+    };
+
+    containers.add(container);
+
+    return container;
+  }
+
+  Future<void> startContainer(DockerContainer container) async {
+    await prepareDataDir(dockerDataDir);
+    await _ensureDockerNetwork();
+
+    await container.start();
+  }
+
+  Future<void> stopContainer(DockerContainer container) async {
+    await container.stop();
   }
 }

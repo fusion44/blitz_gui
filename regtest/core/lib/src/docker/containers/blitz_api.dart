@@ -34,12 +34,12 @@ class BlitzAPIContainer extends DockerContainer {
     //    --network workspace_network --name workspace_lnd1-blitz
     //    --detach blitz_api:latest
 
-    statusCtrl.add(StatusMessage(ContainerStatus.starting, ''));
+    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ''));
     final argBuilder = DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'on-failure')
         .addOption('--entrypoint', 'sh /code/entrypoint.sh')
-        .addOption('--volume', '/tmp/regtest-data:/root/data')
+        .addOption('--volume', '$dockerDataDir:/root/data')
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
         .addOption('--environment', 'REDIS_HOST=$redisHost')
@@ -99,7 +99,7 @@ class BlitzAPIContainer extends DockerContainer {
     print(containerId);
     super.subscribeLogs();
 
-    statusCtrl.add(StatusMessage(ContainerStatus.started, ''));
+    statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
   }
 
   @override

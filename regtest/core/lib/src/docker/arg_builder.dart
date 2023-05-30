@@ -14,6 +14,9 @@ class DockerArgBuilder {
     return this;
   }
 
+  /// Prepends '--environment' to the given value
+  DockerArgBuilder addEnv(String val) => addOption('--environment', val);
+
   List<String> build() => _args;
 
   String debugCommand() => 'docker ${_args.join(" ")}';

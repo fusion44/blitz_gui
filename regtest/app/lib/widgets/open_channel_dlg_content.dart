@@ -33,7 +33,7 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
   void initState() {
     super.initState();
 
-    _destinationNodes = NetworkManager().nodeList..remove(widget.from);
+    _destinationNodes = NetworkManager().lnNodes..remove(widget.from);
     _destinationNode = _destinationNodes.first;
     _chanSizeCtrl.addListener(_updateNotifier);
     _pushSatsCtrl.addListener(_updateNotifier);

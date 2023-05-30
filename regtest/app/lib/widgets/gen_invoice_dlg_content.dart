@@ -29,7 +29,7 @@ class _GenInvoiceDlgContentState extends State<GenInvoiceDlgContent> {
   void initState() {
     _memoCtrl.addListener(_updateNotifier);
     _mSatCtrl.addListener(_updateNotifier);
-    _payerNode = NetworkManager().nodeList[3];
+    _payerNode = NetworkManager().lnNodes.last;
     _payDelayCtrl.addListener(_updateNotifier);
     _payAmt.addListener(_updateNotifier);
 
@@ -84,7 +84,7 @@ class _GenInvoiceDlgContentState extends State<GenInvoiceDlgContent> {
           DropdownButton(
             value: _payerNode,
             items: NetworkManager()
-                .nodeList
+                .lnNodes
                 .where((element) => element.id != widget.payeeNode.id)
                 .map((e) => DropdownMenuItem(value: e, child: Text(e.alias)))
                 .toList(),
