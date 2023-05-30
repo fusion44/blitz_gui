@@ -36,15 +36,15 @@ class _NodeFrameWidgetState extends State<NodeFrameWidget> {
     return MouseRegion(
       onEnter: (_) => widget.onHovered?.call(widget.node),
       onExit: (_) => widget.onHovered?.call(null),
-      child: Container(
-        color: Colors.amber[400],
-        child: SizedBox(
-          width: widget.size.width,
-          height: widget.size.height,
-          child: Card(
-            elevation:
-                widget.dragged ? nfTheme.elevationDragged : nfTheme.elevation,
-            margin: nfTheme.margin,
+      child: SizedBox(
+        width: widget.size.width,
+        height: widget.size.height,
+        child: Card(
+          elevation:
+              widget.dragged ? nfTheme.elevationDragged : nfTheme.elevation,
+          margin: nfTheme.margin,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
             child: widget.child,
           ),
         ),

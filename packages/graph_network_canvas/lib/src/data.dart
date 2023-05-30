@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 class Node {
   Offset position;
   final List<Socket> _sockets;
+  Widget? body;
 
-  Node(this.position, {List<Socket>? sockets}) : _sockets = sockets ?? [];
+  Node(this.position, {List<Socket>? sockets, this.body})
+      : _sockets = sockets ?? [];
 
   List<Socket> get sockets => _sockets;
 

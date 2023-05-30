@@ -5,3 +5,4 @@ export 'src/theme/theme.dart';
 export 'src/constants.dart';
 export 'src/data.dart';
 export 'src/network_canvas.dart';
+export 'src/utils.dart';

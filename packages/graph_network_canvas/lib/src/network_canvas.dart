@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 
-import 'package:graph_network_canvas/src/constants.dart';
-
 import 'connection_line_painter.dart';
 import 'data.dart';
 import 'theme/theme.dart';
+import 'utils.dart';
 import 'widgets/node_frame_draggable.dart';
 
 class NetworkCanvas extends StatefulWidget {
+  final List<Node>? nodes;
+  final List<Connection>? connections;
   final NodeFrameThemeData themeData;
+
+  final Function(Connection c)? onConnectionEstablished;
+  final Function(Node? hoveredNode)? onNodeHovered;
 
   const NetworkCanvas({
     super.key,
+    this.nodes,
+    this.connections,
     this.themeData = const NodeFrameThemeData(),
+    this.onConnectionEstablished,
+    this.onNodeHovered,
   });
 
   @override
@@ -20,8 +28,8 @@ class NetworkCanvas extends StatefulWidget {
 }
 
 class _NetworkCanvasState extends State<NetworkCanvas> {
-  final List<Node> _nodes = [];
-  final List<Connection> _connections = [];
+  late final List<Node> _nodes;
+  late final List<Connection> _connections;
 
   final ValueNotifier<Offset> _positionNotifier =
       ValueNotifier<Offset>(Offset.zero);
@@ -31,20 +39,11 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
   Socket? _hoveredSocket;
   Socket? _sourceSocket;
 
-  Node? _hoveredNode;
-
-  bool get _canAddNode => _hoveredNode == null;
-
-  void addNode(Node node) {
-    if (!_canAddNode) return;
-
-    setState(() {
-      _nodes.add(node);
-    });
-  }
-
-  void removeNode(int index) {
-    setState(() => _nodes.removeAt(index));
+  @override
+  void initState() {
+    super.initState();
+    _nodes = widget.nodes ?? [];
+    _connections = widget.connections ?? [];
   }
 
   @override
@@ -66,7 +65,7 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
         if (_hoveredSocket != null &&
             _sourceSocket != null &&
             !_hoveredSocket!.hasConnection) {
-          _connections.add(Connection(
+          widget.onConnectionEstablished?.call(Connection(
             socket1: _sourceSocket!,
             socket2: _hoveredSocket!,
           ));
@@ -88,15 +87,7 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
       frame: widget.themeData,
       child: LayoutBuilder(
         builder: (context, constraints) => GestureDetector(
-          onTapUp: (TapUpDetails details) {
-            addNode(
-              Node(_constrain(details.localPosition, constraints))
-                ..addSocket(SocketSide.left)
-                ..addSocket(SocketSide.right)
-                ..addSocket(SocketSide.top)
-                ..addSocket(SocketSide.bottom),
-            );
-          },
+          onTapUp: (TapUpDetails details) => debugPrint('onTapUp'),
           child: ValueListenableBuilder<Offset>(
             valueListenable: _positionNotifier,
             builder: (context, pos, child) {
@@ -124,7 +115,10 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
             setState(() {
               RenderBox renderBox = context.findRenderObject() as RenderBox;
               Offset localPosition = renderBox.globalToLocal(details.offset);
-              _nodes[index].position = _constrain(localPosition, constraints);
+              _nodes[index].position = constrainNodeToCanvas(
+                localPosition,
+                constraints.biggest,
+              );
             });
           },
           onSocketDragStarted: (Socket socket) {
@@ -143,16 +137,9 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
             });
           },
           onSocketHovered: (Socket? socket) => _hoveredSocket = socket,
-          onNodeHovered: (Node? node) => _hoveredNode = node,
+          onNodeHovered: (Node? node) => widget.onNodeHovered?.call(node),
         );
       }).toList(),
-    );
-  }
-
-  Offset _constrain(Offset p, BoxConstraints constraints) {
-    return Offset(
-      p.dx.clamp(0, constraints.maxWidth - defaultNodeSize.width),
-      p.dy.clamp(0, constraints.maxHeight - defaultNodeSize.height),
     );
   }
 }

@@ -70,11 +70,12 @@ class _NodeFrameDraggableWidgetState extends State<NodeFrameDraggableWidget> {
             widget.node,
             dragged: dragged,
             onHovered: widget.onNodeHovered,
-            child: NodeTestContents(
-              header: 'ID: ${widget.index}',
-              body: "LND NODE",
-              footer: 'sdgfg',
-            ),
+            child: widget.node.body ??
+                NodeTestContents(
+                  header: 'ID: ${widget.index}',
+                  body: "Default Node",
+                  footer: 'Default Footer',
+                ),
           ),
           for (final s in widget.node.sockets)
             NodeSocketWidget(
