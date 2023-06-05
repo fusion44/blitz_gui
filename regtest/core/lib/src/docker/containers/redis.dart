@@ -8,11 +8,18 @@ import '../arg_builder.dart';
 import '../docker.dart';
 import '../exceptions.dart';
 
+class RedisOptions extends ContainerOptions {
+  const RedisOptions({
+    super.name = defaultRedisName,
+    super.image = "redis:7.0.5",
+  });
+}
+
 class RedisContainer extends DockerContainer {
-  RedisContainer({
-    name = defaultRedisName,
-    image = "redis:7.0.5",
-  }) : super(name, image);
+  RedisContainer({opts = const RedisOptions()}) : super(opts);
+
+  @override
+  ContainerType get type => ContainerType.redis;
 
   @override
   Future<void> start() async {
@@ -22,7 +29,7 @@ class RedisContainer extends DockerContainer {
         .addOption('--restart', 'on-failure')
         .addOption('--expose', '6379')
         .addOption('--network', projectNetwork)
-        .addOption('--name', containerName)
+        .addOption('--name', name)
         .addOption('--detach')
         .addArg(image);
 
@@ -34,12 +41,12 @@ class RedisContainer extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to start container $containerName. Error: ${result.stderr.toString()}",
+        "Failed to start container $name. Error: ${result.stderr.toString()}",
       );
     }
 
-    containerId = result.stdout as String;
-    containerId = containerId?.trim();
+    dockerId = result.stdout as String;
+    dockerId = dockerId.trim();
 
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
 

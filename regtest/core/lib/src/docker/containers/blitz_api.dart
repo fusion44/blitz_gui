@@ -5,25 +5,55 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:regtest_core/core.dart';
+import 'package:regtest_core/src/docker/containers/fake_ln.dart';
 
 import '../arg_builder.dart';
 import '../exceptions.dart';
 
-class BlitzAPIContainer extends DockerContainer {
-  String btcContainerName = '';
-  String redisHost;
-  int redisPort;
-  int redisDB;
-  LnNode node;
+class BlitzAPIOptions extends ContainerOptions {
+  final LnNode node;
+  final String btcContainerName;
+  final String redisHost;
+  final int redisPort;
+  final int redisDB;
 
-  BlitzAPIContainer({
-    image = 'blitz_api:latest',
+  BlitzAPIOptions({
     required this.node,
     this.btcContainerName = defaultBitcoinCoreName,
     this.redisHost = 'redis',
     this.redisPort = 6379,
     this.redisDB = 0,
-  }) : super('${projectName}_${node.containerName}_api', image);
+    image = 'blitz_api:latest',
+    String workDir = dockerDataDir,
+  }) : super(
+          name: '${projectName}_${node.name}_api',
+          image: image,
+          workDir: workDir,
+        );
+
+  /// factory with a fake Ln node
+  factory BlitzAPIOptions.empty() =>
+      BlitzAPIOptions(node: FakeLnContainer.defaultOptions());
+
+  @override
+  List<Object?> get props => [
+        name,
+        image,
+        workDir,
+        btcContainerName,
+        redisHost,
+        redisPort,
+        redisDB,
+      ];
+}
+
+class BlitzAPIContainer extends DockerContainer {
+  BlitzAPIOptions opts;
+
+  BlitzAPIContainer({required this.opts}) : super(opts);
+
+  @override
+  ContainerType get type => ContainerType.blitzAPI;
 
   @override
   Future<void> start() async {
@@ -33,7 +63,7 @@ class BlitzAPIContainer extends DockerContainer {
     //    --environment "REDIS_DB=0" --environment "LN_BACKEND=lnd1"
     //    --network workspace_network --name workspace_lnd1-blitz
     //    --detach blitz_api:latest
-
+    final o = opts;
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ''));
     final argBuilder = DockerArgBuilder()
         .addArg('run')
@@ -41,42 +71,42 @@ class BlitzAPIContainer extends DockerContainer {
         .addOption('--entrypoint', 'sh /code/entrypoint.sh')
         .addOption('--volume', '$dockerDataDir:/root/data')
         .addOption('--network', projectNetwork)
-        .addOption('--name', containerName)
-        .addOption('--environment', 'REDIS_HOST=$redisHost')
-        .addOption('--environment', 'REDIS_PORT=$redisPort')
-        .addOption('--environment', 'REDIS_DB=$redisDB')
-        .addOption('--environment', 'bitcoind_ip_regtest=$btcContainerName')
+        .addOption('--name', name)
+        .addOption('--environment', 'REDIS_HOST=${o.redisHost}')
+        .addOption('--environment', 'REDIS_PORT=${o.redisPort}')
+        .addOption('--environment', 'REDIS_DB=${o.redisDB}')
+        .addOption('--environment', 'bitcoind_ip_regtest=${o.btcContainerName}')
         .addOption('--environment', 'bitcoind_port_rpc_regtest=18443')
         .addOption('--environment', 'bitcoind_user=regtester')
         .addOption('--environment', 'bitcoind_pw=regtester');
 
-    if (node.runtimeType is CLNContainer) {
-      final n = node as CLNContainer;
+    if (o.node.runtimeType is CLNContainer) {
+      final n = o.node as CLNContainer;
       argBuilder
           .addOption('--environment', 'ln_node=cln_grpc')
           .addOption('--environment', 'cln_grpc_cert=${n.gRPCCert}')
           .addOption('--environment', 'cln_grpc_key=${n.gRPCClientKey}')
           .addOption('--environment', 'cln_grpc_ca=${n.gRPCCACert}')
-          .addOption('--environment', 'cln_grpc_ip=${n.containerName}')
+          .addOption('--environment', 'cln_grpc_ip=${n.name}')
           .addOption('--environment', 'cln_grpc_port=${n.gRPCPort}')
           .addOption('--environment', 'ln_node=cln_jrpc')
           .addOption('--environment', 'cln_jrpc_path=${n.jRPCFilePath}');
     }
 
-    if (node.runtimeType is LNDContainer) {
-      final n = node as LNDContainer;
+    if (o.node.runtimeType is LNDContainer) {
+      final n = o.node as LNDContainer;
       argBuilder
           .addOption('--environment', 'ln_node=lnd_grpc')
           .addOption('--environment', 'lnd_macaroon="${n.adminMacaroonPath}')
           .addOption('--environment', 'lnd_cert="${n.tlsCertPath}')
-          .addOption('--environment', 'lnd_grpc_ip="${n.containerName}')
+          .addOption('--environment', 'lnd_grpc_ip="${n.name}')
           .addOption('--environment', 'lnd_grpc_port="${n.gRPCPort}')
           .addOption('--environment', 'lnd_rest_port="${n.restPort}');
     }
 
     argBuilder
         .addArg('--detach')
-        .addOption('--publish', '${8820 + node.id}:80')
+        .addOption('--publish', '${8820 + o.node.opts.id}:80')
         .addArg(image);
 
     print(argBuilder.debugCommand());
@@ -87,16 +117,14 @@ class BlitzAPIContainer extends DockerContainer {
       workingDirectory: workDir,
     );
 
-    containerId = await Future.any([
+    dockerId = await Future.any([
       result.stderr.transform(utf8.decoder).asBroadcastStream().first,
       result.stdout.transform(utf8.decoder).asBroadcastStream().first
     ]);
-    if (containerId == null ||
-        containerId!.isEmpty ||
-        containerId!.length != 65) {
-      throw DockerException('Failed to start LND container: $containerId');
+    if (dockerId.isEmpty || dockerId.length != 65) {
+      throw DockerException('Failed to start LND container: $dockerId');
     }
-    print(containerId);
+    print(dockerId);
     super.subscribeLogs();
 
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
