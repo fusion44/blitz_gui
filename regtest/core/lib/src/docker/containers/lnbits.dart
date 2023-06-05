@@ -8,11 +8,21 @@ import '../arg_builder.dart';
 import '../docker.dart';
 import '../exceptions.dart';
 
+class LNbitsOptions extends ContainerOptions {
+  const LNbitsOptions({
+    super.name = defaultLNbitsName,
+    super.image = "lnbitsdocker/lnbits-legend",
+    super.workDir = dockerDataDir,
+  });
+}
+
 class LNbitsContainer extends DockerContainer {
-  LNbitsContainer({
-    name = defaultLNbitsName,
-    image = "lnbitsdocker/lnbits-legend",
-  }) : super(name, image);
+  LNbitsOptions opts;
+
+  LNbitsContainer({this.opts = const LNbitsOptions()}) : super(opts);
+
+  @override
+  ContainerType get type => ContainerType.lnbits;
 
   @override
   Future<void> start() async {
@@ -37,10 +47,10 @@ class LNbitsContainer extends DockerContainer {
         .addOption('--expose', '5001')
         .addOption('--publish-all')
         .addOption('--network', projectNetwork)
-        .addOption('--name', containerName)
+        .addOption('--name', name)
         .addOption('--volume', '$dataPath:/root/.cashu/')
         .addOption('--volume', './data/lnd3:/app/lnd:uid=1000,gid=1000')
-        .addEnv('HOST=$containerName')
+        .addEnv('HOST=$name')
         .addEnv('PORT=5001')
         .addEnv('DEBUG=true')
         .addEnv('LNBITS_BACKEND_WALLET_CLASS="LndRestWallet"')
@@ -61,12 +71,12 @@ class LNbitsContainer extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to start container $containerName. Error: ${result.stderr.toString()}",
+        "Failed to start container $name. Error: ${result.stderr.toString()}",
       );
     }
 
-    containerId = result.stdout as String;
-    containerId = containerId?.trim();
+    dockerId = result.stdout as String;
+    dockerId = dockerId.trim();
 
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
 

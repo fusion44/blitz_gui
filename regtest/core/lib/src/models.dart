@@ -50,7 +50,7 @@ class WalletBalances {
         diff = balance.confirmed - ours.balances[node]!.confirmed;
       }
 
-      print("${node.id} ${diff > 0 ? '+' : ''}$diff sat");
+      print("${node.opts.id} ${diff > 0 ? '+' : ''}$diff sat");
     }
   }
 
@@ -156,7 +156,7 @@ class RegtestChannel {
         otherFunds = BtcValue.fromSats(validIntOrZero(json["remote_balance"]));
 
   @override
-  String toString() => "Channel from ${from.id} to ${to.id}";
+  String toString() => "Channel from ${from.opts.id} to ${to.opts.id}";
 }
 
 class MineBlockData {

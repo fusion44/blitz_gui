@@ -5,6 +5,12 @@ abstract class BitcoinCoreContainerEvent {}
 
 class StartBitcoinCoreContainerEvent extends BitcoinCoreContainerEvent {}
 
+class SettingsUpdatedEvent extends BitcoinCoreContainerEvent {
+  final BitcoinCoreOptions options;
+
+  SettingsUpdatedEvent(this.options);
+}
+
 class StopBitcoinCoreContainerEvent extends BitcoinCoreContainerEvent {}
 
 class _BitcoinCoreStatusUpdate extends BitcoinCoreContainerEvent {

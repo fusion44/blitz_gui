@@ -7,6 +7,9 @@ class BitcoinCoreContainerInitial extends BitcoinCoreContainerState {}
 
 class BitcoinCoreStatusUpdate extends BitcoinCoreContainerState {
   final ContainerStatusMessage status;
+  final String name;
+  final String image;
+  final String workDir;
 
-  BitcoinCoreStatusUpdate(this.status);
+  BitcoinCoreStatusUpdate(this.status, this.name, this.image, this.workDir);
 }

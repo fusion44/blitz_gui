@@ -9,23 +9,27 @@ import 'package:regtest_core/core.dart';
 import '../arg_builder.dart';
 import '../exceptions.dart';
 
+class CLNOptions extends LnNodeOptions {
+  CLNOptions({
+    String? name,
+    super.image = 'boltz/c-lightning:23.02.2',
+    super.alias = '',
+    super.btcContainerName = defaultBitcoinCoreName,
+    super.workDir = dockerDataDir,
+    int id = 0,
+  })  : assert(id >= 0),
+        super(name: name ?? '${projectName}_cln_$id', id: id);
+}
+
 class CLNContainer extends LnNode {
   final int _gRPCPort;
 
-  CLNContainer({
-    btcContainerName = defaultBitcoinCoreName,
-    alias = '',
-    int id = 0,
-    image = 'boltz/c-lightning:23.02.2',
-  })  : assert(id >= 0),
-        _gRPCPort = 11109 + id,
-        super(
-          '${projectName}_cln_$id',
-          image,
-          id,
-          alias,
-          btcContainerName,
-        );
+  CLNContainer({required super.opts}) : _gRPCPort = 11109 + opts.id;
+
+  factory CLNContainer.defaultOptions() => CLNContainer(opts: CLNOptions());
+
+  @override
+  ContainerType get type => ContainerType.cln;
 
   int get gRPCPort => _gRPCPort;
   String get gRPCCert => '$dataPath/regtest/client.pem';
@@ -44,14 +48,14 @@ class CLNContainer extends LnNode {
         .addArg('--publish-all')
         .addOption('--volume', '$dataPath:/root/.lightning/')
         .addOption('--network', projectNetwork)
-        .addOption('--name', containerName)
+        .addOption('--name', name)
         .addArg('--detach')
         .addArg(image)
-        .addArg('--alias=$alias')
+        .addArg('--alias=$opts.alias')
         .addArg('--large-channels')
         .addArg('--network=regtest')
         .addArg('--bind-addr=0.0.0.0:9735')
-        .addArg('--bitcoin-rpcconnect=$btcContainerName')
+        .addArg('--bitcoin-rpcconnect=$opts.btcContainerName')
         .addArg('--bitcoin-rpcport=18443')
         .addArg('--bitcoin-rpcuser=regtester')
         .addArg('--bitcoin-rpcpassword=regtester')
@@ -63,15 +67,13 @@ class CLNContainer extends LnNode {
       workingDirectory: workDir,
     );
 
-    containerId = await Future.any([
+    dockerId = await Future.any([
       result.stderr.transform(utf8.decoder).asBroadcastStream().first,
       result.stdout.transform(utf8.decoder).asBroadcastStream().first
     ]);
 
-    if (containerId == null ||
-        containerId!.isEmpty ||
-        containerId!.length != 65) {
-      throw DockerException('Failed to start LND container: $containerId');
+    if (dockerId.isEmpty || dockerId.length != 65) {
+      throw DockerException('Failed to start LND container: $dockerId');
     }
 
     super.subscribeLogs();

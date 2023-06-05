@@ -8,25 +8,32 @@ import '../../manager.dart';
 import '../../models.dart';
 import '../../utils.dart';
 
-class LnNode extends DockerContainer {
+class LnNodeOptions extends ContainerOptions {
+  final String alias;
+  final int id;
+  final String btcContainerName;
+
+  LnNodeOptions({
+    required super.name,
+    required super.image,
+    super.workDir = dockerDataDir,
+    required this.id,
+    required this.alias,
+    required this.btcContainerName,
+  });
+}
+
+abstract class LnNode extends DockerContainer {
   late final String pubKey;
   final List<RegtestChannel> channels = [];
   late LnInfo lnInfo;
-  final int id;
-  final String alias;
+  final LnNodeOptions opts;
 
-  final String btcContainerName;
   late BlitzApiClient _api;
   bool _bootstrapped = false;
   late String? _token;
 
-  LnNode(
-    super.containerName,
-    super.image,
-    this.id,
-    this.alias,
-    this.btcContainerName,
-  ) {
+  LnNode({required this.opts}) : super(opts) {
     _api = BlitzApiClient(basePathOverride: 'http://localhost:8825/latest');
 
     _api.dio.interceptors.add(
@@ -40,21 +47,23 @@ class LnNode extends DockerContainer {
       ),
     );
   }
-  String get hostname => containerName;
+  String get hostname => name;
   String get fullUri => "$pubKey@$hostname:9735";
   String? get token => _token;
   BlitzApiClient get api {
-    if (!_bootstrapped) throw Exception("Node $containerName not bootstrapped");
+    if (!_bootstrapped) throw Exception("Node $name not bootstrapped");
 
     return _api;
   }
 
   bool get bootstrapped => _bootstrapped;
   Implementation get implementation => Implementation.empty;
+  int get id => opts.id;
+  String get alias => opts.alias;
 
   Future<void> bootstrap() async {
     if (_bootstrapped) {
-      throw Exception("Node $containerName already bootstrapped");
+      throw Exception("Node $name already bootstrapped");
     }
 
     final api = _api.getSystemApi();
@@ -74,7 +83,7 @@ class LnNode extends DockerContainer {
     } on DioError catch (e) {
       printDioError(
         e,
-        'Node $containerName: Exception when calling SystemApi->systemLoginSystemLoginPost',
+        'Node $name: Exception when calling SystemApi->systemLoginSystemLoginPost',
       );
     }
 
@@ -84,7 +93,7 @@ class LnNode extends DockerContainer {
           await _api.getLightningApi().lightningGetInfoLightningGetInfoGet();
 
       if (lnInfoResp.statusCode != 200) {
-        throw Exception("Failed to bootstrap node $containerName");
+        throw Exception("Failed to bootstrap node $name");
       }
 
       if (lnInfoResp.data!.identityPubkey != null) {
@@ -97,16 +106,16 @@ class LnNode extends DockerContainer {
     } on DioError catch (e) {
       printDioError(
         e,
-        'Node $containerName: Exception when calling SystemApi->systemLoginSystemLoginPost',
+        'Node $name: Exception when calling SystemApi->systemLoginSystemLoginPost',
       );
 
       logMessage(
-        "Unable to bootstrap $containerName with pubkey $pubKey, ${_api.dio.options.baseUrl}",
+        "Unable to bootstrap $name with pubkey $pubKey, ${_api.dio.options.baseUrl}",
       );
     }
 
     logMessage(
-      "Bootstrapped $containerName with pubkey $pubKey, ${_api.dio.options.baseUrl}",
+      "Bootstrapped $name with pubkey $pubKey, ${_api.dio.options.baseUrl}",
     );
   }
 
@@ -178,8 +187,7 @@ class LnNode extends DockerContainer {
       return res.data ?? '';
     } catch (e) {
       if (e is DioError) {
-        printDioError(e,
-            "Error opening channel from $containerName to ${to.containerName}");
+        printDioError(e, "Error opening channel from $name to ${to.name}");
       }
 
       logMessage("$e");
@@ -197,7 +205,7 @@ class LnNode extends DockerContainer {
             forceClose: false,
           );
       logMessage(
-        "Closed channel ${c.id} from ${c.from.id} to ${c.to.id}, txid: $res",
+        "Closed channel ${c.id} from ${c.from.opts.id} to ${c.to.opts.id}, txid: $res",
       );
     } catch (e) {
       if (e is! DioError) {
@@ -225,7 +233,7 @@ class LnNode extends DockerContainer {
 
       printDioError(
         e,
-        "Error closing channel ${c.id} from ${c.from.id}  to ${c.to.id}",
+        "Error closing channel ${c.id} from ${c.from.opts.id}  to ${c.to.opts.id}",
       );
     }
   }
@@ -239,7 +247,7 @@ class LnNode extends DockerContainer {
       return true;
     } catch (e) {
       if (e is DioError) {
-        printDioError(e, "Error paying invoice from $containerName}");
+        printDioError(e, "Error paying invoice from $name}");
       }
 
       logMessage("$e");
@@ -286,7 +294,7 @@ class LnNode extends DockerContainer {
       return d;
     } catch (e) {
       if (e is DioError) {
-        printDioError(e, "Error fetching channels from $containerName");
+        printDioError(e, "Error fetching channels from $name");
       }
 
       logMessage("$e");
@@ -314,7 +322,7 @@ class LnNode extends DockerContainer {
       return res.data;
     } catch (e) {
       if (e is DioError) {
-        printDioError(e, "Error sending on-chain from $containerName");
+        printDioError(e, "Error sending on-chain from $name");
       }
 
       logMessage("$e");
@@ -332,8 +340,7 @@ class LnNode extends DockerContainer {
         await c.from.closeChannel(c);
         numClosed++;
       } catch (e) {
-        print(
-            "sweepChannels($containerName): Failed to close channel ${c.id}: $e");
+        print("sweepChannels($name): Failed to close channel ${c.id}: $e");
       }
     }
 

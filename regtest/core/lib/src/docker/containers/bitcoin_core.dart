@@ -10,11 +10,40 @@ import '../arg_builder.dart';
 import '../docker.dart';
 import '../exceptions.dart';
 
+class BitcoinCoreOptions extends ContainerOptions {
+  const BitcoinCoreOptions({
+    super.name = defaultBitcoinCoreName,
+    super.image = "boltz/bitcoin-core:24.0.1",
+    super.workDir = dockerDataDir,
+  });
+
+  @override
+  List<Object?> get props => [name, image, workDir];
+}
+
 class BitcoinCoreContainer extends DockerContainer {
+  BitcoinCoreOptions opts;
+
   BitcoinCoreContainer({
-    name = defaultBitcoinCoreName,
-    image = "boltz/bitcoin-core:24.0.1",
-  }) : super(name, image);
+    this.opts = const BitcoinCoreOptions(),
+    String? internalId,
+  }) : super(opts, internalId: internalId);
+
+  BitcoinCoreContainer._(ContainerData cd)
+      : opts = BitcoinCoreOptions(name: cd.name, image: cd.image),
+        super(ContainerOptions(name: cd.name, image: cd.image)) {
+    dockerId = cd.dockerId;
+  }
+
+  @override
+  ContainerType get type => ContainerType.bitcoinCore;
+
+  static Future<BitcoinCoreContainer> fromRunningContainer(
+      ContainerData c) async {
+    final newContainer = BitcoinCoreContainer._(c);
+    await newContainer.subscribeLogs();
+    return newContainer;
+  }
 
   @override
   Future<void> start() async {
@@ -27,7 +56,7 @@ class BitcoinCoreContainer extends DockerContainer {
         .addOption('--expose', '29001')
         .addOption('--publish-all')
         .addOption('--network', projectNetwork)
-        .addOption('--name', containerName)
+        .addOption('--name', name)
         .addOption('--detach')
         .addArg(image)
         .addArg('-regtest')
@@ -48,12 +77,12 @@ class BitcoinCoreContainer extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to start container $containerName. Error: ${result.stderr.toString()}",
+        "Failed to start container $name. Error: ${result.stderr.toString()}",
       );
     }
 
-    containerId = result.stdout as String;
-    containerId = containerId?.trim();
+    dockerId = result.stdout as String;
+    dockerId = dockerId.trim();
 
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
 
@@ -181,5 +210,24 @@ class BitcoinCoreContainer extends DockerContainer {
     } catch (e) {
       logMessage(e.toString());
     }
+  }
+
+  BitcoinCoreContainer copyWith({
+    String? name,
+    String? image,
+    String? workDir,
+  }) {
+    if (dockerId.isNotEmpty) {
+      throw StateError('Container is already running');
+    }
+
+    return BitcoinCoreContainer(
+      opts: BitcoinCoreOptions(
+        name: name ?? opts.name,
+        image: image ?? opts.image,
+        workDir: workDir ?? opts.workDir,
+      ),
+      internalId: internalId,
+    );
   }
 }

@@ -2,15 +2,30 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../constants.dart';
+import '../../core.dart';
 import 'exceptions.dart';
 
 export 'blocs/blocs.dart';
 export 'containers/containers.dart';
 
-Future<List<String>> getRunningContainerNames() async {
+class ContainerData {
+  final String internalId;
+  final String dockerId;
+  final String name;
+  final String image;
+
+  ContainerData(this.internalId, this.dockerId, this.image, this.name);
+}
+
+/// Returns a list of running containers
+///
+/// If [filterName] is set it will only return containers that contain
+/// [filterName] in the containers name field. If [filterName] is not set
+/// it'll return all running containers
+Future<List<ContainerData>> getRunningContainerNames(
+    [String filterName = '']) async {
   final proc = await Process.run('docker', ['ps']);
-  final output = <String>[];
+  final output = <ContainerData>[];
 
   if (proc.exitCode != 0) {
     throw DockerException(
@@ -18,11 +33,29 @@ Future<List<String>> getRunningContainerNames() async {
     );
   }
 
-  proc.stdout.split("\n").forEach((line) {
-    final spl = line.split(projectName);
-    if (spl.length < 2) return;
-    output.add("$projectName${spl[1]}");
-  });
+  final lines = proc.stdout.split("\n");
+
+  for (int i = 1; i < lines.length; i++) {
+    final String line = lines[i];
+    if (line.isEmpty) continue;
+    final spl = line.split(RegExp(r'\s{2,}'));
+
+    if (spl.length < 7) {
+      logMessage("Failed to parse line: $line");
+      continue;
+    }
+
+    spl[6] = spl[6].trim();
+    if (!spl[6].contains(dockerContainerNameDelimiter)) continue;
+
+    var [name, internalId] =
+        spl[6].split(dockerContainerNameDelimiter).toList();
+
+    final data = ContainerData(internalId, spl[0], spl[1], name);
+    if (data.name.contains(filterName)) {
+      output.add(data);
+    }
+  }
 
   return output;
 }

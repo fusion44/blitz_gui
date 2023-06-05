@@ -8,11 +8,21 @@ import '../arg_builder.dart';
 import '../docker.dart';
 import '../exceptions.dart';
 
+class CashuMintOptions extends ContainerOptions {
+  const CashuMintOptions({
+    super.name = defaultCashMintName,
+    super.image = "cashu:0.12.0",
+    super.workDir = dockerDataDir,
+  });
+}
+
 class CashuMintContainer extends DockerContainer {
-  CashuMintContainer({
-    name = defaultCashMintName,
-    image = "cashu:0.12.0",
-  }) : super(name, image);
+  CashuMintOptions opts;
+
+  CashuMintContainer({this.opts = const CashuMintOptions()}) : super(opts);
+
+  @override
+  ContainerType get type => ContainerType.cashuMint;
 
   @override
   Future<void> start() async {
@@ -23,7 +33,7 @@ class CashuMintContainer extends DockerContainer {
         .addOption('--expose', '3338')
         .addOption('--publish-all')
         .addOption('--network', projectNetwork)
-        .addOption('--name', containerName)
+        .addOption('--name', name)
         .addOption('--volume', '$dataPath:/root/.cashu/')
         .addOption('--detach')
         .addArg(image);
@@ -36,12 +46,12 @@ class CashuMintContainer extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to start container $containerName. Error: ${result.stderr.toString()}",
+        "Failed to start container $name. Error: ${result.stderr.toString()}",
       );
     }
 
-    containerId = result.stdout as String;
-    containerId = containerId?.trim();
+    dockerId = result.stdout as String;
+    dockerId = dockerId.trim();
 
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
 

@@ -9,7 +9,7 @@ part 'bitcoin_core_container_state.dart';
 
 class BitcoinCoreContainerBloc
     extends Bloc<BitcoinCoreContainerEvent, BitcoinCoreContainerState> {
-  final BitcoinCoreContainer container;
+  final String containerId;
 
   StreamSubscription<ContainerStatusMessage>? _sub;
 
@@ -19,21 +19,52 @@ class BitcoinCoreContainerBloc
     super.close();
   }
 
-  BitcoinCoreContainerBloc(this.container)
+  BitcoinCoreContainerBloc(this.containerId)
       : super(BitcoinCoreContainerInitial()) {
+    on<SettingsUpdatedEvent>((event, emit) async {
+      await NetworkManager().updateContainerOptions(containerId, event.options);
+
+      emit(
+        BitcoinCoreStatusUpdate(
+          ContainerStatusMessage(
+            ContainerStatus.uninitialized,
+            'Settings updated.',
+          ),
+          event.options.name,
+          event.options.image,
+          event.options.workDir,
+        ),
+      );
+    });
+
     on<StartBitcoinCoreContainerEvent>((event, emit) async {
-      await NetworkManager().startContainer(container);
+      await NetworkManager().startContainer(containerId);
     });
 
     on<StopBitcoinCoreContainerEvent>((event, emit) async {
-      await NetworkManager().stopContainer(container);
+      await NetworkManager().stopContainer(containerId);
     });
 
     on<_BitcoinCoreStatusUpdate>((event, emit) {
-      emit(BitcoinCoreStatusUpdate(event.status));
+      final c = NetworkManager().nodeMap[containerId] as BitcoinCoreContainer;
+      emit(
+        BitcoinCoreStatusUpdate(
+          event.status,
+          c.name,
+          c.image,
+          c.workDir,
+        ),
+      );
     });
 
-    _sub = container.statusStream.listen((event) {
+    _subStatuses();
+  }
+
+  void _subStatuses() {
+    _sub?.cancel();
+
+    final c = NetworkManager().nodeMap[containerId] as BitcoinCoreContainer;
+    _sub = c.statusStream.listen((event) {
       add(_BitcoinCoreStatusUpdate(event));
     });
   }

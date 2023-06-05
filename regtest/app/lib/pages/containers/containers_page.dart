@@ -6,7 +6,7 @@ import 'package:regtest_core/core.dart';
 
 import '../../gui_constants.dart';
 import 'container_chip.dart';
-import 'node_bodies/bitcoin_core_body.dart';
+import 'node_shapes/bitcoin_core_shape.dart';
 import 'utils.dart';
 
 class ContainersPage extends StatefulWidget {
@@ -149,10 +149,10 @@ class _ContainersPageState extends State<ContainersPage> {
     final RenderBox target = targetCtx.findRenderObject() as RenderBox;
     final localPos = target.globalToLocal(globalPos);
 
-    final container = NetworkManager().addContainer(type);
+    final container = NetworkManager().createContainer(type);
     final n = gnc.Node(
       gnc.constrainNodeToCanvas(localPos, target.size),
-      body: BitcoinCoreBody(container as BitcoinCoreContainer),
+      body: BitcoinCoreShape(container.internalId),
     );
     setState(() {
       _canvasKey = GlobalKey();
