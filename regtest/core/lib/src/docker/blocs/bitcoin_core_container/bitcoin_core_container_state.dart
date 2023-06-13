@@ -12,4 +12,8 @@ class BitcoinCoreStatusUpdate extends BitcoinCoreContainerState {
   final String workDir;
 
   BitcoinCoreStatusUpdate(this.status, this.name, this.image, this.workDir);
+
+  @override
+  String toString() =>
+      'BitcoinCoreStatusUpdate: ${status.status} / ${status.message} / $name';
 }

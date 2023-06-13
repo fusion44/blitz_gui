@@ -256,6 +256,15 @@ class NetworkManager {
     await container.stop();
   }
 
+  Future<bool> deleteContainer(String id) async {
+    final container = _containerMap[id];
+    if (container == null) throw StateError('Container not found');
+
+    await container.delete();
+
+    return true;
+  }
+
   Future<void> updateContainerOptions(
     String id,
     ContainerOptions opts,

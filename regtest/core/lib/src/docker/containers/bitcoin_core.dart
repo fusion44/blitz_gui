@@ -83,14 +83,33 @@ class BitcoinCoreContainer extends DockerContainer {
 
     dockerId = result.stdout as String;
     dockerId = dockerId.trim();
+    running = true;
+    super.subscribeLogs();
 
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
-
-    super.subscribeLogs();
   }
 
   @override
-  Future<void> stop() async {}
+  Future<void> stop() async {
+    statusCtrl.add(ContainerStatusMessage(ContainerStatus.stopping, ''));
+
+    final argBuilder = DockerArgBuilder().addArg('stop').addArg(dockerId);
+    final result = await Process.run(
+      'docker',
+      argBuilder.build(),
+      workingDirectory: workDir,
+    );
+
+    if (result.exitCode != 0) {
+      throw DockerException(
+        "Failed to stop container $name. Error: ${result.stderr.toString()}",
+      );
+    }
+
+    running = false;
+
+    statusCtrl.add(ContainerStatusMessage(ContainerStatus.stopped, ''));
+  }
 
   Future<void> mineBlocks(
     int numBlocks, {

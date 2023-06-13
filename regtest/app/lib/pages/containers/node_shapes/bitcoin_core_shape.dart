@@ -8,8 +8,9 @@ import '../utils.dart';
 
 class BitcoinCoreShape extends StatefulWidget {
   final String containerId;
+  final Function()? onDeleted;
 
-  const BitcoinCoreShape(this.containerId, {super.key});
+  const BitcoinCoreShape(this.containerId, {this.onDeleted, super.key});
 
   @override
   State<BitcoinCoreShape> createState() => _BitcoinCoreShapeState();
@@ -35,36 +36,118 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
     return BlocBuilder<BitcoinCoreContainerBloc, BitcoinCoreContainerState>(
       bloc: _bloc,
       builder: (context, state) {
-        Widget? body;
+        Widget? footer;
         if (state is BitcoinCoreContainerInitial) {
-          body = Column(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text('Container not created, yet.'),
+          return _buildShape(
+              state,
+              Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Container not created, yet.'),
+                  ),
+                  ElevatedButton.icon(
+                    label: const Text('Edit Settings'),
+                    onPressed: () => _editSettings(context),
+                    icon: const Icon(Icons.settings),
+                  )
+                ],
               ),
-              ElevatedButton.icon(
-                label: const Text('Edit Settings'),
-                onPressed: () => _editSettings(context),
-                icon: const Icon(Icons.settings),
-              )
-            ],
+              _buildFooter(ContainerStatus.uninitialized));
+        }
+
+        if (state is! BitcoinCoreStatusUpdate) {
+          return Center(child: Text('UNKNOWN STATE $state'));
+        }
+
+        footer = _buildFooter(state.status.status);
+
+        if (state.status.status == ContainerStatus.starting ||
+            state.status.status == ContainerStatus.stopping ||
+            state.status.status == ContainerStatus.deleting) {
+          return _buildShape(
+            state,
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: CircularProgressIndicator(),
+            ),
+            footer,
           );
         }
 
-        if (state is BitcoinCoreStatusUpdate) {
-          body = Text(state.status.message);
+        if (state.status.status == ContainerStatus.stopped) {
+          return _buildShape(
+            state,
+            const Padding(
+              padding: EdgeInsets.only(top: 8.0),
+              child: Text('Container is stopped.'),
+            ),
+            footer,
+          );
         }
 
-        return Column(children: [
-          Image.asset(getContainerLogo(ContainerType.bitcoinCore)),
-          body ?? Center(child: Text('Unknown state $state')),
-          const Spacer(),
-          Row(
+        if (state.status.status == ContainerStatus.started) {
+          return _buildShape(
+            state,
+            const Center(child: Text('Running Bitcoin')),
+            footer,
+          );
+        }
+        if (state.status.status == ContainerStatus.deleted) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            if (widget.onDeleted != null) {
+              widget.onDeleted!();
+            }
+          });
+
+          return _buildShape(
+            state,
+            const Center(child: Text('Remove me, I\'m deleted')),
+            footer,
+          );
+        }
+
+        return Center(child: Text('UNKNOWN STATE $state'));
+      },
+    );
+  }
+
+  Widget _buildShape(
+    BitcoinCoreContainerState state,
+    Widget? body,
+    Widget? footer,
+  ) {
+    return Column(children: [
+      Image.asset(getContainerLogo(ContainerType.bitcoinCore)),
+      body ?? Center(child: Text('Unknown state $state')),
+      const Spacer(),
+      footer ?? const Text('NOT IMPLEMENTED')
+    ]);
+  }
+
+  Widget _buildFooter(ContainerStatus status) => switch (status) {
+        ContainerStatus.uninitialized => Row(
             children: [
               ElevatedButton(
                   onPressed: () => _bloc.add(StartBitcoinCoreContainerEvent()),
-                  child: const Text('Start')),
+                  child: const Text('Start'))
+            ],
+          ),
+        ContainerStatus.starting => const Row(
+            children: [
+              ElevatedButton(onPressed: null, child: Text('Starting...')),
+            ],
+          ),
+        ContainerStatus.started => Row(
+            children: [
+              ElevatedButton(
+                onPressed: () => _bloc.add(StopBitcoinCoreContainerEvent()),
+                child: const Text('Stop'),
+              ),
+              IconButton(
+                onPressed: () => _bloc.add(DeleteBitcoinCoreContainerEvent()),
+                icon: const Icon(Icons.delete),
+              ),
               const Spacer(),
               PopupMenuButton<String>(itemBuilder: (context) {
                 return [
@@ -73,10 +156,27 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
               }),
             ],
           ),
-        ]);
-      },
-    );
-  }
+        ContainerStatus.stopping => const Row(
+            children: [
+              ElevatedButton(onPressed: null, child: Text('Stopping...')),
+              IconButton(onPressed: null, icon: Icon(Icons.delete)),
+            ],
+          ),
+        ContainerStatus.stopped => Row(
+            children: [
+              ElevatedButton(
+                onPressed: () => _bloc.add(StartBitcoinCoreContainerEvent()),
+                child: const Text('Start'),
+              ),
+              IconButton(
+                onPressed: () => _bloc.add(DeleteBitcoinCoreContainerEvent()),
+                icon: const Icon(Icons.delete),
+              ),
+            ],
+          ),
+        ContainerStatus.deleting || ContainerStatus.deleted => Container(),
+        _ => Text('not implemented $status'),
+      };
 
   PopupMenuItem<String> _buildMenuItem(String v, String s, IconData i) {
     return PopupMenuItem<String>(

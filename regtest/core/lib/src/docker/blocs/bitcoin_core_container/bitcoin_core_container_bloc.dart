@@ -35,6 +35,8 @@ class BitcoinCoreContainerBloc
           event.options.workDir,
         ),
       );
+
+      _subStatuses();
     });
 
     on<StartBitcoinCoreContainerEvent>((event, emit) async {
@@ -43,6 +45,10 @@ class BitcoinCoreContainerBloc
 
     on<StopBitcoinCoreContainerEvent>((event, emit) async {
       await NetworkManager().stopContainer(containerId);
+    });
+
+    on<DeleteBitcoinCoreContainerEvent>((event, emit) async {
+      await NetworkManager().deleteContainer(containerId);
     });
 
     on<_BitcoinCoreStatusUpdate>((event, emit) {

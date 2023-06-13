@@ -13,6 +13,8 @@ class SettingsUpdatedEvent extends BitcoinCoreContainerEvent {
 
 class StopBitcoinCoreContainerEvent extends BitcoinCoreContainerEvent {}
 
+class DeleteBitcoinCoreContainerEvent extends BitcoinCoreContainerEvent {}
+
 class _BitcoinCoreStatusUpdate extends BitcoinCoreContainerEvent {
   final ContainerStatusMessage status;
 

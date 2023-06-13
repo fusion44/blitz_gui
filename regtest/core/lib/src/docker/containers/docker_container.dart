@@ -6,9 +6,11 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:regtest_core/src/docker/arg_builder.dart';
 import 'package:slugid/slugid.dart';
 
 import '../../constants.dart';
+import '../exceptions.dart';
 
 enum ContainerStatus {
   uninitialized,
@@ -16,8 +18,9 @@ enum ContainerStatus {
   started,
   stopping,
   stopped,
-  error,
+  deleting,
   deleted,
+  error,
 }
 
 class ContainerStatusMessage {
@@ -64,11 +67,17 @@ abstract class DockerContainer {
   /// The image used for the container.
   final String image;
 
+  // True if the container is running and reachable
+  bool running = false;
+
   /// True if the container was deleted and all resources freed
   bool deleted = false;
 
-  // The name of the docket container.
+  /// The name of the docker container.
   final String _name;
+
+  /// Call back
+  final Function()? onDeleted;
 
   @protected
   Stream<String>? stdOut;
@@ -85,7 +94,7 @@ abstract class DockerContainer {
 
   ContainerStatusMessage _currentStatus;
 
-  DockerContainer(ContainerOptions opts, {String? internalId})
+  DockerContainer(ContainerOptions opts, {String? internalId, this.onDeleted})
       : _currentStatus =
             ContainerStatusMessage(ContainerStatus.uninitialized, ''),
         internalId = internalId ?? Slugid.v4().toString(),
@@ -106,11 +115,31 @@ abstract class DockerContainer {
 
   @mustCallSuper
   Future<void> delete() async {
+    statusCtrl.add(ContainerStatusMessage(ContainerStatus.deleting, ""));
+
+    if (running) await stop();
+    if (running) throw StateError('Unable to stop container $name');
+
     stdOutSub?.cancel();
     stdOutSub = null;
     stdErrSub?.cancel();
     stdErrSub = null;
+
+    final argBuilder = DockerArgBuilder().addArg('rm').addOption(dockerId);
+    final result = await Process.run(
+      'docker',
+      argBuilder.build(),
+      workingDirectory: workDir,
+    );
+
+    if (result.exitCode != 0) {
+      throw DockerException(
+        "Failed to delete container $name. Error: ${result.stderr.toString()}",
+      );
+    }
+
     deleted = true;
+    statusCtrl.add(ContainerStatusMessage(ContainerStatus.deleted, ""));
   }
 
   @override
