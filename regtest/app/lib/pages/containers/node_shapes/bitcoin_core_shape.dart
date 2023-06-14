@@ -21,8 +21,8 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
 
   @override
   void initState() {
-    _bloc = BitcoinCoreContainerBloc(widget.containerId);
     super.initState();
+    _bloc = BitcoinCoreContainerBloc(widget.containerId);
   }
 
   @override
@@ -37,7 +37,12 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
       bloc: _bloc,
       builder: (context, state) {
         Widget? footer;
-        if (state is BitcoinCoreContainerInitial) {
+
+        if (state is! BitcoinCoreStatusUpdate) {
+          return Center(child: Text('UNKNOWN STATE $state'));
+        }
+
+        if (state.status.status == ContainerStatus.uninitialized) {
           return _buildShape(
               state,
               Column(
@@ -54,10 +59,6 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
                 ],
               ),
               _buildFooter(ContainerStatus.uninitialized));
-        }
-
-        if (state is! BitcoinCoreStatusUpdate) {
-          return Center(child: Text('UNKNOWN STATE $state'));
         }
 
         footer = _buildFooter(state.status.status);

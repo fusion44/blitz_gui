@@ -20,7 +20,9 @@ class BitcoinCoreContainerBloc
   }
 
   BitcoinCoreContainerBloc(this.containerId)
-      : super(BitcoinCoreContainerInitial()) {
+      : super(BitcoinCoreStatusUpdate.fromContainer(
+          NetworkManager().nodeMap[containerId] as BitcoinCoreContainer,
+        )) {
     on<SettingsUpdatedEvent>((event, emit) async {
       await NetworkManager().updateContainerOptions(containerId, event.options);
 

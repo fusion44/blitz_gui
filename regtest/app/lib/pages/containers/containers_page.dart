@@ -97,7 +97,16 @@ class _ContainersPageState extends State<ContainersPage> {
                     ) {
                       return gnc.NetworkCanvas(
                         key: _canvasKey,
-                        nodes: nodes.map((e) => e.node).toList(),
+                        nodes: nodes.map((e) {
+                          return gnc.GraphCanvasNodeInfo(
+                            e.initialPos,
+                            body: switch (e.type) {
+                              ContainerType.bitcoinCore =>
+                                BitcoinCoreShape(e.container.internalId),
+                              _ => throw UnimplementedError()
+                            },
+                          );
+                        }).toList(),
                       );
                     },
                   ),
@@ -160,24 +169,24 @@ class _ContainersPageState extends State<ContainersPage> {
     if (targetCtx == null) throw StateError('No context when adding container');
 
     final RenderBox target = targetCtx.findRenderObject() as RenderBox;
-    final localPos = target.globalToLocal(globalPos);
 
-    final container = NetworkManager().createContainer(type);
-    final n = gnc.Node(
-      gnc.constrainNodeToCanvas(localPos, target.size),
-      body: BitcoinCoreShape(container.internalId),
+    final initialPos = gnc.constrainNodeToCanvas(
+      target.globalToLocal(globalPos),
+      target.size,
     );
+    final container = NetworkManager().createContainer(type);
+
     setState(() {
       _canvasKey = GlobalKey();
-      nodes.add(ContainerNode(type, container, n));
+      nodes.add(ContainerNode(initialPos, type, container));
     });
   }
 }
 
 class ContainerNode {
+  final Offset initialPos;
   final ContainerType type;
   final DockerContainer container;
-  final gnc.Node node;
 
-  ContainerNode(this.type, this.container, this.node);
+  ContainerNode(this.initialPos, this.type, this.container);
 }
