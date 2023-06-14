@@ -41,10 +41,13 @@ class NetworkManager {
 
   factory NetworkManager() => _instance;
 
-  final StreamController<NetworkStateMessage> _controller =
+  final StreamController<NetworkStateMessage> _netStateController =
       StreamController<NetworkStateMessage>();
+  late final Stream<NetworkStateMessage> _netStateStream;
+
   final StreamController<DockerContainer> _containerDeletedController =
       StreamController<DockerContainer>();
+  late final Stream<DockerContainer> _containerDeletedStream;
 
   NetworkManager._internal();
 
@@ -54,16 +57,20 @@ class NetworkManager {
       return;
     }
     _isInitialized = true;
+
+    _netStateStream = _netStateController.stream.asBroadcastStream();
+
+    _containerDeletedStream =
+        _containerDeletedController.stream.asBroadcastStream();
+
     await _checkIfRunning();
   }
 
   bool get initialized => _isInitialized;
 
-  Stream<NetworkStateMessage> get stream =>
-      _controller.stream.asBroadcastStream();
+  Stream<NetworkStateMessage> get netStateStream => _netStateStream;
 
-  Stream<DockerContainer> get containerDeletedStream =>
-      _containerDeletedController.stream.asBroadcastStream();
+  Stream<DockerContainer> get containerDeletedStream => _containerDeletedStream;
 
   Map<String, DockerContainer> get nodeMap => _containerMap;
   List<DockerContainer> get containers =>
@@ -131,7 +138,7 @@ class NetworkManager {
   }
 
   _sendMessage(NetworkState state, [String? message]) =>
-      _controller.add(NetworkStateMessage(state, message));
+      _netStateController.add(NetworkStateMessage(state, message));
 
   recreate() async {
     final containers = await getRunningContainerNames();

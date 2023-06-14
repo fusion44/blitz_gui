@@ -54,8 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
       rethrow;
     }
 
-    _sub = _mgr.stream
-        .asBroadcastStream()
+    _sub = _mgr.netStateStream
         .listen((event) => setState(() => _networkState = event));
     _mgr.refresh();
   }

@@ -72,6 +72,16 @@ class _SSEInspectorPageState extends State<SSEInspectorPage> {
     initApi();
   }
 
+  @override
+  void dispose() async {
+    super.dispose();
+  }
+
+  Future<void> cleanUp() async {
+    await _sub?.cancel();
+    _api.dio.close();
+  }
+
   Future<void> initApi() async {
     final bo = BaseOptions(
       baseUrl: '${widget._url}/latest',
@@ -145,6 +155,8 @@ class _SSEInspectorPageState extends State<SSEInspectorPage> {
 
     _sysInfo = resp2.data;
 
+    if (!mounted) return await cleanUp();
+
     await initRepo();
   }
 
@@ -157,31 +169,32 @@ class _SSEInspectorPageState extends State<SSEInspectorPage> {
 
     await _repo.init(widget._url, _token);
 
+    if (!mounted) return await cleanUp();
+
     final stream = _repo.filteredStream([]);
+
     if (stream != null) {
       _sub = stream.listen(
-        (event) => setState(() {
-          final e = _SSEEvent(
-            DateTime.now(),
-            event['id'],
-            event['data'],
-            rawType: event['event'],
-          );
-          _eventList.insert(0, e);
-          if (_filter.isNotEmpty) _updateFilter();
-        }),
+        (event) {
+          if (!mounted) return;
+
+          setState(() {
+            final e = _SSEEvent(
+              DateTime.now(),
+              event['id'],
+              event['data'],
+              rawType: event['event'],
+            );
+            _eventList.insert(0, e);
+            if (_filter.isNotEmpty) _updateFilter();
+          });
+        },
       );
     } else {
       BlitzLog().w('Unable to connect to the SEE endpoint: ${widget._url}');
     }
 
     setState(() => _initialized = true);
-  }
-
-  @override
-  void dispose() async {
-    await _sub?.cancel();
-    super.dispose();
   }
 
   @override

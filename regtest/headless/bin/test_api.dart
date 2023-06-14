@@ -74,7 +74,7 @@ Future<void> reset() async {
 }
 
 void setup() async {
-  manager.stream.listen((event) async {
+  manager.netStateStream.listen((event) async {
     if (event.state == NetworkState.checking ||
         event.state == NetworkState.startingUp) {
       return print(event.state);
