@@ -183,4 +183,20 @@ abstract class DockerContainer {
     _currentStatus = status;
     statusCtrl.add(status);
   }
+
+  Future<String> runDockerCommand(List<String> args) async {
+    final result = await Process.run(
+      'docker',
+      args,
+      workingDirectory: workDir,
+    );
+
+    if (result.exitCode != 0) {
+      throw DockerException(
+        "Failed to execute Docker command. Error: ${result.stderr.toString()}",
+      );
+    }
+
+    return result.stdout as String;
+  }
 }

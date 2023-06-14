@@ -93,19 +93,6 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
             footer,
           );
         }
-        if (state.status.status == ContainerStatus.deleted) {
-          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-            if (widget.onDeleted != null) {
-              widget.onDeleted!();
-            }
-          });
-
-          return _buildShape(
-            state,
-            const Center(child: Text('Remove me, I\'m deleted')),
-            footer,
-          );
-        }
 
         return Center(child: Text('UNKNOWN STATE $state'));
       },

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
@@ -27,13 +29,24 @@ class _ContainersPageState extends State<ContainersPage> {
 
   List<ContainerNode> nodes = [];
 
+  StreamSubscription<DockerContainer>? _containerDelSub;
+
   @override
   void initState() {
+    _containerDelSub = NetworkManager()
+        .containerDeletedStream
+        .listen((container) => setState(() {
+              _canvasKey = GlobalKey();
+              final l = nodes.length;
+              nodes.removeWhere((element) => element.container == container);
+              if (nodes.length == l) throw StateError("No container deleted");
+            }));
     super.initState();
   }
 
   @override
   void dispose() async {
+    _containerDelSub?.cancel();
     super.dispose();
   }
 

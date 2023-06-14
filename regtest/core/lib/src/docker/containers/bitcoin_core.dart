@@ -48,44 +48,17 @@ class BitcoinCoreContainer extends DockerContainer {
   @override
   Future<void> start() async {
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ""));
-    final argBuilder = DockerArgBuilder()
-        .addArg("run")
-        .addOption('--restart', 'on-failure')
-        .addOption('--expose', '18443')
-        .addOption('--expose', '29000')
-        .addOption('--expose', '29001')
-        .addOption('--publish-all')
-        .addOption('--network', projectNetwork)
-        .addOption('--name', name)
-        .addOption('--detach')
-        .addArg(image)
-        .addArg('-regtest')
-        .addArg('-fallbackfee=0.00000253')
-        .addArg('-zmqpubrawtx=tcp://0.0.0.0:29000')
-        .addArg('-zmqpubrawblock=tcp://0.0.0.0:29001')
-        .addArg('-txindex')
-        .addArg('-rpcallowip=0.0.0.0/0')
-        .addArg('-rpcbind=0.0.0.0')
-        .addArg('-rpcuser=regtester')
-        .addArg('-rpcpassword=regtester');
 
-    final result = await Process.run(
-      'docker',
-      argBuilder.build(),
-      workingDirectory: workDir,
-    );
-
-    if (result.exitCode != 0) {
-      throw DockerException(
-        "Failed to start container $name. Error: ${result.stderr.toString()}",
-      );
+    if (dockerId.isNotEmpty) {
+      await runDockerCommand(["start", dockerId]);
+    } else {
+      await prepareDataDir(dataPath);
+      dockerId = await runDockerCommand(_buildRunDockerArgs());
+      dockerId = dockerId.trim();
+      super.subscribeLogs();
     }
 
-    dockerId = result.stdout as String;
-    dockerId = dockerId.trim();
     running = true;
-    super.subscribeLogs();
-
     statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
   }
 
@@ -248,5 +221,29 @@ class BitcoinCoreContainer extends DockerContainer {
       ),
       internalId: internalId,
     );
+  }
+
+  List<String> _buildRunDockerArgs() {
+    return DockerArgBuilder()
+        .addArg("run")
+        .addOption('--restart', 'on-failure')
+        .addOption('--expose', '18443')
+        .addOption('--expose', '29000')
+        .addOption('--expose', '29001')
+        .addOption('--publish-all')
+        .addOption('--network', projectNetwork)
+        .addOption('--name', name)
+        .addOption('--detach')
+        .addArg(image)
+        .addArg('-regtest')
+        .addArg('-fallbackfee=0.00000253')
+        .addArg('-zmqpubrawtx=tcp://0.0.0.0:29000')
+        .addArg('-zmqpubrawblock=tcp://0.0.0.0:29001')
+        .addArg('-txindex')
+        .addArg('-rpcallowip=0.0.0.0/0')
+        .addArg('-rpcbind=0.0.0.0')
+        .addArg('-rpcuser=regtester')
+        .addArg('-rpcpassword=regtester')
+        .build();
   }
 }

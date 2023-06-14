@@ -15,7 +15,7 @@ class BitcoinCoreContainerBloc
 
   @override
   Future<void> close() async {
-    await _sub?.cancel();
+    await _unSubStatuses();
     super.close();
   }
 
@@ -35,11 +35,10 @@ class BitcoinCoreContainerBloc
           event.options.workDir,
         ),
       );
-
-      _subStatuses();
     });
 
     on<StartBitcoinCoreContainerEvent>((event, emit) async {
+      _subStatuses();
       await NetworkManager().startContainer(containerId);
     });
 
@@ -51,7 +50,24 @@ class BitcoinCoreContainerBloc
       await NetworkManager().deleteContainer(containerId);
     });
 
-    on<_BitcoinCoreStatusUpdate>((event, emit) {
+    on<_BitcoinCoreStatusUpdate>((event, emit) async {
+      if (event.status.status == ContainerStatus.deleted) {
+        final lastState = state;
+        if (lastState is BitcoinCoreStatusUpdate) {
+          emit(
+            BitcoinCoreStatusUpdate(
+              event.status,
+              lastState.name,
+              lastState.image,
+              lastState.workDir,
+            ),
+          );
+        }
+
+        await _unSubStatuses();
+        return;
+      }
+
       final c = NetworkManager().nodeMap[containerId] as BitcoinCoreContainer;
       emit(
         BitcoinCoreStatusUpdate(
@@ -66,12 +82,24 @@ class BitcoinCoreContainerBloc
     _subStatuses();
   }
 
-  void _subStatuses() {
+  Future<void> _subStatuses() async {
     _sub?.cancel();
 
     final c = NetworkManager().nodeMap[containerId] as BitcoinCoreContainer;
     _sub = c.statusStream.listen((event) {
       add(_BitcoinCoreStatusUpdate(event));
     });
+
+    try {
+      final event = await c.statusStream.last;
+      add(_BitcoinCoreStatusUpdate(event));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _unSubStatuses() async {
+    await _sub?.cancel();
+    _sub = null;
   }
 }

@@ -45,6 +45,8 @@ class NetworkManager {
 
   final StreamController<NetworkStateMessage> _controller =
       StreamController<NetworkStateMessage>();
+  final StreamController<DockerContainer> _containerDeletedController =
+      StreamController<DockerContainer>();
 
   NetworkManager._internal();
 
@@ -61,6 +63,9 @@ class NetworkManager {
 
   Stream<NetworkStateMessage> get stream =>
       _controller.stream.asBroadcastStream();
+
+  Stream<DockerContainer> get containerDeletedStream =>
+      _containerDeletedController.stream.asBroadcastStream();
 
   Map<String, DockerContainer> get nodeMap => _containerMap;
   List<DockerContainer> get containers =>
@@ -239,7 +244,6 @@ class NetworkManager {
     final container = _containerMap[id];
     if (container == null) throw StateError('Container not found');
 
-    await prepareDataDir(container.dataPath);
     await _ensureDockerNetwork();
 
     try {
@@ -260,7 +264,14 @@ class NetworkManager {
     final container = _containerMap[id];
     if (container == null) throw StateError('Container not found');
 
-    await container.delete();
+    try {
+      await container.delete();
+      _containerMap.remove(id);
+    } on DockerException catch (e) {
+      print(e.message);
+    }
+
+    _containerDeletedController.add(container);
 
     return true;
   }
