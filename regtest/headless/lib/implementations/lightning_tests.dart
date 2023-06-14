@@ -130,7 +130,12 @@ Future<void> _validateOpensChan(
         );
       }
 
-      await mgr.btcc.mineBlocks(1);
+      final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
+      if (btcc == null) {
+        throw StateError('BitcoinCoreContainer not found');
+      }
+
+      await btcc.mineBlocks(1);
       await Future.delayed(Duration(seconds: 2));
       numBlocks++;
 
@@ -206,7 +211,12 @@ Future<void> validateOpenChannelNoPush(NetworkManager manager) async {
 
   await manager.getWalletBalances();
 
-  await manager.btcc.mineBlocks(10, delayBetweenBlocks: 2);
+  final btcc = manager.findFirstOf<BitcoinCoreContainer>();
+  if (btcc == null) {
+    throw StateError('BitcoinCoreContainer not found');
+  }
+
+  await btcc.mineBlocks(10, delayBetweenBlocks: 2);
 
   // channels should be open and be listed
   printGroupHeader("Channel should be open after 10 new blocks");

@@ -103,7 +103,12 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
 
     if (i == 2 || i == 3) {
       try {
-        await NetworkManager().btcc.mineBlocks(rand.nextInt(6) + 3);
+        final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
+        if (btcc == null) {
+          throw StateError('BitcoinCoreContainer not found');
+        }
+
+        await btcc.mineBlocks(rand.nextInt(6) + 3);
 
         onchainTxCreated++;
       } catch (e) {

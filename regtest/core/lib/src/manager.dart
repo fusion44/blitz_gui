@@ -39,8 +39,6 @@ class NetworkManager {
 
   bool _bootstrapped = false;
 
-  BitcoinCoreContainer? _btcc;
-
   factory NetworkManager() => _instance;
 
   final StreamController<NetworkStateMessage> _controller =
@@ -70,15 +68,6 @@ class NetworkManager {
   Map<String, DockerContainer> get nodeMap => _containerMap;
   List<DockerContainer> get containers =>
       _containerMap.values.toList(growable: false);
-
-  BitcoinCoreContainer get btcc {
-    final f = _btcc;
-    if (f == null) {
-      throw NodeNotRunningError.fromContainerType(ContainerType.bitcoinCore);
-    }
-
-    return f;
-  }
 
   LnNode? nodeByPubKey(String key) => _containerMap.values
       .whereType<LnNode>()
@@ -207,8 +196,6 @@ class NetworkManager {
     return WalletBalances(balances);
   }
 
-  // Future<String> getNewBitcoinCoreAddress() async => await _btcc.newAddress();
-
   Future<void> _ensureDockerNetwork() async {
     final networkArgs = [
       'network',
@@ -313,5 +300,13 @@ class NetworkManager {
     return BlitzAPIContainer(
       opts: opts == null ? BlitzAPIOptions.empty() : opts as BlitzAPIOptions,
     );
+  }
+
+  T? findFirstOf<T>() {
+    for (var container in containers) {
+      if (container is T) return container as T;
+    }
+
+    return null;
   }
 }

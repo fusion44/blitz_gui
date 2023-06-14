@@ -99,7 +99,12 @@ ${data.numBlocks - x} blocks left
         }
 
         try {
-          await NetworkManager().btcc.mineBlocks(1);
+          final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
+          if (btcc == null) {
+            throw StateError('BitcoinCoreContainer not found');
+          }
+
+          await btcc.mineBlocks(1);
         } catch (e) {
           debugPrint(e.toString());
         }

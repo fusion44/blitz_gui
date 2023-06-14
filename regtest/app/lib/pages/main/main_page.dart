@@ -265,17 +265,22 @@ class _MyHomePageState extends State<MyHomePage> {
       _currentBlock = 0;
     });
 
+    final btcc = _mgr.findFirstOf<BitcoinCoreContainer>();
+    if (btcc == null) {
+      throw StateError('BitcoinCoreContainer not found');
+    }
+
     if (blockData.value.delay) {
       while (_currentBlock < blockData.value.numBlocks) {
         final delay = from != to ? Random().nextInt(to) + from : from;
         await Future.delayed(Duration(seconds: delay));
-        await _mgr.btcc.mineBlocks(1);
+        await btcc.mineBlocks(1);
         setState(() => _currentBlock += 1);
       }
 
       debugPrint('Done mining');
     } else {
-      await _mgr.btcc.mineBlocks(blockData.value.numBlocks);
+      await btcc.mineBlocks(blockData.value.numBlocks);
     }
 
     setState(() => _miningBlocks = false);

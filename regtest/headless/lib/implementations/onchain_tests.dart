@@ -220,7 +220,13 @@ Future<void> _sendOnChainFixedAmount(
     int n = 0;
     while (true) {
       // Mine blocks until the tx is confirmed fully
-      await mgr.btcc.mineBlocks(1);
+
+      final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
+      if (btcc == null) {
+        throw StateError('BitcoinCoreContainer not found');
+      }
+
+      await btcc.mineBlocks(1);
       await Future.delayed(Duration(seconds: 1));
 
       rAfter = await receiver.walletBalance();
@@ -343,7 +349,12 @@ Future<void> _sendOnChainAll(
     int n = 0;
     while (true) {
       // Mine blocks until the tx is confirmed fully
-      await mgr.btcc.mineBlocks(1);
+      final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
+      if (btcc == null) {
+        throw StateError('BitcoinCoreContainer not found');
+      }
+
+      await btcc.mineBlocks(1);
       await Future.delayed(Duration(seconds: 1));
 
       final sAfter = await sender.walletBalance();
