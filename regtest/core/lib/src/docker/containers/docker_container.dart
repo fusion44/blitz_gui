@@ -89,8 +89,8 @@ abstract class DockerContainer {
   StreamSubscription<String>? stdErrSub;
   @protected
   final logCtrl = StreamController<String>.broadcast();
-  @protected
-  final statusCtrl = StreamController<ContainerStatusMessage>.broadcast();
+
+  final _statusCtrl = StreamController<ContainerStatusMessage>.broadcast();
 
   ContainerStatusMessage _currentStatus;
 
@@ -104,7 +104,7 @@ abstract class DockerContainer {
 
   String get name => _name + dockerContainerNameDelimiter + internalId;
   String get dataPath => '$workDir/$_name';
-  Stream<ContainerStatusMessage> get statusStream => statusCtrl.stream;
+  Stream<ContainerStatusMessage> get statusStream => _statusCtrl.stream;
   Stream<String> get logStream => logCtrl.stream;
   ContainerStatusMessage get status => _currentStatus;
   ContainerType get type;
@@ -115,7 +115,7 @@ abstract class DockerContainer {
 
   @mustCallSuper
   Future<void> delete() async {
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.deleting, ""));
+    setStatus(ContainerStatusMessage(ContainerStatus.deleting, ""));
 
     if (running) await stop();
     if (running) throw StateError('Unable to stop container $name');
@@ -139,7 +139,7 @@ abstract class DockerContainer {
     }
 
     deleted = true;
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.deleted, ""));
+    setStatus(ContainerStatusMessage(ContainerStatus.deleted, ""));
   }
 
   @override
@@ -181,7 +181,7 @@ abstract class DockerContainer {
 
   void setStatus(ContainerStatusMessage status) {
     _currentStatus = status;
-    statusCtrl.add(status);
+    _statusCtrl.add(status);
   }
 
   Future<String> runDockerCommand(List<String> args) async {

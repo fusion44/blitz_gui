@@ -27,16 +27,16 @@ class FakeLnContainer extends LnNode {
 
   @override
   Future<void> start() async {
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.starting, ''));
 
     await Future.delayed(Duration(seconds: 1));
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, 'Step 1'));
+    setStatus(ContainerStatusMessage(ContainerStatus.starting, 'Step 1'));
 
     await Future.delayed(Duration(seconds: 1));
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, 'Step 2'));
+    setStatus(ContainerStatusMessage(ContainerStatus.starting, 'Step 2'));
 
     await Future.delayed(Duration(seconds: 1));
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, 'Up'));
+    setStatus(ContainerStatusMessage(ContainerStatus.started, 'Up'));
   }
 
   @override

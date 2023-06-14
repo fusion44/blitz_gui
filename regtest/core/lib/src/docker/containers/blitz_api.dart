@@ -64,7 +64,7 @@ class BlitzAPIContainer extends DockerContainer {
     //    --network workspace_network --name workspace_lnd1-blitz
     //    --detach blitz_api:latest
     final o = opts;
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.starting, ''));
     final argBuilder = DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'on-failure')
@@ -127,7 +127,7 @@ class BlitzAPIContainer extends DockerContainer {
     print(dockerId);
     super.subscribeLogs();
 
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
   }
 
   @override

@@ -47,7 +47,7 @@ class BitcoinCoreContainer extends DockerContainer {
 
   @override
   Future<void> start() async {
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ""));
+    setStatus(ContainerStatusMessage(ContainerStatus.starting, ""));
 
     if (dockerId.isNotEmpty) {
       await runDockerCommand(["start", dockerId]);
@@ -59,12 +59,12 @@ class BitcoinCoreContainer extends DockerContainer {
     }
 
     running = true;
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
   }
 
   @override
   Future<void> stop() async {
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.stopping, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.stopping, ''));
 
     final argBuilder = DockerArgBuilder().addArg('stop').addArg(dockerId);
     final result = await Process.run(
@@ -81,7 +81,7 @@ class BitcoinCoreContainer extends DockerContainer {
 
     running = false;
 
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.stopped, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.stopped, ''));
   }
 
   Future<void> mineBlocks(

@@ -26,7 +26,7 @@ class LNbitsContainer extends DockerContainer {
 
   @override
   Future<void> start() async {
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ""));
+    setStatus(ContainerStatusMessage(ContainerStatus.starting, ""));
     // docker run --restart on-failure --entrypoint sh -c 'sleep 30; poetry run lnbits'
     // --entrypoint sh -c 'sleep 30; poetry run lnbits' --environment "HOST=lnbits"
     // --environment "PORT=5001" --environment "DEBUG=True"
@@ -78,7 +78,7 @@ class LNbitsContainer extends DockerContainer {
     dockerId = result.stdout as String;
     dockerId = dockerId.trim();
 
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
 
     super.subscribeLogs();
   }

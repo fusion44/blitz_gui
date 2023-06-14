@@ -23,7 +23,7 @@ class RedisContainer extends DockerContainer {
 
   @override
   Future<void> start() async {
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ""));
+    setStatus(ContainerStatusMessage(ContainerStatus.starting, ""));
     final argBuilder = DockerArgBuilder()
         .addArg("run")
         .addOption('--restart', 'on-failure')
@@ -48,7 +48,7 @@ class RedisContainer extends DockerContainer {
     dockerId = result.stdout as String;
     dockerId = dockerId.trim();
 
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
 
     super.subscribeLogs();
   }

@@ -45,7 +45,7 @@ class LNDContainer extends LnNode {
   Future<void> start() async {
     final o = opts;
 
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.starting, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.starting, ''));
     final argBuilder = DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'on-failure')
@@ -95,7 +95,7 @@ class LNDContainer extends LnNode {
 
     super.subscribeLogs();
 
-    statusCtrl.add(ContainerStatusMessage(ContainerStatus.started, ''));
+    setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
   }
 
   @override
