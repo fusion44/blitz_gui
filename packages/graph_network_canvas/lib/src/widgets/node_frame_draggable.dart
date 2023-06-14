@@ -10,12 +10,12 @@ import 'node_test_contents.dart';
 
 class NodeFrameDraggableWidget extends StatefulWidget {
   final int index;
-  final Node node;
+  final GraphCanvasNodeInfo node;
   final Function(DraggableDetails details) onDragEnd;
   final Function(Velocity velocity, Offset offset)? onDraggableCanceled;
   final Function(Socket socket)? onSocketDragStarted;
   final Function(Socket? socket)? onSocketHovered;
-  final Function(Node? node)? onNodeHovered;
+  final Function(GraphCanvasNodeInfo? node)? onNodeHovered;
   final Size size;
 
   const NodeFrameDraggableWidget(
@@ -45,6 +45,9 @@ class _NodeFrameDraggableWidgetState extends State<NodeFrameDraggableWidget> {
     return Positioned(
       left: widget.node.position.dx,
       top: widget.node.position.dy,
+      // If a socket is hovered, we don't want the
+      // Node Frame to be draggable. Otherwise it'd be dragged
+      // and the Socket doesn't get any drag information.
       child: _socketHovered
           ? _buildFrameStack(false)
           : Draggable(

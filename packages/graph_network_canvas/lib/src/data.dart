@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Node {
+class GraphCanvasNodeInfo {
   Offset position;
   final List<Socket> _sockets;
   Widget? body;
 
-  Node(this.position, {List<Socket>? sockets, this.body})
+  GraphCanvasNodeInfo(this.position, {List<Socket>? sockets, this.body})
       : _sockets = sockets ?? [];
 
   List<Socket> get sockets => _sockets;
@@ -28,15 +28,16 @@ class Node {
   bool containsSocket(Socket socket) => _sockets.contains(socket);
 
   // copyWith
-  Node copyWith({Offset? position, List<Socket>? sockets}) {
-    return Node(position ?? this.position, sockets: sockets ?? _sockets);
+  GraphCanvasNodeInfo copyWith({Offset? position, List<Socket>? sockets}) {
+    return GraphCanvasNodeInfo(position ?? this.position,
+        sockets: sockets ?? _sockets);
   }
 }
 
 enum SocketSide { left, right, top, bottom }
 
 class Socket {
-  final Node _parent;
+  final GraphCanvasNodeInfo _parent;
   Offset position;
   SocketSide side;
   Connection? connection;
@@ -44,9 +45,9 @@ class Socket {
   Socket({
     required this.side,
     this.position = Offset.zero,
-    Node? parent,
+    GraphCanvasNodeInfo? parent,
     this.connection,
-  }) : _parent = parent ?? Node(Offset.zero);
+  }) : _parent = parent ?? GraphCanvasNodeInfo(Offset.zero);
 
   /// Get this Sockets global position relative to the canvas
   Offset get globalPosition => position + _parent.position;

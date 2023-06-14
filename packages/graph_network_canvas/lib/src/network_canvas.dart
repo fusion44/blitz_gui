@@ -7,12 +7,12 @@ import 'utils.dart';
 import 'widgets/node_frame_draggable.dart';
 
 class NetworkCanvas extends StatefulWidget {
-  final List<Node>? nodes;
+  final List<GraphCanvasNodeInfo>? nodes;
   final List<Connection>? connections;
   final NodeFrameThemeData themeData;
 
   final Function(Connection c)? onConnectionEstablished;
-  final Function(Node? hoveredNode)? onNodeHovered;
+  final Function(GraphCanvasNodeInfo? hoveredNode)? onNodeHovered;
 
   const NetworkCanvas({
     super.key,
@@ -28,7 +28,7 @@ class NetworkCanvas extends StatefulWidget {
 }
 
 class _NetworkCanvasState extends State<NetworkCanvas> {
-  late final List<Node> _nodes;
+  late final List<GraphCanvasNodeInfo> _nodes;
   late final List<Connection> _connections;
 
   final ValueNotifier<Offset> _positionNotifier =
@@ -106,7 +106,7 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
     return Stack(
       children: _nodes.asMap().entries.map((entry) {
         int index = entry.key;
-        Node node = entry.value;
+        GraphCanvasNodeInfo node = entry.value;
 
         return NodeFrameDraggableWidget(
           index,
@@ -137,7 +137,8 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
             });
           },
           onSocketHovered: (Socket? socket) => _hoveredSocket = socket,
-          onNodeHovered: (Node? node) => widget.onNodeHovered?.call(node),
+          onNodeHovered: (GraphCanvasNodeInfo? node) =>
+              widget.onNodeHovered?.call(node),
         );
       }).toList(),
     );

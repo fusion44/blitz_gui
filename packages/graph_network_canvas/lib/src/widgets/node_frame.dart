@@ -10,8 +10,8 @@ class NodeFrameWidget extends StatefulWidget {
   final bool dragged;
   final Size size;
   final Widget child;
-  final Node node;
-  final Function(Node? node)? onHovered;
+  final GraphCanvasNodeInfo node;
+  final Function(GraphCanvasNodeInfo? node)? onHovered;
 
   const NodeFrameWidget(
     this.node, {
