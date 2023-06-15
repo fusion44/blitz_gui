@@ -211,7 +211,7 @@ class NetworkManager {
       'bridge',
       projectNetwork
     ];
-    await dockerCmd(networkArgs, dockerDataDir);
+    await dockerCmd(networkArgs, '.');
   }
 
   DockerContainer createContainer(
