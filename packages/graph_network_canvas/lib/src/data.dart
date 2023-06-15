@@ -5,8 +5,14 @@ class GraphCanvasNodeInfo {
   final List<Socket> _sockets;
   Widget? body;
 
-  GraphCanvasNodeInfo(this.position, {List<Socket>? sockets, this.body})
-      : _sockets = sockets ?? [];
+  final Function(Offset position)? onPositionUpdated;
+
+  GraphCanvasNodeInfo(
+    this.position, {
+    List<Socket>? sockets,
+    this.body,
+    this.onPositionUpdated,
+  }) : _sockets = sockets ?? [];
 
   List<Socket> get sockets => _sockets;
 
@@ -29,8 +35,12 @@ class GraphCanvasNodeInfo {
 
   // copyWith
   GraphCanvasNodeInfo copyWith({Offset? position, List<Socket>? sockets}) {
-    return GraphCanvasNodeInfo(position ?? this.position,
-        sockets: sockets ?? _sockets);
+    return GraphCanvasNodeInfo(
+      position ?? this.position,
+      sockets: sockets ?? _sockets,
+      body: body,
+      onPositionUpdated: onPositionUpdated,
+    );
   }
 }
 

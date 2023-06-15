@@ -5,6 +5,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graph_network_canvas/graph_network_canvas.dart' as gnc;
 import 'package:regtest_core/core.dart';
+import 'package:stash/stash_api.dart';
+import 'package:stash_file/stash_file.dart';
 
 import '../../gui_constants.dart';
 import 'container_chip.dart';
@@ -30,22 +32,25 @@ class _ContainersPageState extends State<ContainersPage> {
   List<ContainerNode> nodes = [];
 
   StreamSubscription<DockerContainer>? _containerDelSub;
+  late final Vault _posVault;
+  bool _loading = true;
 
   @override
   void initState() {
-    final mgr = NetworkManager();
-    _containerDelSub = mgr.containerDeletedStream.listen(
-      (container) => setState(() {
-        _canvasKey = GlobalKey();
-        final l = nodes.length;
-        nodes.removeWhere((element) => element.container == container);
-        if (nodes.length == l) throw StateError("No container deleted");
-      }),
+    _containerDelSub = NetworkManager().containerDeletedStream.listen(
+      (container) async {
+        await _posVault.remove(container.internalId);
+
+        setState(() {
+          _canvasKey = GlobalKey();
+          final l = nodes.length;
+          nodes.removeWhere((element) => element.container == container);
+          if (nodes.length == l) throw StateError("No container deleted");
+        });
+      },
     );
 
-    for (var node in mgr.nodeMap.values) {
-      nodes.add(ContainerNode(Offset.zero, node.type, node));
-    }
+    _loadPositions();
 
     super.initState();
   }
@@ -54,6 +59,26 @@ class _ContainersPageState extends State<ContainersPage> {
   void dispose() async {
     _containerDelSub?.cancel();
     super.dispose();
+  }
+
+  Future<void> _loadPositions() async {
+    final store = await newFileLocalVaultStore(path: 'vaults');
+    _posVault = await store.vault(name: 'positions');
+    final keys = await _posVault.keys;
+    final values = await _posVault.getAll(keys.toSet());
+
+    for (var node in NetworkManager().nodeMap.values) {
+      Offset? o;
+      if (values.keys.contains(node.internalId)) {
+        o = OffsetExtension.fromJson(values[node.internalId]);
+      }
+
+      nodes.add(ContainerNode(o ?? Offset.zero, node.type, node));
+    }
+
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -101,6 +126,10 @@ class _ContainersPageState extends State<ContainersPage> {
                       List<ContainerType?> candidateData,
                       List<dynamic> rejectedData,
                     ) {
+                      if (_loading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
                       return gnc.NetworkCanvas(
                         key: _canvasKey,
                         nodes: nodes.map((e) {
@@ -110,6 +139,10 @@ class _ContainersPageState extends State<ContainersPage> {
                               ContainerType.bitcoinCore =>
                                 BitcoinCoreShape(e.container.internalId),
                               _ => throw UnimplementedError()
+                            },
+                            onPositionUpdated: (position) async {
+                              await _posVault.put(
+                                  e.container.internalId, position.toJson());
                             },
                           );
                         }).toList(),
@@ -181,6 +214,7 @@ class _ContainersPageState extends State<ContainersPage> {
       target.size,
     );
     final container = NetworkManager().createContainer(type);
+    _posVault.put(container.internalId, initialPos.toJson());
 
     setState(() {
       _canvasKey = GlobalKey();

@@ -40,6 +40,8 @@ dependencies:
   blitz_api_client: ^0.5.1
   subscription_repository: ^0.5.1
   graph_network_canvas: ^0.5.1
+  stash: ^4.5.3
+  stash_file: ^4.5.3
   
 dev_dependencies:
   flutter_test:

@@ -31,6 +31,8 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
   late final List<GraphCanvasNodeInfo> _nodes;
   late final List<Connection> _connections;
 
+  // When a node position changes, we need to update the canvas
+  // using a ValueListenableBuilder<Offset>
   final ValueNotifier<Offset> _positionNotifier =
       ValueNotifier<Offset>(Offset.zero);
   bool _addingConnection = false;
@@ -112,14 +114,15 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
           index,
           node,
           onDragEnd: (DraggableDetails details) {
-            setState(() {
-              RenderBox renderBox = context.findRenderObject() as RenderBox;
-              Offset localPosition = renderBox.globalToLocal(details.offset);
-              _nodes[index].position = constrainNodeToCanvas(
-                localPosition,
-                constraints.biggest,
-              );
-            });
+            RenderBox renderBox = context.findRenderObject() as RenderBox;
+            Offset localPosition = renderBox.globalToLocal(details.offset);
+            final pos = constrainNodeToCanvas(
+              localPosition,
+              constraints.biggest,
+            );
+            _nodes[index].onPositionUpdated?.call(pos);
+
+            setState(() => _nodes[index].position = pos);
           },
           onSocketDragStarted: (Socket socket) {
             _sourceSocket = socket;

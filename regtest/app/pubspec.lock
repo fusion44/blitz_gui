@@ -103,6 +103,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.1"
+  crypto:
+    dependency: transitive
+    description:
+      name: crypto
+      sha256: ff625774173754681d66daaf4a448684fb04b78f902da9cb3d308c19cc5e8bab
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.3"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -488,6 +496,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.0"
+  stash:
+    dependency: "direct main"
+    description:
+      name: stash
+      sha256: "4a9b765eef4890b8032c1c440464f71ca45f7a68c1b91c7db07165bc5accdf73"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.5.3"
+  stash_file:
+    dependency: "direct main"
+    description:
+      name: stash_file
+      sha256: "8f150e405b1bd1dd493299e5773774d34e6286c5a4c4f3c83ff4efaf821cb268"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.5.3"
   stream_channel:
     dependency: transitive
     description:
@@ -496,6 +520,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  stream_transform:
+    dependency: transitive
+    description:
+      name: stream_transform
+      sha256: "14a00e794c7c11aa145a170587321aedce29769c08d7f58b1d141da75e3b1c6f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   string_scanner:
     dependency: transitive
     description:
@@ -551,6 +583,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      sha256: "648e103079f7c64a36dc7d39369cabb358d377078a051d6ae2ad3aa539519313"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.7"
   vector_math:
     dependency: transitive
     description:
