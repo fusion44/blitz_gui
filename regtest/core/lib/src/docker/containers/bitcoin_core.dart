@@ -31,8 +31,12 @@ class BitcoinCoreContainer extends DockerContainer {
 
   BitcoinCoreContainer._(ContainerData cd)
       : opts = BitcoinCoreOptions(name: cd.name, image: cd.image),
-        super(ContainerOptions(name: cd.name, image: cd.image)) {
+        super(
+          ContainerOptions(name: cd.name, image: cd.image),
+          internalId: cd.internalId,
+        ) {
     dockerId = cd.dockerId;
+    setStatus(ContainerStatusMessage(cd.status, ''));
   }
 
   @override

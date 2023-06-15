@@ -13,8 +13,17 @@ class BitcoinCoreStatusUpdate extends BitcoinCoreContainerState {
 
   BitcoinCoreStatusUpdate(this.status, this.name, this.image, this.workDir);
 
-  factory BitcoinCoreStatusUpdate.fromContainer(BitcoinCoreContainer c) =>
-      BitcoinCoreStatusUpdate(c.status, c.name, c.image, c.dataPath);
+  factory BitcoinCoreStatusUpdate.fromContainer(String containerId) {
+    final c = NetworkManager().findContainerById<BitcoinCoreContainer>(
+      containerId,
+    );
+
+    if (c == null) {
+      throw StateError('BitcoinCoreContainer with ID $containerId not found');
+    }
+
+    return BitcoinCoreStatusUpdate(c.status, c.name, c.image, c.dataPath);
+  }
 
   @override
   String toString() =>

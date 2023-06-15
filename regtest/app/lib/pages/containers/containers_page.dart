@@ -33,14 +33,20 @@ class _ContainersPageState extends State<ContainersPage> {
 
   @override
   void initState() {
-    _containerDelSub = NetworkManager()
-        .containerDeletedStream
-        .listen((container) => setState(() {
-              _canvasKey = GlobalKey();
-              final l = nodes.length;
-              nodes.removeWhere((element) => element.container == container);
-              if (nodes.length == l) throw StateError("No container deleted");
-            }));
+    final mgr = NetworkManager();
+    _containerDelSub = mgr.containerDeletedStream.listen(
+      (container) => setState(() {
+        _canvasKey = GlobalKey();
+        final l = nodes.length;
+        nodes.removeWhere((element) => element.container == container);
+        if (nodes.length == l) throw StateError("No container deleted");
+      }),
+    );
+
+    for (var node in mgr.nodeMap.values) {
+      nodes.add(ContainerNode(Offset.zero, node.type, node));
+    }
+
     super.initState();
   }
 

@@ -13,8 +13,15 @@ class ContainerData {
   final String dockerId;
   final String name;
   final String image;
+  final ContainerStatus status;
 
-  ContainerData(this.internalId, this.dockerId, this.image, this.name);
+  ContainerData(
+    this.internalId,
+    this.dockerId,
+    this.image,
+    this.name,
+    this.status,
+  );
 }
 
 /// Returns a list of running containers
@@ -45,13 +52,26 @@ Future<List<ContainerData>> getRunningContainerNames(
       continue;
     }
 
+    final dockerStatus = spl[4].split(' ')[0];
+    final ContainerStatus status = switch (dockerStatus) {
+      'Up' => ContainerStatus.started,
+      'Exited' => ContainerStatus.stopped,
+      _ => ContainerStatus.uninitialized,
+    };
+
+    if (status == ContainerStatus.uninitialized) {
+      // we treat ContainerStatus.uninitialized as an error here as it means we
+      // have a state that isn't handled yet
+      throw StateError('Unknown container status: $dockerStatus');
+    }
+
     spl[6] = spl[6].trim();
     if (!spl[6].contains(dockerContainerNameDelimiter)) continue;
 
     var [name, internalId] =
         spl[6].split(dockerContainerNameDelimiter).toList();
 
-    final data = ContainerData(internalId, spl[0], spl[1], name);
+    final data = ContainerData(internalId, spl[0], spl[1], name, status);
     if (data.name.contains(filterName)) {
       output.add(data);
     }

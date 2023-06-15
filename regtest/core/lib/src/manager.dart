@@ -129,8 +129,8 @@ class NetworkManager {
 
     for (final ContainerData c in containers) {
       if (c.image.contains('bitcoin-core')) {
-        _containerMap[c.internalId] =
-            await BitcoinCoreContainer.fromRunningContainer(c);
+        final container = await BitcoinCoreContainer.fromRunningContainer(c);
+        _containerMap[c.internalId] = container;
 
         continue;
       }
@@ -307,6 +307,16 @@ class NetworkManager {
     return BlitzAPIContainer(
       opts: opts == null ? BlitzAPIOptions.empty() : opts as BlitzAPIOptions,
     );
+  }
+
+  T? findContainerById<T extends DockerContainer>(String internalId) {
+    for (var container in containers) {
+      if (container.internalId == internalId && container is T) {
+        return container;
+      }
+    }
+
+    return null;
   }
 
   T? findFirstOf<T>() {

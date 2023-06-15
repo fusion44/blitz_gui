@@ -20,9 +20,7 @@ class BitcoinCoreContainerBloc
   }
 
   BitcoinCoreContainerBloc(this.containerId)
-      : super(BitcoinCoreStatusUpdate.fromContainer(
-          NetworkManager().nodeMap[containerId] as BitcoinCoreContainer,
-        )) {
+      : super(BitcoinCoreStatusUpdate.fromContainer(containerId)) {
     on<SettingsUpdatedEvent>((event, emit) async {
       await NetworkManager().updateContainerOptions(containerId, event.options);
 
@@ -87,7 +85,13 @@ class BitcoinCoreContainerBloc
   Future<void> _subStatuses() async {
     _sub?.cancel();
 
-    final c = NetworkManager().nodeMap[containerId] as BitcoinCoreContainer;
+    final c =
+        NetworkManager().findContainerById<BitcoinCoreContainer>(containerId);
+
+    if (c == null) {
+      throw StateError('BitcoinCoreContainer with ID $containerId not found');
+    }
+
     _sub = c.statusStream.listen((event) {
       add(_BitcoinCoreStatusUpdate(event));
     });
