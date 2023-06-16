@@ -33,17 +33,17 @@ class _InfoScreenPlusPlusState extends State<InfoScreenPlusPlus> {
         return LayoutBuilder(
           builder: (context, constraints) {
             if (constraints.maxWidth < 600) {
-              return Row(
+              return const Row(
                 children: [
                   Expanded(
                     child: Column(
-                      children: const [
+                      children: [
                         Expanded(child: BitcoinInfoCard()),
                         Expanded(child: HardwareInfoCard()),
                       ],
                     ),
                   ),
-                  const Expanded(child: LnInfoCard()),
+                  Expanded(child: LnInfoCard()),
                 ],
               );
             } else {

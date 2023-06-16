@@ -41,3 +41,7 @@ scripts:
     description: Run a build_runner build.
     packageFilters:
       scope: '*list_transactions*'
+
+  dart:fix:all:
+    exec: dart fix --apply
+    description: Run `dart fix` for all packages.

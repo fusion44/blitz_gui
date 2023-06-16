@@ -81,11 +81,6 @@ class _ChannelsCardState extends State<ChannelsCard> {
     );
   }
 
-  _openChannel() {
-    debugPrint("Open channel for node ${widget.node.id}");
-    return null;
-  }
-
   _closeChannel(RegtestChannel c) {
     widget.node.closeChannel(c);
   }

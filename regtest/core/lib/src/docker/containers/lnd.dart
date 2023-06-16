@@ -114,7 +114,7 @@ class LndContainer extends LnNode {
     ]);
     dockerId = dockerId.trim();
 
-    if (dockerId.isEmpty || dockerId.length != 65) {
+    if (dockerId.isEmpty || dockerId.length != 64) {
       throw DockerException('Failed to start LND container: $dockerId');
     }
 

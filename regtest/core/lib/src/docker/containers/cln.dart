@@ -73,7 +73,7 @@ class CLNContainer extends LnNode {
     ]);
 
     if (dockerId.isEmpty || dockerId.length != 65) {
-      throw DockerException('Failed to start LND container: $dockerId');
+      throw DockerException('Failed to start CLN container: $dockerId');
     }
 
     super.subscribeLogs();

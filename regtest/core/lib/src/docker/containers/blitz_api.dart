@@ -127,7 +127,7 @@ class BlitzAPIContainer extends DockerContainer {
       result.stdout.transform(utf8.decoder).asBroadcastStream().first
     ]);
     if (dockerId.isEmpty || dockerId.length != 65) {
-      throw DockerException('Failed to start LND container: $dockerId');
+      throw DockerException('Failed to start BlitzAPI container: $dockerId');
     }
     print(dockerId);
     super.subscribeLogs();

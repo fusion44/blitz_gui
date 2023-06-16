@@ -39,10 +39,7 @@ class _BlitzAppState extends State<BlitzApp> {
 
     _initSubRepo();
 
-    _big = MediaQueryData.fromWindow(
-          WidgetsBinding.instance.window,
-        ).size.width >
-        1024;
+    _big = MediaQueryData.fromView(View.of(context)).size.width > 1024;
 
     if (_big) {
       _router = BigScreenApp.buildRouter();
@@ -118,11 +115,7 @@ class _BlitzAppState extends State<BlitzApp> {
 
     return NotificationListener(
       onNotification: (SizeChangedLayoutNotification notification) {
-        final big = MediaQueryData.fromWindow(
-              WidgetsBinding.instance.window,
-            ).size.width >
-            1024;
-
+        final big = MediaQueryData.fromView(View.of(context)).size.width > 1024;
         if (big != _big) RestartWidget.restartApp(context);
 
         return true;

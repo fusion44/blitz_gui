@@ -180,13 +180,6 @@ class _LndShapeState extends State<LndShape> {
         _ => Text('not implemented $status'),
       };
 
-  PopupMenuItem<String> _buildMenuItem(String v, String s, IconData i) {
-    return PopupMenuItem<String>(
-      value: v,
-      child: Row(children: [Icon(i), const SizedBox(width: 8), Text(s)]),
-    );
-  }
-
   _editSettings(BuildContext context) async {
     final c = NetworkManager().nodeMap[widget.containerId] as LndContainer;
     final ValueNotifier<LndOptions> notifier = ValueNotifier<LndOptions>(

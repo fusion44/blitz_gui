@@ -37,8 +37,6 @@ class NetworkManager {
 
   static final NetworkManager _instance = NetworkManager._internal();
 
-  bool _bootstrapped = false;
-
   factory NetworkManager() => _instance;
 
   final StreamController<NetworkStateMessage> _netStateController =
@@ -153,13 +151,6 @@ class NetworkManager {
     }
 
     await Future.delayed(const Duration(seconds: 15));
-  }
-
-  _bootstrapNodeData() async {
-    if (_bootstrapped) return;
-    logMessage("Bootstrapping node data");
-
-    _bootstrapped = true;
   }
 
   Future<void> fundNodes({

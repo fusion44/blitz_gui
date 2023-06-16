@@ -7,9 +7,9 @@ class BigScreenDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
       child: Row(
-        children: const [
+        children: [
           FeeRevenueView(),
         ],
       ),

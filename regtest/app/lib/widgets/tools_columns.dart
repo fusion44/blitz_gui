@@ -70,7 +70,7 @@ class _ToolsColumnsState extends State<ToolsColumns> {
         PopupMenuButton<String>(
           onSelected: (String text) {
             if (text == 'logs' || text == 'logs_blitz') {
-              print('not implemented');
+              debugPrint('not implemented');
               return;
             }
             copyToClipboardWithNotification(context, text);
