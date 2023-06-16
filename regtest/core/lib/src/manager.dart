@@ -129,10 +129,14 @@ class NetworkManager {
 
     for (final ContainerData c in containers) {
       if (c.image.contains('bitcoin-core')) {
-        final container = await BitcoinCoreContainer.fromRunningContainer(c);
+        final container =
+            await BitcoinCoreContainer.fromRunningContainer(c, null);
         _containerMap[c.internalId] = container;
 
         continue;
+      } else if (c.image.contains('lnd')) {
+        final container = await LndContainer.fromRunningContainer(c, null);
+        _containerMap[c.internalId] = container;
       }
     }
   }
@@ -225,7 +229,7 @@ class NetworkManager {
       ContainerType.cln => CLNContainer.defaultOptions(),
       ContainerType.fakeLn => FakeLnContainer.defaultOptions(),
       ContainerType.lnbits => LNbitsContainer(),
-      ContainerType.lnd => LNDContainer.defaultOptions(),
+      ContainerType.lnd => LndContainer.defaultOptions(),
       ContainerType.redis => RedisContainer(),
     };
 

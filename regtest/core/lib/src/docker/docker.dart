@@ -14,14 +14,16 @@ class ContainerData {
   final String name;
   final String image;
   final ContainerStatus status;
+  final Map<String, dynamic> inspectData;
 
   ContainerData(
     this.internalId,
     this.dockerId,
     this.image,
     this.name,
-    this.status,
-  );
+    this.status, {
+    this.inspectData = const {},
+  });
 }
 
 /// Returns a list of running containers
@@ -31,7 +33,7 @@ class ContainerData {
 /// it'll return all running containers
 Future<List<ContainerData>> getRunningContainerNames(
     [String filterName = '']) async {
-  final proc = await Process.run('docker', ['ps']);
+  final proc = await Process.run('docker', ['ps', '-a']);
   final output = <ContainerData>[];
 
   if (proc.exitCode != 0) {
@@ -46,16 +48,27 @@ Future<List<ContainerData>> getRunningContainerNames(
     final String line = lines[i];
     if (line.isEmpty) continue;
     final spl = line.split(RegExp(r'\s{2,}'));
+    String dockerId = spl[0];
 
-    if (spl.length < 7) {
-      logMessage("Failed to parse line: $line");
+    if (dockerId.length != 12) {
+      print('Ignoring docker id length: $dockerId');
+
       continue;
     }
 
-    final dockerStatus = spl[4].split(' ')[0];
+    final inspectData = (await Process.run('docker', ['inspect', dockerId]))
+        .stdout
+        .toString()
+        .trim();
+    final Map<String, dynamic> inspectJson = jsonDecode(inspectData)[0];
+    dockerId = inspectJson['Id'];
+
+    final dockerStatus = inspectJson['State']['Status'];
     final ContainerStatus status = switch (dockerStatus) {
-      'Up' => ContainerStatus.started,
-      'Exited' => ContainerStatus.stopped,
+      'starting' => ContainerStatus.starting,
+      'restarting' => ContainerStatus.starting,
+      'running' => ContainerStatus.started,
+      'exited' => ContainerStatus.stopped,
       _ => ContainerStatus.uninitialized,
     };
 
@@ -65,13 +78,21 @@ Future<List<ContainerData>> getRunningContainerNames(
       throw StateError('Unknown container status: $dockerStatus');
     }
 
-    spl[6] = spl[6].trim();
-    if (!spl[6].contains(dockerContainerNameDelimiter)) continue;
+    final dockerName = inspectJson['Name'];
+    if (!dockerName.contains(dockerContainerNameDelimiter)) continue;
 
     var [name, internalId] =
-        spl[6].split(dockerContainerNameDelimiter).toList();
+        dockerName.split(dockerContainerNameDelimiter).toList();
 
-    final data = ContainerData(internalId, spl[0], spl[1], name, status);
+    final data = ContainerData(
+      internalId,
+      dockerId,
+      inspectJson['Config']['Image'],
+      (name as String).replaceFirst('/', ''),
+      status,
+      inspectData: inspectJson,
+    );
+
     if (data.name.contains(filterName)) {
       output.add(data);
     }
