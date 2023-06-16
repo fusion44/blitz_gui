@@ -3,7 +3,7 @@
 library utils;
 
 import 'dart:async';
-import 'dart:io' show Directory, Platform, Process;
+import 'dart:io' show Directory, PathAccessException, Platform, Process;
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -197,7 +197,11 @@ Future<void> prepareDataDir([String dir = dockerDataDir]) async {
   }
   logMessage("Creating data directory $dir");
 
-  await directory.create(recursive: true);
+  try {
+    await directory.create(recursive: true);
+  } on PathAccessException catch (e) {
+    logMessage(e.toString());
+  }
 }
 
 Future<void> makeDataDirsPublic([String dir = dockerDataDir]) async {

@@ -117,6 +117,12 @@ abstract class DockerContainer {
   Future<void> delete() async {
     setStatus(ContainerStatusMessage(ContainerStatus.deleting, ""));
 
+    if (dockerId.isEmpty) {
+      deleted = true;
+      setStatus(ContainerStatusMessage(ContainerStatus.deleted, ""));
+      return;
+    }
+
     if (running) await stop();
     if (running) throw StateError('Unable to stop container $name');
 
@@ -134,7 +140,7 @@ abstract class DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to delete container $name. Error: ${result.stderr.toString()}",
+        "Failed to delete container $name. Error: ${result.stderr}",
       );
     }
 

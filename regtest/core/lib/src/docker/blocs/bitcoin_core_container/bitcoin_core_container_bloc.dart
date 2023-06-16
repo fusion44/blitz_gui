@@ -22,7 +22,11 @@ class BitcoinCoreContainerBloc
   BitcoinCoreContainerBloc(this.containerId)
       : super(BitcoinCoreStatusUpdate.fromContainer(containerId)) {
     on<SettingsUpdatedEvent>((event, emit) async {
+      // NetworkManager internally creates a new Container, so we have
+      // to resubscribe to get status information from the new container
+      await _unSubStatuses();
       await NetworkManager().updateContainerOptions(containerId, event.options);
+      await _subStatuses();
 
       emit(
         BitcoinCoreStatusUpdate(

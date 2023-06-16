@@ -13,7 +13,7 @@ import '../exceptions.dart';
 class BitcoinCoreOptions extends ContainerOptions {
   const BitcoinCoreOptions({
     super.name = defaultBitcoinCoreName,
-    super.image = "boltz/bitcoin-core:24.0.1",
+    super.image = 'boltz/bitcoin-core:24.0.1',
     super.workDir = dockerDataDir,
   });
 
@@ -29,11 +29,12 @@ class BitcoinCoreContainer extends DockerContainer {
     String? internalId,
   }) : super(opts, internalId: internalId);
 
-  BitcoinCoreContainer._(ContainerData cd)
+  BitcoinCoreContainer._(ContainerData cd, Function()? onDeleted)
       : opts = BitcoinCoreOptions(name: cd.name, image: cd.image),
         super(
           ContainerOptions(name: cd.name, image: cd.image),
           internalId: cd.internalId,
+          onDeleted: onDeleted,
         ) {
     dockerId = cd.dockerId;
     setStatus(ContainerStatusMessage(cd.status, ''));
@@ -43,8 +44,10 @@ class BitcoinCoreContainer extends DockerContainer {
   ContainerType get type => ContainerType.bitcoinCore;
 
   static Future<BitcoinCoreContainer> fromRunningContainer(
-      ContainerData c) async {
-    final newContainer = BitcoinCoreContainer._(c);
+    ContainerData c,
+    Function()? onDeleted,
+  ) async {
+    final newContainer = BitcoinCoreContainer._(c, onDeleted);
     await newContainer.subscribeLogs();
     return newContainer;
   }
@@ -230,7 +233,7 @@ class BitcoinCoreContainer extends DockerContainer {
   List<String> _buildRunDockerArgs() {
     return DockerArgBuilder()
         .addArg("run")
-        .addOption('--restart', 'on-failure')
+        .addOption('--restart', 'always')
         .addOption('--expose', '18443')
         .addOption('--expose', '29000')
         .addOption('--expose', '29001')

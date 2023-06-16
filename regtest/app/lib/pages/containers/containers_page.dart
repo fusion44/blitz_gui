@@ -44,7 +44,8 @@ class _ContainersPageState extends State<ContainersPage> {
         setState(() {
           _canvasKey = GlobalKey();
           final l = nodes.length;
-          nodes.removeWhere((element) => element.container == container);
+          nodes.removeWhere(
+              (element) => element.containerId == container.internalId);
           if (nodes.length == l) throw StateError("No container deleted");
         });
       },
@@ -73,7 +74,7 @@ class _ContainersPageState extends State<ContainersPage> {
         o = OffsetExtension.fromJson(values[node.internalId]);
       }
 
-      nodes.add(ContainerNode(o ?? Offset.zero, node.type, node));
+      nodes.add(ContainerNode(o ?? Offset.zero, node.type, node.internalId));
     }
 
     setState(() {
@@ -137,12 +138,15 @@ class _ContainersPageState extends State<ContainersPage> {
                             e.initialPos,
                             body: switch (e.type) {
                               ContainerType.bitcoinCore =>
-                                BitcoinCoreShape(e.container.internalId),
+                                BitcoinCoreShape(e.containerId),
+                              ContainerType.lnd => LndShape(e.containerId),
                               _ => throw UnimplementedError()
                             },
                             onPositionUpdated: (position) async {
                               await _posVault.put(
-                                  e.container.internalId, position.toJson());
+                                e.containerId,
+                                position.toJson(),
+                              );
                             },
                           );
                         }).toList(),
@@ -218,7 +222,7 @@ class _ContainersPageState extends State<ContainersPage> {
 
     setState(() {
       _canvasKey = GlobalKey();
-      nodes.add(ContainerNode(initialPos, type, container));
+      nodes.add(ContainerNode(initialPos, type, container.internalId));
     });
   }
 }
@@ -226,7 +230,7 @@ class _ContainersPageState extends State<ContainersPage> {
 class ContainerNode {
   final Offset initialPos;
   final ContainerType type;
-  final DockerContainer container;
+  final String containerId;
 
-  ContainerNode(this.initialPos, this.type, this.container);
+  ContainerNode(this.initialPos, this.type, this.containerId);
 }

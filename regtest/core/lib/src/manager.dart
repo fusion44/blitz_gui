@@ -270,6 +270,8 @@ class NetworkManager {
     return true;
   }
 
+  /// Updating container options results in a new container
+  /// object being instantiated with the same internal ID.
   Future<void> updateContainerOptions(
     String id,
     ContainerOptions opts,
@@ -291,11 +293,16 @@ class NetworkManager {
       ContainerType.cln => CLNContainer(opts: opts as CLNOptions),
       ContainerType.fakeLn => FakeLnContainer(opts: opts as FakeLnOptions),
       ContainerType.lnbits => LNbitsContainer(opts: opts as LNbitsOptions),
-      ContainerType.lnd => LNDContainer(opts: opts as LNDOptions),
+      ContainerType.lnd => LndContainer(lndOpts: opts as LndOptions),
       ContainerType.redis => RedisContainer(opts: opts as RedisOptions),
     };
 
-    await container.delete();
+    try {
+      await container.delete();
+    } on DockerException catch (e) {
+      print(e.message);
+    }
+
     _containerMap[id] = newContainer;
   }
 
