@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class DeleteContainerBtn extends StatelessWidget {
+class ShowLogsBtn extends StatelessWidget {
   final void Function()? onPressed;
 
-  const DeleteContainerBtn(this.onPressed, {super.key});
+  const ShowLogsBtn(this.onPressed, {super.key});
 
   @override
   Widget build(BuildContext context) => Tooltip(
-        message: 'Delete container',
+        message: 'Logs',
         child: IconButton(
           onPressed: onPressed,
-          icon: const Icon(Icons.delete),
+          icon: const Icon(Icons.bug_report),
         ),
       );
 }

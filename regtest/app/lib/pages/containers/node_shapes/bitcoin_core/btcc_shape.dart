@@ -133,23 +133,28 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
             ],
           ),
         ContainerStatus.started => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
                 onPressed: () => _bloc.add(StopBitcoinCoreContainerEvent()),
                 child: const Text('Stop'),
               ),
-              DeleteContainerBtn(
-                () => _bloc.add(DeleteBitcoinCoreContainerEvent()),
-              ),
-              OpenTerminalBtn(
-                  () => openTerminalInDialog(context, widget.containerId)),
-              const Spacer(),
+              OpenTerminalBtn(() async =>
+                  await openTerminalInDialog(context, widget.containerId)),
+              ShowLogsBtn(() async =>
+                  await openLogWindowInDialog(context, widget.containerId)),
               PopupMenuButton<String>(
-                onSelected: (item) => print('item'),
+                onSelected: (item) => switch (item) {
+                  'delete' => _bloc.add(DeleteBitcoinCoreContainerEvent()),
+                  _ => throw StateError('not implemented $item'),
+                },
                 itemBuilder: (context) {
                   return [
-                    _buildMenuItem(
-                        'action', 'Nothing here, yet', Icons.question_mark),
+                    DeleteContainerBtn.asMenuItem(
+                      'delete',
+                      'Delete Container',
+                      iconColor: Colors.redAccent,
+                    ),
                   ];
                 },
               ),
@@ -158,7 +163,6 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
         ContainerStatus.stopping => const Row(
             children: [
               ElevatedButton(onPressed: null, child: Text('Stopping...')),
-              IconButton(onPressed: null, icon: Icon(Icons.delete)),
             ],
           ),
         ContainerStatus.stopped => Row(
@@ -176,13 +180,6 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
         ContainerStatus.deleting || ContainerStatus.deleted => Container(),
         _ => Text('not implemented $status'),
       };
-
-  PopupMenuItem<String> _buildMenuItem(String v, String s, IconData i) {
-    return PopupMenuItem<String>(
-      value: v,
-      child: Row(children: [Icon(i), const SizedBox(width: 8), Text(s)]),
-    );
-  }
 
   _editSettings(BuildContext context) async {
     final c =

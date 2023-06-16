@@ -132,26 +132,36 @@ class _LndShapeState extends State<LndShape> {
             ],
           ),
         ContainerStatus.started => Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
                 onPressed: () => _bloc.add(StopLndContainerEvent()),
                 child: const Text('Stop'),
               ),
-              DeleteContainerBtn(() => _bloc.add(DeleteLndContainerEvent())),
-              OpenTerminalBtn(
-                  () => openTerminalInDialog(context, widget.containerId)),
-              const Spacer(),
-              PopupMenuButton<String>(itemBuilder: (context) {
-                return [
-                  _buildMenuItem('terminal', 'Terminal', Icons.terminal),
-                ];
-              }),
+              OpenTerminalBtn(() async =>
+                  await openTerminalInDialog(context, widget.containerId)),
+              ShowLogsBtn(() async =>
+                  await openLogWindowInDialog(context, widget.containerId)),
+              PopupMenuButton<String>(
+                onSelected: (item) => switch (item) {
+                  'delete' => _bloc.add(DeleteLndContainerEvent()),
+                  _ => throw StateError('not implemented $item'),
+                },
+                itemBuilder: (context) {
+                  return [
+                    DeleteContainerBtn.asMenuItem(
+                      'delete',
+                      'Delete Container',
+                      iconColor: Colors.redAccent,
+                    ),
+                  ];
+                },
+              ),
             ],
           ),
         ContainerStatus.stopping => const Row(
             children: [
               ElevatedButton(onPressed: null, child: Text('Stopping...')),
-              IconButton(onPressed: null, icon: Icon(Icons.delete)),
             ],
           ),
         ContainerStatus.stopped => Row(

@@ -185,6 +185,18 @@ abstract class DockerContainer {
     );
   }
 
+  Future<String> fetchLogs({int numLines = 0}) async {
+    if (dockerId.isEmpty) return '';
+
+    final res = await runDockerCommand([
+      'logs',
+      if (numLines > 0) ...['-n', numLines.toString()],
+      dockerId,
+    ]);
+
+    return res;
+  }
+
   void setStatus(ContainerStatusMessage status) {
     _currentStatus = status;
     _statusCtrl.add(status);
