@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const headerBarIconSize = 25.0;
+const containerLogoHeaderHeight = 40.0;
 
 enum RouteNames { machineRoom, containers, sseTester }
 

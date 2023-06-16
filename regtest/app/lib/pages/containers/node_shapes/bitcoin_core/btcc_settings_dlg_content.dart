@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:regtest_core/core.dart';
 
-class EditContainerBaseSettingsDlgContent extends StatefulWidget {
+class BtccSettingsDlgContent extends StatefulWidget {
   final ValueNotifier<BitcoinCoreOptions> changeNotifier;
   final ContainerOptions opts;
   final String internalId;
 
-  const EditContainerBaseSettingsDlgContent(
+  const BtccSettingsDlgContent(
     this.changeNotifier,
     this.opts,
     this.internalId, {
@@ -15,12 +15,10 @@ class EditContainerBaseSettingsDlgContent extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<EditContainerBaseSettingsDlgContent> createState() =>
-      _EditContainerBaseSettingsDlgContentState();
+  State<BtccSettingsDlgContent> createState() => _BtccSettingsDlgContentState();
 }
 
-class _EditContainerBaseSettingsDlgContentState
-    extends State<EditContainerBaseSettingsDlgContent> {
+class _BtccSettingsDlgContentState extends State<BtccSettingsDlgContent> {
   final String _fixedPrefix = '${projectName}_';
   late final TextEditingController _nameCtrl;
   late final TextEditingController _imageCtrl;

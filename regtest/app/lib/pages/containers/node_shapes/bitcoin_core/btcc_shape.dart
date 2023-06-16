@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ndialog/ndialog.dart';
-import 'package:regtest_app/pages/containers/node_shapes/edit_container_base_settings_dlg_content.dart';
 import 'package:regtest_core/core.dart';
 
-import '../utils.dart';
+import '../../../../gui_constants.dart';
+import '../../utils.dart';
+import 'btcc_settings_dlg_content.dart';
 
 class BitcoinCoreShape extends StatefulWidget {
   final String containerId;
@@ -106,7 +107,10 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
     Widget? footer,
   ) {
     return Column(children: [
-      Image.asset(getContainerLogo(ContainerType.bitcoinCore)),
+      Image.asset(
+        getContainerLogo(ContainerType.bitcoinCore),
+        height: containerLogoHeaderHeight,
+      ),
       body ?? Center(child: Text('Unknown state $state')),
       const Spacer(),
       footer ?? const Text('NOT IMPLEMENTED')
@@ -190,7 +194,7 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
     final ok = await NDialog(
       dialogStyle: DialogStyle(titleDivider: true),
       title: const Text("Edit Bitcoin Core Settings"),
-      content: EditContainerBaseSettingsDlgContent(
+      content: BtccSettingsDlgContent(
         notifier,
         opts,
         c.internalId,

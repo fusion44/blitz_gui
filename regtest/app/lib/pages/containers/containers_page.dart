@@ -10,7 +10,8 @@ import 'package:stash_file/stash_file.dart';
 
 import '../../gui_constants.dart';
 import 'container_chip.dart';
-import 'node_shapes/bitcoin_core_shape.dart';
+import 'node_shapes/bitcoin_core/btcc_shape.dart';
+import 'node_shapes/lnd/lnd_shape.dart';
 import 'utils.dart';
 
 class ContainersPage extends StatefulWidget {
