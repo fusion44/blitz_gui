@@ -45,7 +45,7 @@ class LndContainer extends LnNode {
           internalId: cd.internalId,
           onDeleted: onDeleted,
         ) {
-    dockerId = cd.dockerId;
+    dockerId = cd.dockerId.trim();
     setStatus(ContainerStatusMessage(cd.status, ''));
   }
 
@@ -112,6 +112,7 @@ class LndContainer extends LnNode {
       result.stderr.transform(utf8.decoder).asBroadcastStream().first,
       result.stdout.transform(utf8.decoder).asBroadcastStream().first
     ]);
+    dockerId = dockerId.trim();
 
     if (dockerId.isEmpty || dockerId.length != 65) {
       throw DockerException('Failed to start LND container: $dockerId');
@@ -121,4 +122,10 @@ class LndContainer extends LnNode {
 
     setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
   }
+
+  @override
+  List<String> bootstrapCommands() => [
+        ...super.bootstrapCommands(),
+        'alias lncli="lncli --network regtest --rpcserver=localhost:$_gRPCPort"\n',
+      ];
 }

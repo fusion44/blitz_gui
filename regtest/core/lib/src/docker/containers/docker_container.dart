@@ -205,4 +205,10 @@ abstract class DockerContainer {
 
     return result.stdout as String;
   }
+
+  List<String> bootstrapCommands() => [
+        'docker exec -it $dockerId /bin/bash\n',
+        // the executing Dart function will sleep 500 ms before executing the next line
+        'sleep 500',
+      ];
 }

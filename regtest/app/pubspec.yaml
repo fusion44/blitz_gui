@@ -32,7 +32,10 @@ dependencies:
   bloc: ^8.1.1
   flutter_bloc: ^8.1.2
   meta: ^1.8.0
-  
+  stash: ^4.5.3
+  stash_file: ^4.5.3
+  xterm: ^3.5.0
+  flutter_pty: ^0.4.0
   
   # locals 
   common: ^0.5.1
@@ -40,8 +43,6 @@ dependencies:
   blitz_api_client: ^0.5.1
   subscription_repository: ^0.5.1
   graph_network_canvas: ^0.5.1
-  stash: ^4.5.3
-  stash_file: ^4.5.3
   
 dev_dependencies:
   flutter_test:

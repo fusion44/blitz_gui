@@ -5,6 +5,7 @@ import 'package:regtest_core/core.dart';
 
 import '../../../../gui_constants.dart';
 import '../../utils.dart';
+import '../widgets/action_buttons.dart';
 import 'lnd_settings_dlg_content.dart';
 
 class LndShape extends StatefulWidget {
@@ -136,10 +137,9 @@ class _LndShapeState extends State<LndShape> {
                 onPressed: () => _bloc.add(StopLndContainerEvent()),
                 child: const Text('Stop'),
               ),
-              IconButton(
-                onPressed: () => _bloc.add(DeleteLndContainerEvent()),
-                icon: const Icon(Icons.delete),
-              ),
+              DeleteContainerBtn(() => _bloc.add(DeleteLndContainerEvent())),
+              OpenTerminalBtn(
+                  () => openTerminalInDialog(context, widget.containerId)),
               const Spacer(),
               PopupMenuButton<String>(itemBuilder: (context) {
                 return [

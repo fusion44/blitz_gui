@@ -5,6 +5,7 @@ import 'package:regtest_core/core.dart';
 
 import '../../../../gui_constants.dart';
 import '../../utils.dart';
+import '../widgets/action_buttons.dart';
 import 'btcc_settings_dlg_content.dart';
 
 class BitcoinCoreShape extends StatefulWidget {
@@ -59,10 +60,10 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
                   )
                 ],
               ),
-              _buildFooter(ContainerStatus.uninitialized));
+              _buildFooter(ContainerStatus.uninitialized, context));
         }
 
-        footer = _buildFooter(state.status.status);
+        footer = _buildFooter(state.status.status, context);
 
         if (state.status.status == ContainerStatus.starting ||
             state.status.status == ContainerStatus.stopping ||
@@ -117,7 +118,8 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
     ]);
   }
 
-  Widget _buildFooter(ContainerStatus status) => switch (status) {
+  Widget _buildFooter(ContainerStatus status, BuildContext context) =>
+      switch (status) {
         ContainerStatus.uninitialized => Row(
             children: [
               ElevatedButton(
@@ -136,16 +138,21 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
                 onPressed: () => _bloc.add(StopBitcoinCoreContainerEvent()),
                 child: const Text('Stop'),
               ),
-              IconButton(
-                onPressed: () => _bloc.add(DeleteBitcoinCoreContainerEvent()),
-                icon: const Icon(Icons.delete),
+              DeleteContainerBtn(
+                () => _bloc.add(DeleteBitcoinCoreContainerEvent()),
               ),
+              OpenTerminalBtn(
+                  () => openTerminalInDialog(context, widget.containerId)),
               const Spacer(),
-              PopupMenuButton<String>(itemBuilder: (context) {
-                return [
-                  _buildMenuItem('terminal', 'Terminal', Icons.terminal),
-                ];
-              }),
+              PopupMenuButton<String>(
+                onSelected: (item) => print('item'),
+                itemBuilder: (context) {
+                  return [
+                    _buildMenuItem(
+                        'action', 'Nothing here, yet', Icons.question_mark),
+                  ];
+                },
+              ),
             ],
           ),
         ContainerStatus.stopping => const Row(

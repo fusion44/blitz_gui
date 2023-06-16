@@ -253,4 +253,10 @@ class BitcoinCoreContainer extends DockerContainer {
         .addArg('-rpcpassword=regtester')
         .build();
   }
+
+  @override
+  List<String> bootstrapCommands() => [
+        ...super.bootstrapCommands(),
+        'alias bitcoin-cli="bitcoin-cli -rpcuser=regtester -rpcpassword=regtester -regtest"\n',
+      ];
 }
