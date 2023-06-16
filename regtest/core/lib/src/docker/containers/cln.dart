@@ -14,7 +14,7 @@ class CLNOptions extends LnNodeOptions {
     String? name,
     super.image = 'boltz/c-lightning:23.02.2',
     super.alias = '',
-    super.btcContainerName = defaultBitcoinCoreName,
+    super.btccContainerId = '',
     super.workDir = dockerDataDir,
     int id = 0,
   })  : assert(id >= 0),

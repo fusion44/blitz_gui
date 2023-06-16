@@ -1,17 +1,17 @@
+import 'dart:io';
+
 import 'package:blitz_api_client/blitz_api_client.dart';
 import 'package:common/common.dart' show BtcValue;
 import 'package:dio/dio.dart';
-import 'package:regtest_core/src/docker/containers/docker_container.dart';
 
-import '../../constants.dart';
-import '../../manager.dart';
-import '../../models.dart';
-import '../../utils.dart';
+import '../../../core.dart';
+import '../arg_builder.dart';
+import '../exceptions.dart';
 
 class LnNodeOptions extends ContainerOptions {
   final String alias;
   final int id;
-  final String btcContainerName;
+  final String btccContainerId;
 
   LnNodeOptions({
     required super.name,
@@ -19,7 +19,7 @@ class LnNodeOptions extends ContainerOptions {
     super.workDir = dockerDataDir,
     required this.id,
     required this.alias,
-    required this.btcContainerName,
+    required this.btccContainerId,
   });
 }
 
@@ -33,7 +33,8 @@ abstract class LnNode extends DockerContainer {
   bool _bootstrapped = false;
   late String? _token;
 
-  LnNode({required this.opts}) : super(opts) {
+  LnNode({required this.opts, String? internalId, Function()? onDeleted})
+      : super(opts, internalId: internalId, onDeleted: onDeleted) {
     _api = BlitzApiClient(basePathOverride: 'http://localhost:8825/latest');
 
     _api.dio.interceptors.add(
@@ -60,6 +61,29 @@ abstract class LnNode extends DockerContainer {
   Implementation get implementation => Implementation.empty;
   int get id => opts.id;
   String get alias => opts.alias;
+
+  @override
+  Future<void> stop() async {
+    setStatus(ContainerStatusMessage(ContainerStatus.stopping, ''));
+
+    final argBuilder = DockerArgBuilder().addArg('stop').addArg(dockerId);
+
+    final result = await Process.run(
+      'docker',
+      argBuilder.build(),
+      workingDirectory: workDir,
+    );
+
+    if (result.exitCode != 0) {
+      throw DockerException(
+        "Failed to stop container $name. Error: ${result.stderr.toString()}",
+      );
+    }
+
+    running = false;
+
+    setStatus(ContainerStatusMessage(ContainerStatus.stopped, ''));
+  }
 
   Future<void> bootstrap() async {
     if (_bootstrapped) {

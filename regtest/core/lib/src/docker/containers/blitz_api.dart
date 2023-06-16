@@ -12,14 +12,14 @@ import '../exceptions.dart';
 
 class BlitzAPIOptions extends ContainerOptions {
   final LnNode node;
-  final String btcContainerName;
+  final String btccContainerId;
   final String redisHost;
   final int redisPort;
   final int redisDB;
 
   BlitzAPIOptions({
     required this.node,
-    this.btcContainerName = defaultBitcoinCoreName,
+    this.btccContainerId = '',
     this.redisHost = 'redis',
     this.redisPort = 6379,
     this.redisDB = 0,
@@ -40,7 +40,7 @@ class BlitzAPIOptions extends ContainerOptions {
         name,
         image,
         workDir,
-        btcContainerName,
+        btccContainerId,
         redisHost,
         redisPort,
         redisDB,
@@ -65,6 +65,11 @@ class BlitzAPIContainer extends DockerContainer {
     //    --detach blitz_api:latest
     final o = opts;
     setStatus(ContainerStatusMessage(ContainerStatus.starting, ''));
+
+    final btccName = NetworkManager()
+        .findContainerById<BitcoinCoreContainer>(o.btccContainerId)!
+        .name;
+
     final argBuilder = DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'on-failure')
@@ -75,7 +80,7 @@ class BlitzAPIContainer extends DockerContainer {
         .addOption('--environment', 'REDIS_HOST=${o.redisHost}')
         .addOption('--environment', 'REDIS_PORT=${o.redisPort}')
         .addOption('--environment', 'REDIS_DB=${o.redisDB}')
-        .addOption('--environment', 'bitcoind_ip_regtest=${o.btcContainerName}')
+        .addOption('--environment', 'bitcoind_ip_regtest=$btccName')
         .addOption('--environment', 'bitcoind_port_rpc_regtest=18443')
         .addOption('--environment', 'bitcoind_user=regtester')
         .addOption('--environment', 'bitcoind_pw=regtester');
@@ -93,8 +98,8 @@ class BlitzAPIContainer extends DockerContainer {
           .addOption('--environment', 'cln_jrpc_path=${n.jRPCFilePath}');
     }
 
-    if (o.node.runtimeType is LNDContainer) {
-      final n = o.node as LNDContainer;
+    if (o.node.runtimeType is LndContainer) {
+      final n = o.node as LndContainer;
       argBuilder
           .addOption('--environment', 'ln_node=lnd_grpc')
           .addOption('--environment', 'lnd_macaroon="${n.adminMacaroonPath}')

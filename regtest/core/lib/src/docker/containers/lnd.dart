@@ -9,29 +9,55 @@ import 'package:regtest_core/core.dart';
 import '../arg_builder.dart';
 import '../exceptions.dart';
 
-class LNDOptions extends LnNodeOptions {
-  LNDOptions({
+class LndOptions extends LnNodeOptions {
+  LndOptions({
     String? name,
     super.image = 'boltz/lnd:0.16.2-beta',
     super.alias = '',
-    super.btcContainerName = defaultBitcoinCoreName,
+    super.btccContainerId = '',
     super.workDir = dockerDataDir,
     int id = 0,
   })  : assert(id >= 0),
         super(name: name ?? '${projectName}_lnd_$id', id: id);
 }
 
-class LNDContainer extends LnNode {
-  final LNDOptions opts;
+class LndContainer extends LnNode {
+  late final LndOptions lndOpts;
   final int _gRPCPort;
   final int _restPort;
 
-  LNDContainer({required this.opts})
-      : _gRPCPort = 11109 + opts.id,
-        _restPort = 8081 + opts.id,
-        super(opts: opts);
+  LndContainer({required this.lndOpts, final Function()? onDeleted})
+      : _gRPCPort = 11109 + lndOpts.id,
+        _restPort = 8081 + lndOpts.id,
+        super(opts: lndOpts, onDeleted: onDeleted);
 
-  factory LNDContainer.defaultOptions() => LNDContainer(opts: LNDOptions());
+  // This private constructor is only available for instantiating from
+  // an actual running docker container. At this point we do have an internalId
+  // already defined and we won't create a new one.
+  LndContainer._(
+    this.lndOpts,
+    ContainerData cd,
+    final Function()? onDeleted,
+  )   : _gRPCPort = 11109 + lndOpts.id,
+        _restPort = 8081 + lndOpts.id,
+        super(
+          opts: lndOpts,
+          internalId: cd.internalId,
+          onDeleted: onDeleted,
+        ) {
+    dockerId = cd.dockerId;
+    setStatus(ContainerStatusMessage(cd.status, ''));
+  }
+
+  factory LndContainer.defaultOptions() => LndContainer(lndOpts: LndOptions());
+
+  static Future<LndContainer> fromRunningContainer(
+      ContainerData c, Function()? onDeleted) async {
+    final newContainer =
+        LndContainer._(LndOptions(name: c.name, image: c.image), c, onDeleted);
+    await newContainer.subscribeLogs();
+    return newContainer;
+  }
 
   @override
   ContainerType get type => ContainerType.lnd;
@@ -48,7 +74,7 @@ class LNDContainer extends LnNode {
     setStatus(ContainerStatusMessage(ContainerStatus.starting, ''));
     final argBuilder = DockerArgBuilder()
         .addArg('run')
-        .addOption('--restart', 'on-failure')
+        .addOption('--restart', 'always')
         .addOption('--expose', '${8081 + o.id}')
         .addOption('--expose', '$_gRPCPort')
         .addArg('--publish-all')
@@ -64,9 +90,9 @@ class LNDContainer extends LnNode {
         .addArg('--bitcoin.active')
         .addArg('--bitcoin.regtest')
         .addArg('--bitcoin.node=bitcoind')
-        .addArg('--bitcoind.rpchost=${o.btcContainerName}')
-        .addArg('--bitcoind.zmqpubrawtx=tcp://${o.btcContainerName}:29000')
-        .addArg('--bitcoind.zmqpubrawblock=tcp://${o.btcContainerName}:29001')
+        .addArg('--bitcoind.rpchost=${o.btccContainerId}')
+        .addArg('--bitcoind.zmqpubrawtx=tcp://${o.btccContainerId}:29000')
+        .addArg('--bitcoind.zmqpubrawblock=tcp://${o.btccContainerId}:29001')
         .addArg('--bitcoind.rpcuser=regtester')
         .addArg('--bitcoind.rpcpass=regtester')
         .addArg('--noseedbackup')
@@ -75,8 +101,6 @@ class LNDContainer extends LnNode {
         .addArg('--tlsextraip=0.0.0.0')
         .addArg('--tlsextradomain=localhost')
         .addArg('--tlsextradomain=$name');
-
-    print(argBuilder.debugCommand());
 
     final result = await Process.start(
       'docker',
@@ -97,7 +121,4 @@ class LNDContainer extends LnNode {
 
     setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
   }
-
-  @override
-  Future<void> stop() async {}
 }
