@@ -220,7 +220,9 @@ class NetworkManager {
       ContainerType.cln => CLNContainer.defaultOptions(),
       ContainerType.fakeLn => FakeLnContainer.defaultOptions(),
       ContainerType.lnbits => LNbitsContainer(),
-      ContainerType.lnd => LndContainer.defaultOptions(),
+      ContainerType.lnd => _createLndContainer(
+          opts == null ? null : opts as LndOptions,
+        ),
       ContainerType.redis => RedisContainer(),
     };
 
@@ -327,5 +329,21 @@ class NetworkManager {
     }
 
     return null;
+  }
+
+  LndContainer _createLndContainer([LndOptions? opts]) {
+    String btccId = opts == null ? '' : opts.btccContainerId;
+    LndOptions lndOptions = opts ?? LndOptions();
+
+    if (btccId.isEmpty) {
+      final btcc = findFirstOf<BitcoinCoreContainer>();
+      if (btcc == null) {
+        throw StateError('LND needs a Bitcoin Core container to run.');
+      }
+
+      lndOptions = lndOptions.copyWith(btccContainerId: btcc.internalId);
+    }
+
+    return LndContainer(lndOpts: lndOptions);
   }
 }

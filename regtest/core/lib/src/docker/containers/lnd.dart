@@ -1,8 +1,6 @@
 library docker.containers;
 
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:regtest_core/core.dart';
 
@@ -19,6 +17,24 @@ class LndOptions extends LnNodeOptions {
     int id = 0,
   })  : assert(id >= 0),
         super(name: name ?? '${projectName}_lnd_$id', id: id);
+
+  LndOptions copyWith({
+    String? name,
+    String? image,
+    String? alias,
+    String? btccContainerId,
+    String? workDir,
+    int? id,
+  }) {
+    return LndOptions(
+      name: name ?? this.name,
+      image: image ?? this.image,
+      alias: alias ?? this.alias,
+      btccContainerId: btccContainerId ?? this.btccContainerId,
+      workDir: workDir ?? this.workDir,
+      id: id ?? this.id,
+    );
+  }
 }
 
 class LndContainer extends LnNode {
@@ -69,10 +85,45 @@ class LndContainer extends LnNode {
 
   @override
   Future<void> start() async {
+    if (dockerId.isNotEmpty) {
+      await runDockerCommand(["start", dockerId]);
+    } else {
+      await prepareDataDir(dataPath);
+      dockerId = await runDockerCommand(_buildRunDockerArgs());
+      dockerId = dockerId.trim();
+
+      if (dockerId.isEmpty || dockerId.length != 64) {
+        throw DockerException('Failed to start LND container: $dockerId');
+      }
+
+      super.subscribeLogs();
+    }
+
+    setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
+  }
+
+  @override
+  List<String> bootstrapCommands() => [
+        ...super.bootstrapCommands(),
+        'alias lncli="lncli --network regtest --rpcserver=$name:$_gRPCPort"\n',
+      ];
+
+  List<String> _buildRunDockerArgs() {
     final o = opts;
+    final btcc = NetworkManager().findContainerById<BitcoinCoreContainer>(
+      opts.btccContainerId,
+    );
+
+    if (btcc == null) {
+      throw StateError(
+        'BitcoinCoreContainer with ID ${opts.btccContainerId} not found',
+      );
+    }
 
     setStatus(ContainerStatusMessage(ContainerStatus.starting, ''));
-    final argBuilder = DockerArgBuilder()
+    String alias = o.alias.isNotEmpty ? o.alias : o.name;
+
+    return DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'always')
         .addOption('--expose', '${8081 + o.id}')
@@ -83,16 +134,16 @@ class LndContainer extends LnNode {
         .addOption('--name', name)
         .addArg('--detach')
         .addArg(image)
-        .addArg('--alias=$o.alias')
-        .addArg('--listen=$name:9735')
-        .addArg('--rpclisten=$name:$_gRPCPort')
-        .addArg('--restlisten=$name:$_restPort')
+        .addArg('--alias=$alias')
+        .addArg('--listen=0.0.0.0:9735')
+        .addArg('--rpclisten=0.0.0.0:$_gRPCPort')
+        .addArg('--restlisten=0.0.0.0:$_restPort')
         .addArg('--bitcoin.active')
         .addArg('--bitcoin.regtest')
         .addArg('--bitcoin.node=bitcoind')
-        .addArg('--bitcoind.rpchost=${o.btccContainerId}')
-        .addArg('--bitcoind.zmqpubrawtx=tcp://${o.btccContainerId}:29000')
-        .addArg('--bitcoind.zmqpubrawblock=tcp://${o.btccContainerId}:29001')
+        .addArg('--bitcoind.rpchost=${btcc.name}')
+        .addArg('--bitcoind.zmqpubrawtx=tcp://${btcc.name}:29000')
+        .addArg('--bitcoind.zmqpubrawblock=tcp://${btcc.name}:29001')
         .addArg('--bitcoind.rpcuser=regtester')
         .addArg('--bitcoind.rpcpass=regtester')
         .addArg('--noseedbackup')
@@ -100,32 +151,7 @@ class LndContainer extends LnNode {
         .addArg('--tlsextraip=127.0.0.1')
         .addArg('--tlsextraip=0.0.0.0')
         .addArg('--tlsextradomain=localhost')
-        .addArg('--tlsextradomain=$name');
-
-    final result = await Process.start(
-      'docker',
-      argBuilder.build(),
-      workingDirectory: workDir,
-    );
-
-    dockerId = await Future.any([
-      result.stderr.transform(utf8.decoder).asBroadcastStream().first,
-      result.stdout.transform(utf8.decoder).asBroadcastStream().first
-    ]);
-    dockerId = dockerId.trim();
-
-    if (dockerId.isEmpty || dockerId.length != 64) {
-      throw DockerException('Failed to start LND container: $dockerId');
-    }
-
-    super.subscribeLogs();
-
-    setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
+        .addArg('--tlsextradomain=$name')
+        .build();
   }
-
-  @override
-  List<String> bootstrapCommands() => [
-        ...super.bootstrapCommands(),
-        'alias lncli="lncli --network regtest --rpcserver=localhost:$_gRPCPort"\n',
-      ];
 }
