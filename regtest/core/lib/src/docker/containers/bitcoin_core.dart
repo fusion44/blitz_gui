@@ -10,15 +10,55 @@ import '../arg_builder.dart';
 import '../docker.dart';
 import '../exceptions.dart';
 
+const defaultWalletName = "regtest";
+
 class BitcoinCoreOptions extends ContainerOptions {
+  final bool fundWallet;
+  final String walletName;
+  final bool makeDataDirPublic;
+
   const BitcoinCoreOptions({
     super.name = defaultBitcoinCoreName,
     super.image = 'boltz/bitcoin-core:24.0.1',
     super.workDir = dockerDataDir,
+    this.fundWallet = true,
+    this.walletName = defaultWalletName,
+    this.makeDataDirPublic = false,
   });
 
   @override
-  List<Object?> get props => [name, image, workDir];
+  List<Object?> get props => [
+        name,
+        image,
+        workDir,
+        fundWallet,
+        walletName,
+        makeDataDirPublic,
+      ];
+
+  @override
+  String toString() {
+    return "BitcoinCoreOptions{name: $name, image: $image, workDir: $workDir, fundWallet: $fundWallet, walletName: $walletName, makeDataDirPublic: $makeDataDirPublic}";
+  }
+
+  // copyWith method
+  BitcoinCoreOptions copyWith({
+    String? name,
+    String? image,
+    String? workDir,
+    bool? fundWallet,
+    String? walletName,
+    bool? makeDataDirPublic,
+  }) {
+    return BitcoinCoreOptions(
+      name: name ?? this.name,
+      image: image ?? this.image,
+      workDir: workDir ?? this.workDir,
+      fundWallet: fundWallet ?? this.fundWallet,
+      walletName: walletName ?? this.walletName,
+      makeDataDirPublic: makeDataDirPublic ?? this.makeDataDirPublic,
+    );
+  }
 }
 
 class BitcoinCoreContainer extends DockerContainer {
@@ -58,11 +98,23 @@ class BitcoinCoreContainer extends DockerContainer {
 
     if (dockerId.isNotEmpty) {
       await runDockerCommand(["start", dockerId]);
+      await ensureWalletLoaded(walletName: opts.walletName);
     } else {
       await prepareDataDir(dataPath);
       dockerId = await runDockerCommand(_buildRunDockerArgs());
       dockerId = dockerId.trim();
       super.subscribeLogs();
+
+      if (opts.fundWallet) {
+        await ensureWalletLoaded(walletName: opts.walletName);
+        // Bitcoin block rewards get unlocked after 100 blocks
+        await mineBlocks(110);
+      }
+
+      if (opts.makeDataDirPublic) {
+        await Future.delayed(Duration(seconds: 1));
+        await makeDataDirsPublic(dataPath);
+      }
     }
 
     running = true;
@@ -128,25 +180,52 @@ class BitcoinCoreContainer extends DockerContainer {
     return "error, see logs";
   }
 
-  Future<void> ensureWalletLoaded({String walletName = "regtest"}) async {
-    try {
-      final output = await _command(['loadwallet', walletName]);
-      final json = jsonDecode(output);
-      if (json["walletname"] != null && json["walletname"] == walletName) {
-        return;
-      }
-    } catch (e) {
-      final error = e.toString();
-      if (error.contains(
-          "SQLiteDatabase: Unable to obtain an exclusive lock on the database")) {
-        // wallet is loaded
-        return;
+  Future<void> ensureWalletLoaded({
+    String walletName = defaultWalletName,
+  }) async {
+    const maxAttempts = 5;
+    var attempt = 0;
+    while (attempt < maxAttempts) {
+      try {
+        final output = await _command(['loadwallet', walletName]);
+        final json = jsonDecode(output);
+        if (json["walletname"] != null && json["walletname"] == walletName) {
+          return;
+        }
+        break;
+      } on BitcoinCoreNotReadyException {
+        attempt++;
+      } on DockerException catch (e) {
+        attempt++;
+        final error = e.message;
+        // Different bitcoin core versions have different error messages
+        if (error.contains(
+              'SQLiteDatabase: Unable to obtain an exclusive lock on the database',
+            ) ||
+            error.contains(
+              'sqlitedatabase: unable to obtain an exclusive lock on the database,',
+            ) ||
+            error.contains(
+              'database already exists',
+            )) {
+          // wallet is loaded
+          return;
+        }
+
+        if (error.contains('path does not exist.')) {
+          logMessage("Creating Bitcoin Core wallet $walletName");
+          await _command(['createwallet', walletName]);
+        }
       }
 
-      logMessage("Creating Bitcoin Core wallet $walletName");
+      if (attempt < maxAttempts) {
+        await Future.delayed(
+          const Duration(seconds: 2),
+        ); // wait for 2 seconds before the next attempt
+      } else {
+        print('Max attempts reached. Stopping execution.');
+      }
     }
-
-    await _command(['createwallet', walletName]);
   }
 
   Future<String> sendFunds(String address, [double amountInBtc = 15.0]) async {
@@ -174,10 +253,13 @@ class BitcoinCoreContainer extends DockerContainer {
   }
 
   Future<String> _command(List<String> args) async {
-    final c = Completer<String>();
-    final p = await Process.start('docker', [
+    if (dockerId.isEmpty) {
+      throw StateError('dockerId is empty');
+    }
+
+    final p = await Process.run('docker', [
       'exec',
-      defaultBitcoinCoreName,
+      dockerId,
       'bitcoin-cli',
       '-rpcuser=regtester',
       '-rpcpassword=regtester',
@@ -185,14 +267,24 @@ class BitcoinCoreContainer extends DockerContainer {
       ...args,
     ]);
 
-    p.stdout.transform(utf8.decoder).listen(
-          (event) => c.complete(event),
-          onError: (error) => c.completeError(error),
-        );
+    var err = p.stderr;
+    if (err != null && err is String && err.isNotEmpty) {
+      err = err.toLowerCase();
+      if (err.contains("loading block index") ||
+          err.contains('verifying blocks') ||
+          err.contains('loading banlist')) {
+        throw BitcoinCoreNotReadyException.isStartingUp();
+      }
 
-    p.stderr.transform(utf8.decoder).listen((error) => c.completeError(error));
+      if (err.contains(
+          'Wallet file verification failed. Failed to load database path')) {
+        throw BitcoinCoreNotReadyException.walletError(err);
+      }
 
-    return c.future;
+      throw DockerException('Unknown Docker Error: $err');
+    }
+
+    return p.stdout;
   }
 
   Future<void> _doMineBlocks(int numBlocks) async {
@@ -231,7 +323,7 @@ class BitcoinCoreContainer extends DockerContainer {
   }
 
   List<String> _buildRunDockerArgs() {
-    return DockerArgBuilder()
+    final builder = DockerArgBuilder()
         .addArg("run")
         .addOption('--restart', 'always')
         .addOption('--expose', '18443')
@@ -240,7 +332,13 @@ class BitcoinCoreContainer extends DockerContainer {
         .addOption('--publish-all')
         .addOption('--network', projectNetwork)
         .addOption('--name', name)
-        .addOption('--detach')
+        .addOption('--detach');
+
+    if (opts.makeDataDirPublic) {
+      builder.addOption('--volume', '$dataPath:/root/.bitcoin/');
+    }
+
+    builder
         .addArg(image)
         .addArg('-regtest')
         .addArg('-fallbackfee=0.00000253')
@@ -250,8 +348,9 @@ class BitcoinCoreContainer extends DockerContainer {
         .addArg('-rpcallowip=0.0.0.0/0')
         .addArg('-rpcbind=0.0.0.0')
         .addArg('-rpcuser=regtester')
-        .addArg('-rpcpassword=regtester')
-        .build();
+        .addArg('-rpcpassword=regtester');
+
+    return builder.build();
   }
 
   @override

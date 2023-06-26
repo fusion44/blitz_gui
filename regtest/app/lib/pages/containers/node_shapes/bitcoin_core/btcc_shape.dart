@@ -184,25 +184,21 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
   _editSettings(BuildContext context) async {
     final c =
         NetworkManager().nodeMap[widget.containerId] as BitcoinCoreContainer;
-    final ValueNotifier<BitcoinCoreOptions> notifier =
-        ValueNotifier<BitcoinCoreOptions>(
-      BitcoinCoreOptions(name: c.name, image: c.image, workDir: c.dataPath),
-    );
-
     final opts = BitcoinCoreOptions(
       name: c.name,
       image: c.image,
       workDir: c.dataPath,
+      fundWallet: c.opts.fundWallet,
+      walletName: c.opts.walletName,
+      makeDataDirPublic: c.opts.makeDataDirPublic,
     );
+    final ValueNotifier<BitcoinCoreOptions> notifier =
+        ValueNotifier<BitcoinCoreOptions>(opts);
 
     final ok = await NDialog(
       dialogStyle: DialogStyle(titleDivider: true),
       title: const Text("Edit Bitcoin Core Settings"),
-      content: BtccSettingsDlgContent(
-        notifier,
-        opts,
-        c.internalId,
-      ),
+      content: BtccSettingsDlgContent(notifier, c.internalId),
       actions: <Widget>[
         ElevatedButton(
           child: const Text("OK"),
