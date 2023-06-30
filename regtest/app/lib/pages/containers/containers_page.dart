@@ -46,7 +46,7 @@ class _ContainersPageState extends State<ContainersPage> {
           _canvasKey = GlobalKey();
           final l = nodes.length;
           nodes.removeWhere(
-              (element) => element.containerId == container.internalId);
+              (element) => element.mainContainerId == container.internalId);
           if (nodes.length == l) throw StateError("No container deleted");
         });
       },
@@ -75,7 +75,14 @@ class _ContainersPageState extends State<ContainersPage> {
         o = OffsetExtension.fromJson(values[node.internalId]);
       }
 
-      nodes.add(ContainerNode(o ?? Offset.zero, node.type, node.internalId));
+      nodes.add(
+        ContainerNode(
+          o ?? Offset.zero,
+          node.type,
+          node.internalId,
+          '',
+        ),
+      );
     }
 
     setState(() {
@@ -138,14 +145,16 @@ class _ContainersPageState extends State<ContainersPage> {
                           return gnc.GraphCanvasNodeInfo(
                             e.initialPos,
                             body: switch (e.type) {
-                              ContainerType.bitcoinCore =>
-                                BitcoinCoreShape(e.containerId),
-                              ContainerType.lnd => LndShape(e.containerId),
+                              ContainerType.bitcoinCore => BitcoinCoreShape(
+                                  e.mainContainerId,
+                                  e.complementaryContainerId,
+                                ),
+                              ContainerType.lnd => LndShape(e.mainContainerId),
                               _ => throw UnimplementedError()
                             },
                             onPositionUpdated: (position) async {
                               await _posVault.put(
-                                e.containerId,
+                                e.mainContainerId,
                                 position.toJson(),
                               );
                             },
@@ -218,20 +227,59 @@ class _ContainersPageState extends State<ContainersPage> {
       target.globalToLocal(globalPos),
       target.size,
     );
+
     final container = NetworkManager().createContainer(type);
+    final bapi = switch (type) {
+      ContainerType.bitcoinCore ||
+      ContainerType.cln ||
+      ContainerType.lnd =>
+        NetworkManager().createContainer(
+          ContainerType.blitzApi,
+          opts: _buildBlitzApiOptions(container),
+        ),
+      _ => null
+    };
+
     _posVault.put(container.internalId, initialPos.toJson());
 
     setState(() {
       _canvasKey = GlobalKey();
-      nodes.add(ContainerNode(initialPos, type, container.internalId));
+      nodes.add(ContainerNode(
+        initialPos,
+        type,
+        container.internalId,
+        bapi != null ? bapi.internalId : '',
+      ));
     });
+  }
+
+  BlitzApiOptions? _buildBlitzApiOptions(DockerContainer container) {
+    if (container.type == ContainerType.bitcoinCore) {
+      return BlitzApiOptions(
+        name: '${container.name}_bapi',
+        btccContainerId: container.internalId,
+      );
+    }
+
+    return null;
   }
 }
 
 class ContainerNode {
   final Offset initialPos;
   final ContainerType type;
-  final String containerId;
 
-  ContainerNode(this.initialPos, this.type, this.containerId);
+  /// The container ID of the main container as requested by the user
+  final String mainContainerId;
+
+  /// The container ID of the complementary container as required by
+  /// the app itself to make it easier to connect to the main container
+  final String complementaryContainerId;
+
+  ContainerNode(
+    this.initialPos,
+    this.type,
+    this.mainContainerId,
+    this.complementaryContainerId,
+  );
 }

@@ -6,37 +6,48 @@ import 'package:regtest_core/core.dart';
 import '../../../../gui_constants.dart';
 import '../../utils.dart';
 import '../widgets/action_buttons.dart';
+import '../widgets/open_blitz_terminal_btn.dart';
+import '../widgets/show_blitz_logs_btn.dart';
 import 'btcc_settings_dlg_content.dart';
 
 class BitcoinCoreShape extends StatefulWidget {
-  final String containerId;
+  final String btccContainerId;
+  final String bapiContainerId;
   final Function()? onDeleted;
 
-  const BitcoinCoreShape(this.containerId, {this.onDeleted, super.key});
+  const BitcoinCoreShape(
+    this.btccContainerId,
+    this.bapiContainerId, {
+    this.onDeleted,
+    super.key,
+  });
 
   @override
   State<BitcoinCoreShape> createState() => _BitcoinCoreShapeState();
 }
 
 class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
-  late final BitcoinCoreContainerBloc _bloc;
+  late final BlitzApiContainerBloc _bapi;
+  late final BitcoinCoreContainerBloc _btcc;
 
   @override
   void initState() {
     super.initState();
-    _bloc = BitcoinCoreContainerBloc(widget.containerId);
+    _bapi = BlitzApiContainerBloc(widget.bapiContainerId);
+    _btcc = BitcoinCoreContainerBloc(widget.btccContainerId);
   }
 
   @override
   void dispose() async {
     super.dispose();
-    await _bloc.close();
+    await _bapi.close();
+    await _btcc.close();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BitcoinCoreContainerBloc, BitcoinCoreContainerState>(
-      bloc: _bloc,
+      bloc: _btcc,
       builder: (context, state) {
         Widget? footer;
 
@@ -123,7 +134,10 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
         ContainerStatus.uninitialized => Row(
             children: [
               ElevatedButton(
-                  onPressed: () => _bloc.add(StartBitcoinCoreContainerEvent()),
+                  onPressed: () {
+                    _bapi.add(StartBlitzApiContainerEvent());
+                    _btcc.add(StartBitcoinCoreContainerEvent());
+                  },
                   child: const Text('Start'))
             ],
           ),
@@ -136,16 +150,21 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               ElevatedButton(
-                onPressed: () => _bloc.add(StopBitcoinCoreContainerEvent()),
+                onPressed: () {
+                  _bapi.add(StopBlitzApiContainerEvent());
+                  _btcc.add(StopBitcoinCoreContainerEvent());
+                },
                 child: const Text('Stop'),
               ),
               OpenTerminalBtn(() async =>
-                  await openTerminalInDialog(context, widget.containerId)),
+                  await openTerminalInDialog(context, widget.btccContainerId)),
               ShowLogsBtn(() async =>
-                  await openLogWindowInDialog(context, widget.containerId)),
+                  await openLogWindowInDialog(context, widget.btccContainerId)),
               PopupMenuButton<String>(
                 onSelected: (item) => switch (item) {
-                  'delete' => _bloc.add(DeleteBitcoinCoreContainerEvent()),
+                  'delete' => _deleteContainers(),
+                  'blitz_terminal' => _openBlitzTerminal(context),
+                  'blitz_logs' => _showBlitzLogs(context),
                   _ => throw StateError('not implemented $item'),
                 },
                 itemBuilder: (context) {
@@ -155,6 +174,8 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
                       'Delete Container',
                       iconColor: Colors.redAccent,
                     ),
+                    OpenBlitzTerminalBtn.asMenuItem('blitz_terminal'),
+                    ShowBlitzLogsBtn.asMenuItem('blitz_logs')
                   ];
                 },
               ),
@@ -168,11 +189,17 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
         ContainerStatus.stopped => Row(
             children: [
               ElevatedButton(
-                onPressed: () => _bloc.add(StartBitcoinCoreContainerEvent()),
+                onPressed: () {
+                  _bapi.add(StartBlitzApiContainerEvent());
+                  _btcc.add(StartBitcoinCoreContainerEvent());
+                },
                 child: const Text('Start'),
               ),
               IconButton(
-                onPressed: () => _bloc.add(DeleteBitcoinCoreContainerEvent()),
+                onPressed: () {
+                  _bapi.add(DeleteBlitzApiContainerEvent());
+                  _btcc.add(DeleteBitcoinCoreContainerEvent());
+                },
                 icon: const Icon(Icons.delete),
               ),
             ],
@@ -182,8 +209,8 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
       };
 
   _editSettings(BuildContext context) async {
-    final c =
-        NetworkManager().nodeMap[widget.containerId] as BitcoinCoreContainer;
+    final c = NetworkManager().nodeMap[widget.btccContainerId]
+        as BitcoinCoreContainer;
     final opts = BitcoinCoreOptions(
       name: c.name,
       image: c.image,
@@ -212,6 +239,17 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
     final newOpts = notifier.value;
     if (opts == newOpts) return;
 
-    _bloc.add(SettingsUpdatedEvent(newOpts));
+    _btcc.add(SettingsUpdatedEvent(newOpts));
   }
+
+  void _deleteContainers() {
+    _bapi.add(DeleteBlitzApiContainerEvent());
+    _btcc.add(DeleteBitcoinCoreContainerEvent());
+  }
+
+  _openBlitzTerminal(BuildContext context) async =>
+      await openTerminalInDialog(context, widget.bapiContainerId);
+
+  _showBlitzLogs(BuildContext context) async =>
+      await openLogWindowInDialog(context, widget.bapiContainerId);
 }

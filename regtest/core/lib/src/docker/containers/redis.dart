@@ -1,9 +1,9 @@
 library docker.containers;
 
 import 'dart:async';
-import 'dart:io';
 
 import '../../constants.dart';
+import '../../utils.dart';
 import '../arg_builder.dart';
 import '../docker.dart';
 import '../exceptions.dart';
@@ -33,26 +33,20 @@ class RedisContainer extends DockerContainer {
         .addOption('--detach')
         .addArg(image);
 
-    final result = await Process.run(
-      'docker',
-      argBuilder.build(),
-      workingDirectory: workDir,
-    );
-
-    if (result.exitCode != 0) {
-      throw DockerException(
-        "Failed to start container $name. Error: ${result.stderr.toString()}",
-      );
+    if (dockerId.isNotEmpty) {
+      await runDockerCommand(["start", dockerId]);
+    } else {
+      await prepareDataDir(dataPath);
+      dockerId = await runDockerCommand(argBuilder.build());
+      dockerId = dockerId.trim();
     }
 
-    dockerId = result.stdout as String;
-    dockerId = dockerId.trim();
+    if (dockerId.isEmpty || dockerId.length != 65) {
+      throw DockerException('Failed to start BlitzApi container: $dockerId');
+    }
 
+    running = true;
     setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
-
     super.subscribeLogs();
   }
-
-  @override
-  Future<void> stop() async {}
 }

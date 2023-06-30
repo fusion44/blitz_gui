@@ -215,7 +215,7 @@ class NetworkManager {
   }) {
     final DockerContainer container = switch (type) {
       ContainerType.bitcoinCore => BitcoinCoreContainer(),
-      ContainerType.blitzAPI => _buildBlitzAPIContainer(opts),
+      ContainerType.blitzApi => _buildBlitzApiContainer(opts),
       ContainerType.cashuMint => CashuMintContainer(),
       ContainerType.cln => CLNContainer.defaultOptions(),
       ContainerType.fakeLn => FakeLnContainer.defaultOptions(),
@@ -277,16 +277,12 @@ class NetworkManager {
     if (container == null) throw StateError('Container not found');
 
     final DockerContainer newContainer = switch (container.type) {
-      ContainerType.bitcoinCore => BitcoinCoreContainer(
-          opts: opts as BitcoinCoreOptions,
-          internalId: id,
-        ),
-      ContainerType.blitzAPI => BlitzAPIContainer(
-          opts: opts as BlitzAPIOptions,
-        ),
-      ContainerType.cashuMint => CashuMintContainer(
-          opts: opts as CashuMintOptions,
-        ),
+      ContainerType.bitcoinCore =>
+        BitcoinCoreContainer(opts: opts as BitcoinCoreOptions, internalId: id),
+      ContainerType.blitzApi =>
+        BlitzApiContainer(opts: opts as BlitzApiOptions),
+      ContainerType.cashuMint =>
+        CashuMintContainer(opts: opts as CashuMintOptions),
       ContainerType.cln => CLNContainer(opts: opts as CLNOptions),
       ContainerType.fakeLn => FakeLnContainer(opts: opts as FakeLnOptions),
       ContainerType.lnbits => LNbitsContainer(opts: opts as LNbitsOptions),
@@ -303,13 +299,13 @@ class NetworkManager {
     _containerMap[id] = newContainer;
   }
 
-  BlitzAPIContainer _buildBlitzAPIContainer(ContainerOptions? opts) {
-    if (opts != null && opts is BlitzAPIOptions) {
+  BlitzApiContainer _buildBlitzApiContainer(ContainerOptions? opts) {
+    if (opts != null && opts is! BlitzApiOptions) {
       throw ArgumentError.value(opts);
     }
 
-    return BlitzAPIContainer(
-      opts: opts == null ? BlitzAPIOptions.empty() : opts as BlitzAPIOptions,
+    return BlitzApiContainer(
+      opts: opts == null ? BlitzApiOptions.empty() : opts as BlitzApiOptions,
     );
   }
 

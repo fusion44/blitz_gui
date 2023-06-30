@@ -16,7 +16,7 @@ enum Implementation { empty, lnd, cln }
 enum Denomination { btc, sats, msats }
 
 enum ContainerType {
-  blitzAPI,
+  blitzApi,
   bitcoinCore,
   lnd,
   cln,
