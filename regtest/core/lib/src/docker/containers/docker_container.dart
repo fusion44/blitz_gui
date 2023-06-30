@@ -111,7 +111,16 @@ abstract class DockerContainer {
 
   Future<void> start();
 
-  Future<void> stop();
+  Future<void> stop() async {
+    setStatus(ContainerStatusMessage(ContainerStatus.stopping, ''));
+
+    final argBuilder = DockerArgBuilder().addArg('stop').addArg(dockerId);
+    runDockerCommand(argBuilder.build());
+
+    running = false;
+
+    setStatus(ContainerStatusMessage(ContainerStatus.stopped, ''));
+  }
 
   @mustCallSuper
   Future<void> delete() async {
