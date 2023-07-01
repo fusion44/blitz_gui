@@ -216,7 +216,7 @@ class NetworkManager {
 
     final DockerContainer container = switch (type) {
       ContainerType.bitcoinCore => BitcoinCoreContainer(),
-      ContainerType.blitzApi => _buildBlitzApiContainer(opts),
+      ContainerType.blitzApi => _createBlitzApiContainer(opts),
       ContainerType.cashuMint => CashuMintContainer(),
       ContainerType.cln => CLNContainer.defaultOptions(),
       ContainerType.fakeLn => FakeLnContainer.defaultOptions(),
@@ -300,16 +300,6 @@ class NetworkManager {
     _containerMap[id] = newContainer;
   }
 
-  BlitzApiContainer _buildBlitzApiContainer(ContainerOptions? opts) {
-    if (opts != null && opts is! BlitzApiOptions) {
-      throw ArgumentError.value(opts);
-    }
-
-    return BlitzApiContainer(
-      opts: opts == null ? BlitzApiOptions.empty() : opts as BlitzApiOptions,
-    );
-  }
-
   void _checkRequirements(ContainerType type) {
     final unmetReq = <ContainerType>[];
 
@@ -362,6 +352,16 @@ class NetworkManager {
     }
 
     return null;
+  }
+
+  BlitzApiContainer _createBlitzApiContainer(ContainerOptions? opts) {
+    if (opts != null && opts is! BlitzApiOptions) {
+      throw ArgumentError.value(opts);
+    }
+
+    return BlitzApiContainer(
+      opts: opts == null ? BlitzApiOptions.empty() : opts as BlitzApiOptions,
+    );
   }
 
   LndContainer _createLndContainer([LndOptions? opts]) {
