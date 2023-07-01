@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:regtest_core/core.dart';
 
 import '../arg_builder.dart';
-import '../exceptions.dart';
 
 class LndOptions extends LnNodeOptions {
   LndOptions({

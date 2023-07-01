@@ -8,7 +8,6 @@ import 'docker/containers/fake_ln.dart';
 import 'docker/containers/lnbits.dart';
 import 'docker/docker.dart';
 import 'constants.dart';
-import 'docker/exceptions.dart';
 import 'models.dart';
 import 'utils.dart';
 
@@ -213,6 +212,8 @@ class NetworkManager {
     ContainerType type, {
     ContainerOptions? opts,
   }) {
+    _checkRequirements(type);
+
     final DockerContainer container = switch (type) {
       ContainerType.bitcoinCore => BitcoinCoreContainer(),
       ContainerType.blitzApi => _buildBlitzApiContainer(opts),
@@ -309,6 +310,28 @@ class NetworkManager {
     );
   }
 
+  void _checkRequirements(ContainerType type) {
+    final unmetReq = <ContainerType>[];
+
+    final List<ContainerType> requirements = switch (type) {
+      ContainerType.blitzApi => BlitzApiContainer.requirements,
+      _ => const []
+    };
+
+    if (requirements.isEmpty) return;
+
+    for (var req in requirements) {
+      if (findFirstOf(req) == null) unmetReq.add(req);
+    }
+
+    if (unmetReq.isNotEmpty) {
+      throw RequirementsNotMetError.fromContainerType(
+        ContainerType.blitzApi,
+        unmetReq,
+      );
+    }
+  }
+
   T? findContainerById<T extends DockerContainer>(String internalId) {
     for (var container in containers) {
       if (container.internalId == internalId && container is T) {
@@ -319,7 +342,21 @@ class NetworkManager {
     return null;
   }
 
-  T? findFirstOf<T>() {
+  T? findFirstOf<T>([ContainerType? type]) {
+    if (type != null) {
+      for (var container in containers) {
+        if (container.type == type) {
+          return container as dynamic;
+        }
+      }
+
+      return null;
+    }
+
+    if (T is! DockerContainer) {
+      throw ArgumentError.value(T);
+    }
+
     for (var container in containers) {
       if (container is T) return container as T;
     }

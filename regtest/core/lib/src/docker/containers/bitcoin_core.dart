@@ -8,7 +8,6 @@ import '../../constants.dart';
 import '../../utils.dart';
 import '../arg_builder.dart';
 import '../docker.dart';
-import '../exceptions.dart';
 
 const defaultWalletName = "regtest";
 

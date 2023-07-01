@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:regtest_core/core.dart';
 
 import '../arg_builder.dart';
-import '../exceptions.dart';
 
 enum ClnConnectionMode { gRPC, jRPC }
 
@@ -47,6 +46,9 @@ class BlitzApiOptions extends ContainerOptions {
 }
 
 class BlitzApiContainer extends DockerContainer {
+  static const requirements = [ContainerType.bitcoinCore, ContainerType.redis];
+  static const optionals = [ContainerType.cln, ContainerType.lnd];
+
   BlitzApiOptions opts;
 
   BlitzApiContainer({required this.opts}) : super(opts);

@@ -6,7 +6,6 @@ import 'package:dio/dio.dart';
 
 import '../../../core.dart';
 import '../arg_builder.dart';
-import '../exceptions.dart';
 
 class LnNodeOptions extends ContainerOptions {
   final String alias;

@@ -6,7 +6,6 @@ import 'dart:io';
 import '../../constants.dart';
 import '../arg_builder.dart';
 import '../docker.dart';
-import '../exceptions.dart';
 
 class CashuMintOptions extends ContainerOptions {
   const CashuMintOptions({

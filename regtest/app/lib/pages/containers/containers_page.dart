@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,7 @@ import 'package:stash/stash_api.dart';
 import 'package:stash_file/stash_file.dart';
 
 import '../../gui_constants.dart';
+import '../../widgets/widget_utils.dart';
 import 'container_chip.dart';
 import 'node_shapes/bitcoin_core/btcc_shape.dart';
 import 'node_shapes/lnd/lnd_shape.dart';
@@ -229,28 +231,38 @@ class _ContainersPageState extends State<ContainersPage> {
     );
 
     final container = NetworkManager().createContainer(type);
-    final bapi = switch (type) {
-      ContainerType.bitcoinCore ||
-      ContainerType.cln ||
-      ContainerType.lnd =>
-        NetworkManager().createContainer(
-          ContainerType.blitzApi,
-          opts: _buildBlitzApiOptions(container),
-        ),
-      _ => null
-    };
 
-    _posVault.put(container.internalId, initialPos.toJson());
+    try {
+      final bapi = switch (type) {
+        ContainerType.bitcoinCore ||
+        ContainerType.cln ||
+        ContainerType.lnd =>
+          NetworkManager().createContainer(
+            ContainerType.blitzApi,
+            opts: _buildBlitzApiOptions(container),
+          ),
+        _ => null
+      };
 
-    setState(() {
-      _canvasKey = GlobalKey();
-      nodes.add(ContainerNode(
-        initialPos,
-        type,
-        container.internalId,
-        bapi != null ? bapi.internalId : '',
-      ));
-    });
+      _posVault.put(container.internalId, initialPos.toJson());
+
+      setState(() {
+        _canvasKey = GlobalKey();
+        nodes.add(ContainerNode(
+          initialPos,
+          type,
+          container.internalId,
+          bapi != null ? bapi.internalId : '',
+        ));
+      });
+    } on RequirementsNotMetError catch (e) {
+      buildSnackbar(
+        context,
+        title: 'Missing requirement',
+        msg: e.message,
+        ct: ContentType.failure,
+      );
+    }
   }
 
   BlitzApiOptions? _buildBlitzApiOptions(DockerContainer container) {

@@ -1,5 +1,6 @@
 // custom exception called DockerException
-import 'package:regtest_core/core.dart';
+
+import '../constants.dart';
 
 class DockerException implements Exception {
   final String message;
@@ -35,6 +36,27 @@ class NodeNotRunningError implements Exception {
 
   factory NodeNotRunningError.fromContainerType(ContainerType t) =>
       NodeNotRunningError("No such node: $t");
+
+  @override
+  String toString() => message;
+}
+
+class RequirementsNotMetError implements Exception {
+  final ContainerType type;
+  final String message;
+  final List<ContainerType> unmetRequirements;
+
+  RequirementsNotMetError(this.type, this.message, this.unmetRequirements);
+
+  factory RequirementsNotMetError.fromContainerType(
+    ContainerType type,
+    List<ContainerType> unmetRequirements,
+  ) =>
+      RequirementsNotMetError(
+        type,
+        "$type requires $unmetRequirements container(s) to run",
+        unmetRequirements,
+      );
 
   @override
   String toString() => message;

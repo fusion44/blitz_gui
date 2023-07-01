@@ -7,7 +7,6 @@ import 'dart:io';
 import 'package:regtest_core/core.dart';
 
 import '../arg_builder.dart';
-import '../exceptions.dart';
 
 class CLNOptions extends LnNodeOptions {
   CLNOptions({

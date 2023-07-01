@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../core.dart';
-import 'exceptions.dart';
 
 export 'blocs/blocs.dart';
 export 'containers/containers.dart';
+export 'exceptions.dart';
 
 class ContainerData {
   final String internalId;
