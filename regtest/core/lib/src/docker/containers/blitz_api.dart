@@ -20,8 +20,8 @@ class BlitzApiOptions extends ContainerOptions {
   BlitzApiOptions({
     required super.name,
     required this.btccContainerId,
+    required this.redisHost,
     this.lnContainerId = '',
-    this.redisHost = 'redis',
     this.redisPort = 6379,
     this.redisDB = 0,
     this.clnMode = ClnConnectionMode.jRPC,
@@ -30,8 +30,12 @@ class BlitzApiOptions extends ContainerOptions {
   });
 
   /// factory with a fake Ln node
-  factory BlitzApiOptions.empty() =>
-      BlitzApiOptions(btccContainerId: '', name: '', lnContainerId: '');
+  factory BlitzApiOptions.empty() => BlitzApiOptions(
+        btccContainerId: '',
+        name: '',
+        lnContainerId: '',
+        redisHost: '',
+      );
 
   @override
   List<Object?> get props => [
@@ -52,6 +56,75 @@ class BlitzApiContainer extends DockerContainer {
   BlitzApiOptions opts;
 
   BlitzApiContainer({required this.opts}) : super(opts);
+
+  // This private constructor is only available for instantiating from
+  // an actual running docker container. At this point we do have an internalId
+  // already defined and we won't create a new one.
+  BlitzApiContainer._(
+    this.opts,
+    ContainerData cd,
+    final Function()? onDeleted,
+  ) : super(
+          opts,
+          internalId: cd.internalId,
+          onDeleted: onDeleted,
+        ) {
+    dockerId = cd.dockerId.trim();
+    setStatus(ContainerStatusMessage(cd.status, ''));
+  }
+
+  static Future<BlitzApiContainer> fromRunningContainer(
+    ContainerData c,
+    Function()? onDeleted,
+  ) async {
+    final envList = c.inspectData['Config']['Env'];
+    late final String? btccId;
+    late final String? redisHost;
+    late final int? redisDb;
+    for (final String e in envList) {
+      if (e.contains('REDIS_DB')) {
+        final env = e.split('=');
+        redisDb = int.parse(env[1]);
+      } else if (e.contains('REDIS_HOST')) {
+        final env = e.split('=');
+        redisHost = env[1];
+      } else if (e.contains('bitcoind_ip_regtest')) {
+        final env = e.split('=');
+        btccId = env[1].split(dockerContainerNameDelimiter)[1];
+      }
+    }
+
+    if (btccId == null || btccId.isEmpty) {
+      throw StateError('Bitcoin Core container ID not found');
+    }
+
+    if (redisHost == null || redisHost.isEmpty) {
+      throw StateError('Redis Host container ID not found');
+    }
+
+    if (redisDb == null || redisDb < 0) {
+      throw StateError('Redis DB not found');
+    }
+
+    final newContainer = BlitzApiContainer._(
+      BlitzApiOptions(
+        name: c.name,
+        btccContainerId: btccId,
+        image: c.image,
+        redisHost: redisHost,
+        redisDB: redisDb,
+      ),
+      c,
+      onDeleted,
+    );
+    await newContainer.subscribeLogs();
+
+    if (c.status == ContainerStatus.started) {
+      newContainer.running = true;
+    }
+
+    return newContainer;
+  }
 
   @override
   ContainerType get type => ContainerType.blitzApi;
@@ -96,7 +169,7 @@ class BlitzApiContainer extends DockerContainer {
       argBuilder.addOption('--publish', '${8820 + ln.opts.id}:80');
     }
 
-    argBuilder.addArg('--detach').addArg(image).addArg('/code/entrypoint.sh');
+    argBuilder.addArg('--detach').addArg(image);
 
     if (dockerId.isNotEmpty) {
       await runDockerCommand(["start", dockerId]);
@@ -119,17 +192,31 @@ class BlitzApiContainer extends DockerContainer {
     return DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'on-failure')
-        .addOption('--entrypoint', 'sh')
         .addOption('--volume', '$dockerDataDir:/root/data')
         .addOption('--network', projectNetwork)
         .addOption('--name', name)
+        .addEnv('secret=please_please_update_me_please')
+        .addEnv('algorithm=HS256')
+        .addEnv('jwt_expiry_time=999999999')
+        .addEnv('login_password=12345678')
+        .addEnv('enable_local_cookie_auth=true')
+        .addEnv('gather_hw_info_interval = 60')
+        .addEnv('cpu_usage_averaging_period=0.5')
+        .addEnv('gather_ln_info_interval=5.0')
+        .addEnv('shell_script_path = /root')
+        .addEnv('log_level=DEBUG')
+        .addEnv('log_file=blitz_api.log')
         .addEnv('REDIS_HOST=${opts.redisHost}')
         .addEnv('REDIS_PORT=${opts.redisPort}')
         .addEnv('REDIS_DB=${opts.redisDB}')
         .addEnv('bitcoind_ip_regtest=${btcc.name}')
         .addEnv('bitcoind_port_rpc_regtest=18443')
+        .addEnv('bitcoind_zmq_block_rpc=rawblock')
+        .addEnv('bitcoind_zmq_block_port_regtest=29001')
         .addEnv('bitcoind_user=regtester')
-        .addEnv('bitcoind_pw=regtester');
+        .addEnv('bitcoind_pw=regtester')
+        .addEnv('network=regtest')
+        .addEnv('platform=native_python');
   }
 
   void _buildClnGrpcArgs(DockerArgBuilder argBuilder, CLNContainer n) {

@@ -14,6 +14,7 @@ import '../../gui_constants.dart';
 import '../../widgets/mine_blocks_dlg_content.dart';
 import '../../widgets/tools_columns.dart';
 import '../../widgets/widget_utils.dart';
+import '../containers/redis_manager.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -57,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
     _sub = _mgr.netStateStream
         .listen((event) => setState(() => _networkState = event));
     _mgr.refresh();
+
+    RedisManager().init();
   }
 
   @override

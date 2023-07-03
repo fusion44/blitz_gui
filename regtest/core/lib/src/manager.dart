@@ -79,6 +79,13 @@ class NetworkManager {
 
   List<LnNode> get lnNodes => _containerMap.values.whereType<LnNode>().toList();
 
+  /// Get all nodes that are controllable by the user
+  List<DockerContainer> get userNodes => _containerMap.values
+      .where((element) =>
+          element.type != ContainerType.redis &&
+          element.type != ContainerType.blitzApi)
+      .toList();
+
   /// Starts the network if down
   ///
   /// If [exposeDataDirToHost] is true, the data directory will not be made
@@ -125,16 +132,23 @@ class NetworkManager {
     }
 
     for (final ContainerData c in containers) {
+      DockerContainer? container;
       if (c.image.contains('bitcoin-core')) {
-        final container =
-            await BitcoinCoreContainer.fromRunningContainer(c, null);
-        _containerMap[c.internalId] = container;
-
-        continue;
+        container = await BitcoinCoreContainer.fromRunningContainer(c, null);
       } else if (c.image.contains('lnd')) {
-        final container = await LndContainer.fromRunningContainer(c, null);
-        _containerMap[c.internalId] = container;
+        container = await LndContainer.fromRunningContainer(c, null);
+      } else if (c.image.contains('redis')) {
+        container = await RedisContainer.fromRunningContainer(c, null);
+      } else if (c.image.contains('blitz_api')) {
+        container = await BlitzApiContainer.fromRunningContainer(c, null);
       }
+
+      if (container == null) {
+        logMessage('Unknown container type: ${c.image}');
+        continue;
+      }
+
+      _containerMap[c.internalId] = container;
     }
   }
 
@@ -332,7 +346,7 @@ class NetworkManager {
     return null;
   }
 
-  T? findFirstOf<T>([ContainerType? type]) {
+  T? findFirstOf<T extends DockerContainer>([ContainerType? type]) {
     if (type != null) {
       for (var container in containers) {
         if (container.type == type) {
@@ -343,12 +357,8 @@ class NetworkManager {
       return null;
     }
 
-    if (T is! DockerContainer) {
-      throw ArgumentError.value(T);
-    }
-
     for (var container in containers) {
-      if (container is T) return container as T;
+      if (container is T) return container;
     }
 
     return null;

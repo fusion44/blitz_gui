@@ -17,6 +17,38 @@ class RedisOptions extends ContainerOptions {
 class RedisContainer extends DockerContainer {
   RedisContainer({opts = const RedisOptions()}) : super(opts);
 
+  // This private constructor is only available for instantiating from
+  // an actual running docker container. At this point we do have an internalId
+  // already defined and we won't create a new one.
+  RedisContainer._(
+    RedisOptions opts,
+    ContainerData cd,
+    final Function()? onDeleted,
+  ) : super(
+          opts,
+          internalId: cd.internalId,
+          onDeleted: onDeleted,
+        ) {
+    dockerId = cd.dockerId.trim();
+    setStatus(ContainerStatusMessage(cd.status, ''));
+  }
+
+  static Future<RedisContainer> fromRunningContainer(
+      ContainerData c, Function()? onDeleted) async {
+    final newContainer = RedisContainer._(
+      RedisOptions(name: c.name, image: c.image),
+      c,
+      onDeleted,
+    );
+    await newContainer.subscribeLogs();
+    
+    if (c.status == ContainerStatus.started) {
+      newContainer.running = true;
+    }
+
+    return newContainer;
+  }
+
   @override
   ContainerType get type => ContainerType.redis;
 
@@ -40,8 +72,8 @@ class RedisContainer extends DockerContainer {
       dockerId = dockerId.trim();
     }
 
-    if (dockerId.isEmpty || dockerId.length != 65) {
-      throw DockerException('Failed to start BlitzApi container: $dockerId');
+    if (dockerId.isEmpty) {
+      throw DockerException('Failed to start Redis container: $dockerId');
     }
 
     running = true;

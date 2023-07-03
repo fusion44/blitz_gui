@@ -78,22 +78,36 @@ Future<List<ContainerData>> getRunningContainerNames(
       throw StateError('Unknown container status: $dockerStatus');
     }
 
-    final dockerName = inspectJson['Name'];
+    final dockerName = inspectJson['Name'] as String;
     if (!dockerName.contains(dockerContainerNameDelimiter)) continue;
 
-    var [name, internalId] =
-        dockerName.split(dockerContainerNameDelimiter).toList();
+    var res = dockerName.split(dockerContainerNameDelimiter).toList();
+    String name = '', internalId = '';
+
+    if (res.length == 2) {
+      name = res[0];
+      internalId = res[1];
+    } else if (res.length == 4) {
+      name =
+          '${res[0]}$dockerContainerNameDelimiter${res[1]}$dockerContainerNameDelimiter${res[2]}';
+      internalId = res[3];
+    } else {
+      logMessage('Ignoring unparsable container name: $dockerName');
+      continue;
+    }
 
     final data = ContainerData(
       internalId,
       dockerId,
       inspectJson['Config']['Image'],
-      (name as String).replaceFirst('/', ''),
+      name.replaceFirst('/', ''),
       status,
       inspectData: inspectJson,
     );
 
-    if (data.name.contains(filterName)) {
+    if (filterName.isEmpty) {
+      output.add(data);
+    } else if (data.name.contains(filterName)) {
       output.add(data);
     }
   }

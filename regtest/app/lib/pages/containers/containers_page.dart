@@ -14,6 +14,7 @@ import '../../widgets/widget_utils.dart';
 import 'container_chip.dart';
 import 'node_shapes/bitcoin_core/btcc_shape.dart';
 import 'node_shapes/lnd/lnd_shape.dart';
+import 'redis_manager.dart';
 import 'utils.dart';
 
 class ContainersPage extends StatefulWidget {
@@ -65,13 +66,24 @@ class _ContainersPageState extends State<ContainersPage> {
     super.dispose();
   }
 
+  String _findComplementaryNode(DockerContainer main) {
+    for (final node in NetworkManager().nodeMap.values) {
+      if (node.type != ContainerType.blitzApi) continue;
+      if (node.name.contains(main.internalId)) {
+        return node.internalId;
+      }
+    }
+
+    return '';
+  }
+
   Future<void> _loadPositions() async {
     final store = await newFileLocalVaultStore(path: 'vaults');
     _posVault = await store.vault(name: 'positions');
     final keys = await _posVault.keys;
     final values = await _posVault.getAll(keys.toSet());
 
-    for (var node in NetworkManager().nodeMap.values) {
+    for (var node in NetworkManager().userNodes) {
       Offset? o;
       if (values.keys.contains(node.internalId)) {
         o = OffsetExtension.fromJson(values[node.internalId]);
@@ -82,7 +94,7 @@ class _ContainersPageState extends State<ContainersPage> {
           o ?? Offset.zero,
           node.type,
           node.internalId,
-          '',
+          _findComplementaryNode(node),
         ),
       );
     }
@@ -152,7 +164,8 @@ class _ContainersPageState extends State<ContainersPage> {
                                   e.complementaryContainerId,
                                 ),
                               ContainerType.lnd => LndShape(e.mainContainerId),
-                              _ => throw UnimplementedError()
+                              _ => throw UnimplementedError(
+                                  '${e.type.name} not implemented yet'),
                             },
                             onPositionUpdated: (position) async {
                               await _posVault.put(
@@ -265,11 +278,12 @@ class _ContainersPageState extends State<ContainersPage> {
     }
   }
 
-  BlitzApiOptions? _buildBlitzApiOptions(DockerContainer container) {
-    if (container.type == ContainerType.bitcoinCore) {
+  BlitzApiOptions? _buildBlitzApiOptions(DockerContainer parent) {
+    if (parent.type == ContainerType.bitcoinCore) {
       return BlitzApiOptions(
-        name: '${container.name}_bapi',
-        btccContainerId: container.internalId,
+        name: '${parent.name}$dockerContainerNameDelimiter${projectName}_bapi',
+        btccContainerId: parent.internalId,
+        redisHost: RedisManager().mainRedis.name,
       );
     }
 
