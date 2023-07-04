@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:regtest_core/core.dart';
@@ -29,7 +30,29 @@ Future<void> openTerminalInDialog(BuildContext c, String containerId) async {
 
   await NDialog(
     dialogStyle: DialogStyle(titleDivider: true),
-    title: Text(container.name),
+    title: Row(
+      children: [
+        Text(container.name),
+        const Spacer(),
+        Tooltip(
+          message:
+              'Opens this terminal into a new window.\n\n⚠️⚠️ Currently, there is a bug that closes ALL application windows when this new pup-out window is closed. ⚠️⚠️',
+          child: IconButton(
+            onPressed: () async {
+              final window = await DesktopMultiWindow.createWindow(jsonEncode({
+                'title': container.name,
+                'autoCommands': container.bootstrapCommands(),
+              }));
+              window
+                ..center()
+                ..setFrame(const Offset(0, 0) & const Size(720, 480))
+                ..show();
+            },
+            icon: const Icon(Icons.open_in_new),
+          ),
+        )
+      ],
+    ),
     content: TerminalWidget(autoCommands: container.bootstrapCommands()),
     actions: <Widget>[
       ElevatedButton(

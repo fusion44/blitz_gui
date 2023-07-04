@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:desktop_multi_window/desktop_multi_window.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:regtest_core/core.dart';
@@ -8,12 +10,31 @@ import 'gui_constants.dart';
 import 'pages/containers/containers_page.dart';
 import 'pages/main/main_page.dart';
 import 'pages/sse_inspector/sse_inspector_page.dart';
+import 'terminal_sub_window.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-void main() async {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  if (args.firstOrNull == 'multi_window') {
+    final argument = args[2].isEmpty
+        ? const {}
+        : jsonDecode(args[2]) as Map<String, dynamic>;
+    final windowId = int.parse(args[1]);
+
+    var title = argument['title'];
+    var cmds = argument['autoCommands'];
+    if (cmds is List<dynamic>) {
+      cmds = cmds.map<String>((e) => e.toString()).toList();
+    }
+
+    runApp(TerminalSubWindow(
+        cmds, title, WindowController.fromWindowId(windowId)));
+
+    return;
+  }
 
   final InitializationSettings initializationSettings = InitializationSettings(
     linux: LinuxInitializationSettings(
