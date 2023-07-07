@@ -51,6 +51,7 @@ class RedisManager {
       );
     }
 
+    _redisContainer = res;
     _isInitialized = true;
   }
 }

@@ -41,7 +41,7 @@ class RedisContainer extends DockerContainer {
       onDeleted,
     );
     await newContainer.subscribeLogs();
-    
+
     if (c.status == ContainerStatus.started) {
       newContainer.running = true;
     }
