@@ -1,0 +1,19 @@
+name: flutter_ansi_up
+description: A new Flutter package project.
+version: 0.5.1
+homepage: https://github.com/fusion44/blitz_gui
+
+environment:
+  sdk: '>=3.0.5 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:

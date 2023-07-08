@@ -196,6 +196,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_ansi_up:
+    dependency: "direct main"
+    description:
+      path: "../../packages/flutter_ansi_up"
+      relative: true
+    source: path
+    version: "0.5.1"
   flutter_bloc:
     dependency: "direct main"
     description:

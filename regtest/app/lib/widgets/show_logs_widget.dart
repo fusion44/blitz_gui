@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:regtest_core/core.dart';
 
+import 'ansi_text_widget.dart';
+
 class ShowLogsWidget extends StatefulWidget {
   final String containerId;
   const ShowLogsWidget(this.containerId, {super.key});
@@ -61,7 +63,7 @@ class _ShowLogsWidgetState extends State<ShowLogsWidget> {
 
     return SingleChildScrollView(
       controller: _controller,
-      child: SelectableText(logLines.join('\n')),
+      child: AnsiTextWidget(logLines.join('\n')),
     );
   }
 }
