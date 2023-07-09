@@ -47,11 +47,11 @@ abstract class LnNode extends DockerContainer {
       ),
     );
   }
-  String get hostname => name;
+  String get hostname => containerName;
   String get fullUri => "$pubKey@$hostname:9735";
   String? get token => _token;
   BlitzApiClient get api {
-    if (!_bootstrapped) throw Exception("Node $name not bootstrapped");
+    if (!_bootstrapped) throw Exception("Node $containerName not bootstrapped");
 
     return _api;
   }
@@ -75,7 +75,7 @@ abstract class LnNode extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to stop container $name. Error: ${result.stderr.toString()}",
+        "Failed to stop container $containerName. Error: ${result.stderr.toString()}",
       );
     }
 
@@ -86,7 +86,7 @@ abstract class LnNode extends DockerContainer {
 
   Future<void> bootstrap() async {
     if (_bootstrapped) {
-      throw Exception("Node $name already bootstrapped");
+      throw Exception("Node $containerName already bootstrapped");
     }
 
     final api = _api.getSystemApi();
@@ -106,7 +106,7 @@ abstract class LnNode extends DockerContainer {
     } on DioError catch (e) {
       printDioError(
         e,
-        'Node $name: Exception when calling SystemApi->systemLoginSystemLoginPost',
+        'Node $containerName: Exception when calling SystemApi->systemLoginSystemLoginPost',
       );
     }
 
@@ -116,7 +116,7 @@ abstract class LnNode extends DockerContainer {
           await _api.getLightningApi().lightningGetInfoLightningGetInfoGet();
 
       if (lnInfoResp.statusCode != 200) {
-        throw Exception("Failed to bootstrap node $name");
+        throw Exception("Failed to bootstrap node $containerName");
       }
 
       if (lnInfoResp.data!.identityPubkey != null) {
@@ -129,16 +129,16 @@ abstract class LnNode extends DockerContainer {
     } on DioError catch (e) {
       printDioError(
         e,
-        'Node $name: Exception when calling SystemApi->systemLoginSystemLoginPost',
+        'Node $containerName: Exception when calling SystemApi->systemLoginSystemLoginPost',
       );
 
       logMessage(
-        "Unable to bootstrap $name with pubkey $pubKey, ${_api.dio.options.baseUrl}",
+        "Unable to bootstrap $containerName with pubkey $pubKey, ${_api.dio.options.baseUrl}",
       );
     }
 
     logMessage(
-      "Bootstrapped $name with pubkey $pubKey, ${_api.dio.options.baseUrl}",
+      "Bootstrapped $containerName with pubkey $pubKey, ${_api.dio.options.baseUrl}",
     );
   }
 
@@ -210,7 +210,8 @@ abstract class LnNode extends DockerContainer {
       return res.data ?? '';
     } catch (e) {
       if (e is DioError) {
-        printDioError(e, "Error opening channel from $name to ${to.name}");
+        printDioError(e,
+            "Error opening channel from $containerName to ${to.containerName}");
       }
 
       logMessage("$e");
@@ -270,7 +271,7 @@ abstract class LnNode extends DockerContainer {
       return true;
     } catch (e) {
       if (e is DioError) {
-        printDioError(e, "Error paying invoice from $name}");
+        printDioError(e, "Error paying invoice from $containerName}");
       }
 
       logMessage("$e");
@@ -317,7 +318,7 @@ abstract class LnNode extends DockerContainer {
       return d;
     } catch (e) {
       if (e is DioError) {
-        printDioError(e, "Error fetching channels from $name");
+        printDioError(e, "Error fetching channels from $containerName");
       }
 
       logMessage("$e");
@@ -345,7 +346,7 @@ abstract class LnNode extends DockerContainer {
       return res.data;
     } catch (e) {
       if (e is DioError) {
-        printDioError(e, "Error sending on-chain from $name");
+        printDioError(e, "Error sending on-chain from $containerName");
       }
 
       logMessage("$e");
@@ -363,7 +364,8 @@ abstract class LnNode extends DockerContainer {
         await c.from.closeChannel(c);
         numClosed++;
       } catch (e) {
-        print("sweepChannels($name): Failed to close channel ${c.id}: $e");
+        print(
+            "sweepChannels($containerName): Failed to close channel ${c.id}: $e");
       }
     }
 

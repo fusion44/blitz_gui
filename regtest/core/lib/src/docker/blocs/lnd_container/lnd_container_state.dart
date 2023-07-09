@@ -18,7 +18,7 @@ class LndStatusUpdate extends LndContainerState {
       throw StateError('LndContainer with ID $containerId not found');
     }
 
-    return LndStatusUpdate(c.status, c.name, c.image, c.dataPath);
+    return LndStatusUpdate(c.status, c.containerName, c.image, c.dataPath);
   }
 
   @override

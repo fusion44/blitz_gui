@@ -308,7 +308,7 @@ class BitcoinCoreContainer extends DockerContainer {
         .addOption('--expose', '29001')
         .addOption('--publish-all')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addOption('--detach');
 
     if (opts.makeDataDirPublic) {

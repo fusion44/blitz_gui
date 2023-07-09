@@ -76,7 +76,7 @@ class BlitzApiContainerBloc
       emit(
         BlitzApiStatusUpdate(
           event.status,
-          c.name,
+          c.containerName,
           c.image,
           c.workDir,
         ),

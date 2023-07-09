@@ -69,7 +69,7 @@ class _ContainersPageState extends State<ContainersPage> {
   String _findComplementaryNode(DockerContainer main) {
     for (final node in NetworkManager().nodeMap.values) {
       if (node.type != ContainerType.blitzApi) continue;
-      if (node.name.contains(main.internalId)) {
+      if (node.containerName.contains(main.internalId)) {
         return node.internalId;
       }
     }
@@ -286,7 +286,7 @@ class _ContainersPageState extends State<ContainersPage> {
     BitcoinCoreContainer? btcc,
   ]) {
     final name =
-        '${parent.name}$dockerContainerNameDelimiter${projectName}_bapi';
+        '${parent.containerName}$dockerContainerNameDelimiter${projectName}_bapi';
 
     final btccContainer =
         btcc ?? NetworkManager().findFirstOf<BitcoinCoreContainer>();
@@ -295,7 +295,7 @@ class _ContainersPageState extends State<ContainersPage> {
       return BlitzApiOptions(
         name: name,
         btccContainerId: parent.internalId,
-        redisHost: RedisManager().mainRedis.name,
+        redisHost: RedisManager().mainRedis.containerName,
         redisDB: RedisManager().generateDbId(parent.internalId),
       );
     }
@@ -309,7 +309,7 @@ class _ContainersPageState extends State<ContainersPage> {
         name: name,
         btccContainerId: btccContainer.internalId,
         lnContainerId: parent.internalId,
-        redisHost: RedisManager().mainRedis.name,
+        redisHost: RedisManager().mainRedis.containerName,
         redisDB: RedisManager().generateDbId(parent.internalId),
       );
     }

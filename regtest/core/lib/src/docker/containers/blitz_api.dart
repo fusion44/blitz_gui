@@ -194,7 +194,7 @@ class BlitzApiContainer extends DockerContainer {
         .addOption('--restart', 'on-failure')
         .addOption('--volume', '$dockerDataDir:/root/data')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addEnv('secret=please_please_update_me_please')
         .addEnv('algorithm=HS256')
         .addEnv('jwt_expiry_time=999999999')
@@ -209,7 +209,7 @@ class BlitzApiContainer extends DockerContainer {
         .addEnv('REDIS_HOST=${opts.redisHost}')
         .addEnv('REDIS_PORT=${opts.redisPort}')
         .addEnv('REDIS_DB=${opts.redisDB}')
-        .addEnv('bitcoind_ip_regtest=${btcc.name}')
+        .addEnv('bitcoind_ip_regtest=${btcc.containerName}')
         .addEnv('bitcoind_port_rpc_regtest=18443')
         .addEnv('bitcoind_zmq_block_rpc=rawblock')
         .addEnv('bitcoind_zmq_block_port_regtest=29001')
@@ -225,7 +225,7 @@ class BlitzApiContainer extends DockerContainer {
         .addEnv('cln_grpc_cert=${n.gRPCCert}')
         .addEnv('cln_grpc_key=${n.gRPCClientKey}')
         .addEnv('cln_grpc_ca=${n.gRPCCACert}')
-        .addEnv('cln_grpc_ip=${n.name}')
+        .addEnv('cln_grpc_ip=${n.containerName}')
         .addEnv('cln_grpc_port=${n.gRPCPort}');
   }
 
@@ -233,10 +233,10 @@ class BlitzApiContainer extends DockerContainer {
     argBuilder
         .addEnv('ln_node=lnd_grpc')
         .addEnv(
-          'lnd_macaroon=/root/data/${n.shortName}/data/chain/bitcoin/regtest/admin.macaroon',
+          'lnd_macaroon=/root/data/${n.name}/data/chain/bitcoin/regtest/admin.macaroon',
         )
-        .addEnv('lnd_cert=/root/data/${n.shortName}/tls.cert')
-        .addEnv('lnd_grpc_ip=${n.name}')
+        .addEnv('lnd_cert=/root/data/${n.name}/tls.cert')
+        .addEnv('lnd_grpc_ip=${n.containerName}')
         .addEnv('lnd_grpc_port=${n.gRPCPort}')
         .addEnv('lnd_rest_port=${n.restPort}');
   }

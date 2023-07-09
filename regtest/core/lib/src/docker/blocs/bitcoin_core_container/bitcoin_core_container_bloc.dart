@@ -76,7 +76,7 @@ class BitcoinCoreContainerBloc
       emit(
         BitcoinCoreStatusUpdate(
           event.status,
-          c.name,
+          c.containerName,
           c.image,
           c.workDir,
         ),

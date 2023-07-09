@@ -32,7 +32,7 @@ class CashuMintContainer extends DockerContainer {
         .addOption('--expose', '3338')
         .addOption('--publish-all')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addOption('--volume', '$dataPath:/root/.cashu/')
         .addOption('--detach')
         .addArg(image);
@@ -45,7 +45,7 @@ class CashuMintContainer extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to start container $name. Error: ${result.stderr.toString()}",
+        "Failed to start container $containerName. Error: ${result.stderr.toString()}",
       );
     }
 

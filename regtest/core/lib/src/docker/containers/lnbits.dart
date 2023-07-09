@@ -46,10 +46,10 @@ class LNbitsContainer extends DockerContainer {
         .addOption('--expose', '5001')
         .addOption('--publish-all')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addOption('--volume', '$dataPath:/root/.cashu/')
         .addOption('--volume', './data/lnd3:/app/lnd:uid=1000,gid=1000')
-        .addEnv('HOST=$name')
+        .addEnv('HOST=$containerName')
         .addEnv('PORT=5001')
         .addEnv('DEBUG=true')
         .addEnv('LNBITS_BACKEND_WALLET_CLASS="LndRestWallet"')
@@ -70,7 +70,7 @@ class LNbitsContainer extends DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to start container $name. Error: ${result.stderr.toString()}",
+        "Failed to start container $containerName. Error: ${result.stderr.toString()}",
       );
     }
 

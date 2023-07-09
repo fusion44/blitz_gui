@@ -203,11 +203,11 @@ class _LndShapeState extends State<LndShape> {
   _editSettings(BuildContext context) async {
     final c = NetworkManager().nodeMap[widget.lndContainerId] as LndContainer;
     final ValueNotifier<LndOptions> notifier = ValueNotifier<LndOptions>(
-      LndOptions(name: c.name, image: c.image, workDir: c.dataPath),
+      LndOptions(name: c.containerName, image: c.image, workDir: c.dataPath),
     );
 
     final opts = LndOptions(
-      name: c.name,
+      name: c.containerName,
       image: c.image,
       workDir: c.dataPath,
     );

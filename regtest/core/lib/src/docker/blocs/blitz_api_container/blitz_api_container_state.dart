@@ -22,7 +22,7 @@ class BlitzApiStatusUpdate extends BlitzApiContainerState {
       throw StateError('BlitzApiContainer with ID $containerId not found');
     }
 
-    return BlitzApiStatusUpdate(c.status, c.name, c.image, c.dataPath);
+    return BlitzApiStatusUpdate(c.status, c.containerName, c.image, c.dataPath);
   }
 
   @override

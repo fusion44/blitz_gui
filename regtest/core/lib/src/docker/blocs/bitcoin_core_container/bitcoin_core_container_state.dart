@@ -22,7 +22,12 @@ class BitcoinCoreStatusUpdate extends BitcoinCoreContainerState {
       throw StateError('BitcoinCoreContainer with ID $containerId not found');
     }
 
-    return BitcoinCoreStatusUpdate(c.status, c.name, c.image, c.dataPath);
+    return BitcoinCoreStatusUpdate(
+      c.status,
+      c.containerName,
+      c.image,
+      c.dataPath,
+    );
   }
 
   @override

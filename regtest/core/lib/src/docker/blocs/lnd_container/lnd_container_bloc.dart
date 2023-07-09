@@ -71,7 +71,7 @@ class LndContainerBloc extends Bloc<LndContainerEvent, LndContainerState> {
       emit(
         LndStatusUpdate(
           event.status,
-          c.name,
+          c.containerName,
           c.image,
           c.workDir,
         ),

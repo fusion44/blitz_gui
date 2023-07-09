@@ -102,8 +102,8 @@ abstract class DockerContainer {
         image = opts.image,
         workDir = opts.workDir;
 
-  String get shortName => _name;
-  String get name => _name + dockerContainerNameDelimiter + internalId;
+  String get name => _name;
+  String get containerName => _name + dockerContainerNameDelimiter + internalId;
   String get dataPath => '$workDir/$_name';
   Stream<ContainerStatusMessage> get statusStream => _statusCtrl.stream;
   Stream<String> get logStream => logCtrl.stream;
@@ -134,7 +134,7 @@ abstract class DockerContainer {
     }
 
     if (running) await stop();
-    if (running) throw StateError('Unable to stop container $name');
+    if (running) throw StateError('Unable to stop container $containerName');
 
     stdOutSub?.cancel();
     stdOutSub = null;
@@ -150,7 +150,7 @@ abstract class DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to delete container $name. Error: ${result.stderr}",
+        "Failed to delete container $containerName. Error: ${result.stderr}",
       );
     }
 
@@ -160,7 +160,7 @@ abstract class DockerContainer {
 
   @override
   String toString() {
-    return 'DockerContainer{containerName: $name, image: $image, workDir: $workDir}';
+    return 'DockerContainer{containerName: $containerName, image: $image, workDir: $workDir}';
   }
 
   @protected

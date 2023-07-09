@@ -47,7 +47,7 @@ class CLNContainer extends LnNode {
         .addArg('--publish-all')
         .addOption('--volume', '$dataPath:/root/.lightning/')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addArg('--detach')
         .addArg(image)
         .addArg('--alias=$opts.alias')

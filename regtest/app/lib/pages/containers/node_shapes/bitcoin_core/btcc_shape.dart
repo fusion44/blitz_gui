@@ -212,7 +212,7 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
     final c = NetworkManager().nodeMap[widget.btccContainerId]
         as BitcoinCoreContainer;
     final opts = BitcoinCoreOptions(
-      name: c.name,
+      name: c.containerName,
       image: c.image,
       workDir: c.dataPath,
       fundWallet: c.opts.fundWallet,

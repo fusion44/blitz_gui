@@ -32,7 +32,7 @@ Future<void> openTerminalInDialog(BuildContext c, String containerId) async {
     dialogStyle: DialogStyle(titleDivider: true),
     title: Row(
       children: [
-        Text(container.name),
+        Text(container.containerName),
         const Spacer(),
         Tooltip(
           message:
@@ -40,7 +40,7 @@ Future<void> openTerminalInDialog(BuildContext c, String containerId) async {
           child: IconButton(
             onPressed: () async {
               final window = await DesktopMultiWindow.createWindow(jsonEncode({
-                'title': container.name,
+                'title': container.containerName,
                 'autoCommands': container.bootstrapCommands(),
               }));
               window
@@ -73,7 +73,7 @@ Future<void> openLogWindowInDialog(BuildContext c, String containerId) async {
 
   await NDialog(
     dialogStyle: DialogStyle(titleDivider: true),
-    title: Text(container.name),
+    title: Text(container.containerName),
     content: ShowLogsWidget(containerId),
     actions: <Widget>[
       ElevatedButton(

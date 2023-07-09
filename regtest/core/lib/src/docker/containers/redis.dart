@@ -60,7 +60,7 @@ class RedisContainer extends DockerContainer {
         .addOption('--restart', 'on-failure')
         .addOption('--expose', '6379')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addOption('--detach')
         .addArg(image);
 

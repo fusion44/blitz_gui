@@ -104,7 +104,7 @@ class LndContainer extends LnNode {
   @override
   List<String> bootstrapCommands() => [
         ...super.bootstrapCommands(),
-        'alias lncli="lncli --network regtest --rpcserver=$name:$_gRPCPort"\n',
+        'alias lncli="lncli --network regtest --rpcserver=$containerName:$_gRPCPort"\n',
       ];
 
   List<String> _buildRunDockerArgs() {
@@ -130,7 +130,7 @@ class LndContainer extends LnNode {
         .addArg('--publish-all')
         .addOption('--volume', '$dataPath:/root/.lnd/')
         .addOption('--network', projectNetwork)
-        .addOption('--name', name)
+        .addOption('--name', containerName)
         .addArg('--detach')
         .addArg(image)
         .addArg('--alias=$alias')
@@ -140,9 +140,9 @@ class LndContainer extends LnNode {
         .addArg('--bitcoin.active')
         .addArg('--bitcoin.regtest')
         .addArg('--bitcoin.node=bitcoind')
-        .addArg('--bitcoind.rpchost=${btcc.name}')
-        .addArg('--bitcoind.zmqpubrawtx=tcp://${btcc.name}:29000')
-        .addArg('--bitcoind.zmqpubrawblock=tcp://${btcc.name}:29001')
+        .addArg('--bitcoind.rpchost=${btcc.containerName}')
+        .addArg('--bitcoind.zmqpubrawtx=tcp://${btcc.containerName}:29000')
+        .addArg('--bitcoind.zmqpubrawblock=tcp://${btcc.containerName}:29001')
         .addArg('--bitcoind.rpcuser=regtester')
         .addArg('--bitcoind.rpcpass=regtester')
         .addArg('--noseedbackup')
@@ -150,7 +150,7 @@ class LndContainer extends LnNode {
         .addArg('--tlsextraip=127.0.0.1')
         .addArg('--tlsextraip=0.0.0.0')
         .addArg('--tlsextradomain=localhost')
-        .addArg('--tlsextradomain=$name')
+        .addArg('--tlsextradomain=$containerName')
         .build();
   }
 }
