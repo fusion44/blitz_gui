@@ -102,6 +102,7 @@ abstract class DockerContainer {
         image = opts.image,
         workDir = opts.workDir;
 
+  String get shortName => _name;
   String get name => _name + dockerContainerNameDelimiter + internalId;
   String get dataPath => '$workDir/$_name';
   Stream<ContainerStatusMessage> get statusStream => _statusCtrl.stream;

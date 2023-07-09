@@ -163,7 +163,10 @@ class _ContainersPageState extends State<ContainersPage> {
                                   e.mainContainerId,
                                   e.complementaryContainerId,
                                 ),
-                              ContainerType.lnd => LndShape(e.mainContainerId),
+                              ContainerType.lnd => LndShape(
+                                  e.mainContainerId,
+                                  e.complementaryContainerId,
+                                ),
                               _ => throw UnimplementedError(
                                   '${e.type.name} not implemented yet'),
                             },
@@ -278,12 +281,36 @@ class _ContainersPageState extends State<ContainersPage> {
     }
   }
 
-  BlitzApiOptions? _buildBlitzApiOptions(DockerContainer parent) {
+  BlitzApiOptions? _buildBlitzApiOptions(
+    DockerContainer parent, [
+    BitcoinCoreContainer? btcc,
+  ]) {
+    final name =
+        '${parent.name}$dockerContainerNameDelimiter${projectName}_bapi';
+
+    final btccContainer =
+        btcc ?? NetworkManager().findFirstOf<BitcoinCoreContainer>();
+
     if (parent.type == ContainerType.bitcoinCore) {
       return BlitzApiOptions(
-        name: '${parent.name}$dockerContainerNameDelimiter${projectName}_bapi',
+        name: name,
         btccContainerId: parent.internalId,
         redisHost: RedisManager().mainRedis.name,
+        redisDB: RedisManager().generateDbId(parent.internalId),
+      );
+    }
+
+    if (btccContainer == null) {
+      throw StateError('No btcc container found');
+    }
+
+    if (parent.type == ContainerType.lnd) {
+      return BlitzApiOptions(
+        name: name,
+        btccContainerId: btccContainer.internalId,
+        lnContainerId: parent.internalId,
+        redisHost: RedisManager().mainRedis.name,
+        redisDB: RedisManager().generateDbId(parent.internalId),
       );
     }
 

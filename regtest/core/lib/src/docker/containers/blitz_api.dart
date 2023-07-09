@@ -232,11 +232,13 @@ class BlitzApiContainer extends DockerContainer {
   void _buildLndArgs(DockerArgBuilder argBuilder, LndContainer n) {
     argBuilder
         .addEnv('ln_node=lnd_grpc')
-        .addEnv('lnd_macaroon="${n.adminMacaroonPath}')
-        .addEnv('lnd_cert="${n.tlsCertPath}')
-        .addEnv('lnd_grpc_ip="${n.name}')
-        .addEnv('lnd_grpc_port="${n.gRPCPort}')
-        .addEnv('lnd_rest_port="${n.restPort}');
+        .addEnv(
+          'lnd_macaroon=/root/data/${n.shortName}/data/chain/bitcoin/regtest/admin.macaroon',
+        )
+        .addEnv('lnd_cert=/root/data/${n.shortName}/tls.cert')
+        .addEnv('lnd_grpc_ip=${n.name}')
+        .addEnv('lnd_grpc_port=${n.gRPCPort}')
+        .addEnv('lnd_rest_port=${n.restPort}');
   }
 
   void _buildClnJrpcArgs(LnNode ln, DockerArgBuilder argBuilder) {
