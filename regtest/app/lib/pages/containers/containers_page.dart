@@ -38,6 +38,7 @@ class _ContainersPageState extends State<ContainersPage> {
   StreamSubscription<DockerContainer>? _containerDelSub;
   late final Vault _posVault;
   bool _loading = true;
+  final portMgr = PortManager();
 
   @override
   void initState() {
@@ -47,10 +48,10 @@ class _ContainersPageState extends State<ContainersPage> {
 
         setState(() {
           _canvasKey = GlobalKey();
-          final l = nodes.length;
+          portMgr.clearPorts(container.usedPorts);
           nodes.removeWhere(
-              (element) => element.mainContainerId == container.internalId);
-          if (nodes.length == l) throw StateError("No container deleted");
+            (element) => element.mainContainerId == container.internalId,
+          );
         });
       },
     );
@@ -230,12 +231,12 @@ class _ContainersPageState extends State<ContainersPage> {
         feedback: i,
         data: containerType,
         child: i,
-        onDragEnd: (data) {
-          _addContainer(containerType, data.offset);
+        onDragEnd: (data) async {
+          await _addContainer(containerType, data.offset);
         });
   }
 
-  void _addContainer(ContainerType type, Offset globalPos) {
+  Future<void> _addContainer(ContainerType type, Offset globalPos) async {
     final targetCtx = _canvasKey.currentContext;
     if (targetCtx == null) throw StateError('No context when adding container');
 
@@ -255,7 +256,7 @@ class _ContainersPageState extends State<ContainersPage> {
         ContainerType.lnd =>
           NetworkManager().createContainer(
             ContainerType.blitzApi,
-            opts: _buildBlitzApiOptions(container),
+            opts: await _buildBlitzApiOptions(container),
           ),
         _ => null
       };
@@ -281,10 +282,10 @@ class _ContainersPageState extends State<ContainersPage> {
     }
   }
 
-  BlitzApiOptions? _buildBlitzApiOptions(
+  Future<BlitzApiOptions?> _buildBlitzApiOptions(
     DockerContainer parent, [
     BitcoinCoreContainer? btcc,
-  ]) {
+  ]) async {
     final name =
         '${parent.containerName}$dockerContainerNameDelimiter${projectName}_bapi';
 
@@ -297,6 +298,7 @@ class _ContainersPageState extends State<ContainersPage> {
         btccContainerId: parent.internalId,
         redisHost: RedisManager().mainRedis.containerName,
         redisDB: RedisManager().generateDbId(parent.internalId),
+        apiRestPort: await portMgr.nextUnusedPort(BlitzApiContainer.portRange),
       );
     }
 
@@ -311,6 +313,7 @@ class _ContainersPageState extends State<ContainersPage> {
         lnContainerId: parent.internalId,
         redisHost: RedisManager().mainRedis.containerName,
         redisDB: RedisManager().generateDbId(parent.internalId),
+        apiRestPort: await portMgr.nextUnusedPort(BlitzApiContainer.portRange),
       );
     }
 

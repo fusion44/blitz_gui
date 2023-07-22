@@ -30,11 +30,11 @@ class CashuMintContainer extends DockerContainer {
         .addArg("run")
         .addOption('--restart', 'on-failure')
         .addOption('--expose', '3338')
-        .addOption('--publish-all')
+        .addArg('--publish-all')
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
         .addOption('--volume', '$dataPath:/root/.cashu/')
-        .addOption('--detach')
+        .addArg('--detach')
         .addArg(image);
 
     final result = await Process.run(

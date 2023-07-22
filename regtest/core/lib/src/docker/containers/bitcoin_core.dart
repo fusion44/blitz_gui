@@ -306,10 +306,10 @@ class BitcoinCoreContainer extends DockerContainer {
         .addOption('--expose', '18443')
         .addOption('--expose', '29000')
         .addOption('--expose', '29001')
-        .addOption('--publish-all')
+        .addArg('--publish-all')
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
-        .addOption('--detach');
+        .addArg('--detach');
 
     if (opts.makeDataDirPublic) {
       builder.addOption('--volume', '$dataPath:/root/.bitcoin/');

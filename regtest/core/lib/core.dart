@@ -9,4 +9,5 @@ export 'src/utils.dart';
 export 'src/models.dart';
 export 'src/model_extensions.dart';
 export 'src/manager.dart';
+export 'src/port_manager.dart';
 export 'src/docker/docker.dart';

@@ -79,6 +79,9 @@ abstract class DockerContainer {
   /// Call back
   final Function()? onDeleted;
 
+  /// Used ports by this container
+  final List<int> _usedPorts = [];
+
   @protected
   Stream<String>? stdOut;
   @protected
@@ -104,11 +107,14 @@ abstract class DockerContainer {
 
   String get name => _name;
   String get containerName => _name + dockerContainerNameDelimiter + internalId;
-  String get dataPath => '$workDir/$_name';
+  String get dataPath => '$workDir/$containerName';
   Stream<ContainerStatusMessage> get statusStream => _statusCtrl.stream;
   Stream<String> get logStream => logCtrl.stream;
   ContainerStatusMessage get status => _currentStatus;
   ContainerType get type;
+
+  /// The ports used by this container.
+  List<int> get usedPorts => _usedPorts;
 
   Future<void> start();
 
@@ -141,7 +147,7 @@ abstract class DockerContainer {
     stdErrSub?.cancel();
     stdErrSub = null;
 
-    final argBuilder = DockerArgBuilder().addArg('rm').addOption(dockerId);
+    final argBuilder = DockerArgBuilder().addArg('rm').addArg(dockerId);
     final result = await Process.run(
       'docker',
       argBuilder.build(),

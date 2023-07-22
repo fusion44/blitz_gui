@@ -33,6 +33,10 @@ class NetworkStateMessage {
 class NetworkManager {
   bool _isInitialized = false;
   final Map<String, DockerContainer> _containerMap = {};
+  final Map<ContainerType, int> _containerIds = {
+    ContainerType.cln: 0,
+    ContainerType.lnd: 0
+  };
 
   static final NetworkManager _instance = NetworkManager._internal();
 
@@ -364,6 +368,26 @@ class NetworkManager {
     return null;
   }
 
+  List<T> findAllOf<T extends DockerContainer>([ContainerType? type]) {
+    final list = <T>[];
+
+    if (type != null) {
+      for (var container in containers) {
+        if (container.type == type) {
+          list.add(container as T);
+        }
+      }
+
+      return list;
+    }
+
+    for (var container in containers) {
+      if (container is T) list.add(container);
+    }
+
+    return list;
+  }
+
   BlitzApiContainer _createBlitzApiContainer(ContainerOptions? opts) {
     if (opts != null && opts is! BlitzApiOptions) {
       throw ArgumentError.value(opts);
@@ -386,6 +410,17 @@ class NetworkManager {
 
       lndOptions = lndOptions.copyWith(btccContainerId: btcc.internalId);
     }
+    const int defaultgRPCPort = 11100;
+    const int defaultRestPort = 8080;
+
+    var currId = _containerIds[ContainerType.lnd] ??= 0;
+
+    lndOptions = lndOptions.copyWith(
+      gRPCPort: defaultgRPCPort + currId,
+      restPort: defaultRestPort + currId,
+    );
+
+    _containerIds[ContainerType.lnd] = ++currId;
 
     return LndContainer(lndOpts: lndOptions);
   }

@@ -2,6 +2,7 @@ library docker.containers;
 
 import 'dart:async';
 
+import 'package:common/common.dart';
 import 'package:regtest_core/core.dart';
 
 import '../arg_builder.dart';
@@ -15,12 +16,14 @@ class BlitzApiOptions extends ContainerOptions {
   final String redisHost;
   final int redisPort;
   final int redisDB;
+  final int apiRestPort;
   final ClnConnectionMode clnMode;
 
   BlitzApiOptions({
     required super.name,
     required this.btccContainerId,
     required this.redisHost,
+    required this.apiRestPort,
     this.lnContainerId = '',
     this.redisPort = 6379,
     this.redisDB = 0,
@@ -35,6 +38,7 @@ class BlitzApiOptions extends ContainerOptions {
         name: '',
         lnContainerId: '',
         redisHost: '',
+        apiRestPort: 0,
       );
 
   @override
@@ -52,6 +56,7 @@ class BlitzApiOptions extends ContainerOptions {
 class BlitzApiContainer extends DockerContainer {
   static const requirements = [ContainerType.bitcoinCore, ContainerType.redis];
   static const optionals = [ContainerType.cln, ContainerType.lnd];
+  static const portRange = ValueRange(8800, 8899);
 
   BlitzApiOptions opts;
 
@@ -106,6 +111,26 @@ class BlitzApiContainer extends DockerContainer {
       throw StateError('Redis DB not found');
     }
 
+    if (!c.inspectData.containsKey('NetworkSettings') ||
+        !c.inspectData['NetworkSettings'].containsKey('Ports')) {
+      throw StateError('NetworkSettings or Port keys not found');
+    }
+
+    final ports = c.inspectData['NetworkSettings']['Ports'] as Map;
+
+    if (ports.length > 1) {
+      throw StateError('Multiple ports found');
+    }
+
+    int port = 0;
+    if (ports.isNotEmpty) {
+      port = int.tryParse(ports.values.first.first['HostPort']) ?? -1;
+    }
+
+    if (port < 0) {
+      throw StateError('Unable to determine REST port from container info.');
+    }
+
     final newContainer = BlitzApiContainer._(
       BlitzApiOptions(
         name: c.name,
@@ -113,6 +138,7 @@ class BlitzApiContainer extends DockerContainer {
         image: c.image,
         redisHost: redisHost,
         redisDB: redisDb,
+        apiRestPort: port,
       ),
       c,
       onDeleted,
@@ -128,6 +154,8 @@ class BlitzApiContainer extends DockerContainer {
 
   @override
   ContainerType get type => ContainerType.blitzApi;
+
+  int get restPort => opts.apiRestPort;
 
   @override
   Future<void> start() async {
@@ -165,9 +193,13 @@ class BlitzApiContainer extends DockerContainer {
       _buildLndArgs(argBuilder, ln as LndContainer);
     }
 
-    if (ln != null) {
-      argBuilder.addOption('--publish', '${8820 + ln.opts.id}:80');
-    }
+    argBuilder.addOption(
+      '--publish',
+      '${opts.apiRestPort}:80',
+      omit: opts.apiRestPort == 0,
+    );
+
+    usedPorts.add(opts.apiRestPort);
 
     argBuilder.addArg('--detach').addArg(image);
 
@@ -179,7 +211,7 @@ class BlitzApiContainer extends DockerContainer {
       dockerId = dockerId.trim();
     }
 
-    if (dockerId.isEmpty || dockerId.length != 65) {
+    if (dockerId.isEmpty) {
       throw DockerException('Failed to start BlitzApi container: $dockerId');
     }
 

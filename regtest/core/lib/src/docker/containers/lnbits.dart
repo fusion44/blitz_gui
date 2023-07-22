@@ -44,7 +44,7 @@ class LNbitsContainer extends DockerContainer {
         .addOption('--restart', 'on-failure')
         .addOption('--entrypoint', 'sh -c "sleep 30; poetry run lnbits"')
         .addOption('--expose', '5001')
-        .addOption('--publish-all')
+        .addArg('--publish-all')
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
         .addOption('--volume', '$dataPath:/root/.cashu/')
@@ -59,7 +59,7 @@ class LNbitsContainer extends DockerContainer {
         .addEnv(
           'LND_REST_MACAROON=./lnd/data/chain/bitcoin/regtest/admin.macaroon"',
         )
-        .addOption('--detach')
+        .addArg('--detach')
         .addArg(image);
 
     final result = await Process.run(
