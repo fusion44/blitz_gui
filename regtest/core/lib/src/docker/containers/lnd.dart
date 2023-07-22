@@ -7,15 +7,18 @@ import 'package:regtest_core/core.dart';
 import '../arg_builder.dart';
 
 class LndOptions extends LnNodeOptions {
+  final int? gRPCPort;
+  final int? restPort;
+
   LndOptions({
     String? name,
     super.image = 'boltz/lnd:0.16.2-beta',
     super.alias = '',
     super.btccContainerId = '',
     super.workDir = dockerDataDir,
-    int id = 0,
-  })  : assert(id >= 0),
-        super(name: name ?? '${projectName}_lnd_$id', id: id);
+    this.gRPCPort,
+    this.restPort,
+  }) : super(name: name ?? '${projectName}_lnd');
 
   LndOptions copyWith({
     String? name,
@@ -23,7 +26,8 @@ class LndOptions extends LnNodeOptions {
     String? alias,
     String? btccContainerId,
     String? workDir,
-    int? id,
+    int? gRPCPort,
+    int? restPort,
   }) {
     return LndOptions(
       name: name ?? this.name,
@@ -31,19 +35,20 @@ class LndOptions extends LnNodeOptions {
       alias: alias ?? this.alias,
       btccContainerId: btccContainerId ?? this.btccContainerId,
       workDir: workDir ?? this.workDir,
-      id: id ?? this.id,
+      gRPCPort: gRPCPort ?? this.gRPCPort,
+      restPort: restPort ?? this.restPort,
     );
   }
 }
 
 class LndContainer extends LnNode {
   late final LndOptions lndOpts;
-  final int _gRPCPort;
-  final int _restPort;
+  final int? _gRPCPort;
+  final int? _restPort;
 
   LndContainer({required this.lndOpts, final Function()? onDeleted})
-      : _gRPCPort = 11109 + lndOpts.id,
-        _restPort = 8081 + lndOpts.id,
+      : _gRPCPort = lndOpts.gRPCPort,
+        _restPort = lndOpts.restPort,
         super(opts: lndOpts, onDeleted: onDeleted);
 
   // This private constructor is only available for instantiating from
@@ -53,8 +58,8 @@ class LndContainer extends LnNode {
     this.lndOpts,
     ContainerData cd,
     final Function()? onDeleted,
-  )   : _gRPCPort = 11109 + lndOpts.id,
-        _restPort = 8081 + lndOpts.id,
+  )   : _gRPCPort = lndOpts.gRPCPort,
+        _restPort = lndOpts.restPort,
         super(
           opts: lndOpts,
           internalId: cd.internalId,
@@ -68,16 +73,19 @@ class LndContainer extends LnNode {
 
   static Future<LndContainer> fromRunningContainer(
       ContainerData c, Function()? onDeleted) async {
-    final newContainer =
-        LndContainer._(LndOptions(name: c.name, image: c.image), c, onDeleted);
+    final newContainer = LndContainer._(
+      LndOptions(name: c.name, image: c.image),
+      c,
+      onDeleted,
+    );
     await newContainer.subscribeLogs();
     return newContainer;
   }
 
   @override
   ContainerType get type => ContainerType.lnd;
-  int get gRPCPort => _gRPCPort;
-  int get restPort => _restPort;
+  int? get gRPCPort => _gRPCPort;
+  int? get restPort => _restPort;
   String get adminMacaroonPath =>
       '$dataPath/data/chain/bitcoin/regtest/admin.macaroon';
   String get tlsCertPath => '$dataPath/tls.cert';
@@ -125,8 +133,8 @@ class LndContainer extends LnNode {
     return DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'always')
-        .addOption('--expose', '${8081 + o.id}')
-        .addOption('--expose', '$_gRPCPort')
+        .addOption('--expose', _gRPCPort, omit: _gRPCPort == null)
+        .addOption('--expose', _restPort, omit: _restPort == null)
         .addArg('--publish-all')
         .addOption('--volume', '$dataPath:/root/.lnd/')
         .addOption('--network', projectNetwork)
@@ -135,8 +143,8 @@ class LndContainer extends LnNode {
         .addArg(image)
         .addArg('--alias=$alias')
         .addArg('--listen=0.0.0.0:9735')
-        .addArg('--rpclisten=0.0.0.0:$_gRPCPort')
-        .addArg('--restlisten=0.0.0.0:$_restPort')
+        .addArg('--rpclisten=0.0.0.0:$_gRPCPort', omit: _gRPCPort == null)
+        .addArg('--restlisten=0.0.0.0:$_restPort', omit: _restPort == null)
         .addArg('--bitcoin.active')
         .addArg('--bitcoin.regtest')
         .addArg('--bitcoin.node=bitcoind')

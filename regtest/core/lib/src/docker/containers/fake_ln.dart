@@ -11,9 +11,7 @@ class FakeLnOptions extends LnNodeOptions {
     super.alias = '',
     super.btccContainerId = '',
     super.workDir = dockerDataDir,
-    int id = 0,
-  })  : assert(id >= 0),
-        super(name: name ?? '${projectName}_cln_$id', id: id);
+  }) : super(name: name ?? '${projectName}_cln');
 }
 
 class FakeLnContainer extends LnNode {

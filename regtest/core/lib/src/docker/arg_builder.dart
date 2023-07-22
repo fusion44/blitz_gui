@@ -1,15 +1,21 @@
 class DockerArgBuilder {
   final List<String> _args = [];
 
-  DockerArgBuilder addArg(String arg) {
-    _args.add(arg);
+  DockerArgBuilder addArg(String arg, {bool omit = false}) {
+    if (!omit) _args.add(arg);
 
     return this;
   }
 
-  DockerArgBuilder addOption(String option, [dynamic value]) {
+  DockerArgBuilder addOption(
+    String option,
+    dynamic value, {
+    bool omit = false,
+  }) {
+    if (omit) return this;
+
     _args.add(option);
-    if (value != null) _args.add(value.toString());
+    _args.add(value.toString());
 
     return this;
   }

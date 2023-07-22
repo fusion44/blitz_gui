@@ -9,28 +9,31 @@ import 'package:regtest_core/core.dart';
 import '../arg_builder.dart';
 
 class CLNOptions extends LnNodeOptions {
+  final int? gRPCPort;
+
   CLNOptions({
     String? name,
     super.image = 'boltz/c-lightning:23.02.2',
     super.alias = '',
     super.btccContainerId = '',
     super.workDir = dockerDataDir,
-    int id = 0,
-  })  : assert(id >= 0),
-        super(name: name ?? '${projectName}_cln_$id', id: id);
+    this.gRPCPort,
+  }) : super(name: name ?? '${projectName}_cln');
 }
 
 class CLNContainer extends LnNode {
-  final int _gRPCPort;
+  final int? _gRPCPort;
 
-  CLNContainer({required super.opts}) : _gRPCPort = 11109 + opts.id;
+  CLNContainer({required CLNOptions opts})
+      : _gRPCPort = opts.gRPCPort,
+        super(opts: opts);
 
   factory CLNContainer.defaultOptions() => CLNContainer(opts: CLNOptions());
 
   @override
   ContainerType get type => ContainerType.cln;
 
-  int get gRPCPort => _gRPCPort;
+  int? get gRPCPort => _gRPCPort;
   String get gRPCCert => '$dataPath/regtest/client.pem';
   String get gRPCClientKey => '$dataPath/regtest/client-key.pem';
   String get gRPCCACert => '$dataPath/regtest/ca.pem';
