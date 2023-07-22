@@ -38,7 +38,7 @@ class _AddJunkTxButtonState extends State<AddJunkTxButton> {
 
     var res = await NDialog(
       dialogStyle: DialogStyle(titleDivider: true),
-      title: Text("Add Tx Junk to ${node.id}"),
+      title: Text("Add Tx Junk to ${node.name}"),
       content: AddJunkTxDlgContent(notifier, node),
       actions: <Widget>[
         ElevatedButton(

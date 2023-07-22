@@ -36,7 +36,7 @@ class _OpenChannelButtonState extends State<OpenChannelButton> {
 
     final ok = await NDialog(
       dialogStyle: DialogStyle(titleDivider: true),
-      title: Text("Open Channel [${n.id}]"),
+      title: Text("Open Channel [${n.name}]"),
       content: OpenChannelDlgContent(notifier, n),
       actions: <Widget>[
         ElevatedButton(

@@ -44,8 +44,8 @@ class _ToolButtonsCardState extends State<ToolButtonsCard> {
                 ),
               ],
             ),
-            if (_statuses[n.id] != null)
-              Text(_statuses[n.id]!, textAlign: TextAlign.center),
+            if (_statuses[n.internalId] != null)
+              Text(_statuses[n.internalId]!, textAlign: TextAlign.center),
             const SizedBox(height: 8.0),
             const SizedBox(height: 8.0),
             _wrapToolBtn(AddJunkTxButton(n)),
@@ -103,7 +103,7 @@ class _ToolButtonsCardState extends State<ToolButtonsCard> {
 
     var res = await NDialog(
       dialogStyle: DialogStyle(titleDivider: true),
-      title: Text("New Invoice [${n.id}]"),
+      title: Text("New Invoice [${n.name}]"),
       content: GenInvoiceDlgContent(invData, n),
       actions: <Widget>[
         ElevatedButton(

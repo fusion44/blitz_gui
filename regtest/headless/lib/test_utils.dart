@@ -179,7 +179,7 @@ void printWalletBalanceComparison(WalletBalances before, WalletBalances after) {
     final b = before.balances[k]!;
     final a = after.balances[k]!;
 
-    print("Node: ${k.id}");
+    print("Node: ${k.name}");
     print(
       "  total:  ${BtcValue.fromSats(b.onchainTotalBalance).formatted()} -> ${BtcValue.fromSats(a.onchainTotalBalance).formatted()}",
     );

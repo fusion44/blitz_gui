@@ -67,7 +67,7 @@ class _ChannelsCardState extends State<ChannelsCard> {
                       child: Padding(
                         padding: const EdgeInsets.all(6.0),
                         child: Text(
-                          "to ${c.to.id}",
+                          "to ${c.to.name}",
                           textAlign: TextAlign.center,
                         ),
                       ),

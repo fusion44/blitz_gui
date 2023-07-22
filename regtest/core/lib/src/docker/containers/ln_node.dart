@@ -9,14 +9,12 @@ import '../arg_builder.dart';
 
 class LnNodeOptions extends ContainerOptions {
   final String alias;
-  final int id;
   final String btccContainerId;
 
   LnNodeOptions({
     required super.name,
     required super.image,
     super.workDir = dockerDataDir,
-    required this.id,
     required this.alias,
     required this.btccContainerId,
   });
@@ -58,7 +56,6 @@ abstract class LnNode extends DockerContainer {
 
   bool get bootstrapped => _bootstrapped;
   Implementation get implementation => Implementation.empty;
-  int get id => opts.id;
   String get alias => opts.alias;
 
   @override
@@ -229,7 +226,7 @@ abstract class LnNode extends DockerContainer {
             forceClose: false,
           );
       logMessage(
-        "Closed channel ${c.id} from ${c.from.opts.id} to ${c.to.opts.id}, txid: $res",
+        "Closed channel ${c.id} from ${c.from.name} to ${c.to.name}, txid: $res",
       );
     } catch (e) {
       if (e is! DioError) {
@@ -257,7 +254,7 @@ abstract class LnNode extends DockerContainer {
 
       printDioError(
         e,
-        "Error closing channel ${c.id} from ${c.from.opts.id}  to ${c.to.opts.id}",
+        "Error closing channel ${c.id} from ${c.from.name}  to ${c.to.name}",
       );
     }
   }

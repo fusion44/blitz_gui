@@ -233,9 +233,9 @@ class BlitzApiContainer extends DockerContainer {
     argBuilder
         .addEnv('ln_node=lnd_grpc')
         .addEnv(
-          'lnd_macaroon=/root/data/${n.name}/data/chain/bitcoin/regtest/admin.macaroon',
+          'lnd_macaroon=/root/data/${n.containerName}/data/chain/bitcoin/regtest/admin.macaroon',
         )
-        .addEnv('lnd_cert=/root/data/${n.name}/tls.cert')
+        .addEnv('lnd_cert=/root/data/${n.containerName}/tls.cert')
         .addEnv('lnd_grpc_ip=${n.containerName}')
         .addEnv('lnd_grpc_port=${n.gRPCPort}')
         .addEnv('lnd_rest_port=${n.restPort}');

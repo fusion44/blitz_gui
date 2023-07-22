@@ -36,7 +36,7 @@ class _SendOnchainButtonState extends State<SendOnchainButton> {
 
     final ok = await NDialog(
       dialogStyle: DialogStyle(titleDivider: true),
-      title: Text("Send Coins [${n.id}]"),
+      title: Text("Send Coins [${n.name}]"),
       content: SendOnchainDlgContent(notifier, n),
       actions: <Widget>[
         ElevatedButton(
