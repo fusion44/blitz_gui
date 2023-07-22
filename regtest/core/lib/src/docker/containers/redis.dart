@@ -61,8 +61,11 @@ class RedisContainer extends DockerContainer {
         .addOption('--expose', '6379')
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
-        .addOption('--detach')
-        .addArg(image);
+        .addArg('--detach')
+        .addArg(image)
+        // overriding CMD to allow more databases
+        .addArg('redis-server')
+        .addOption('--databases', 32);
 
     if (dockerId.isNotEmpty) {
       await runDockerCommand(["start", dockerId]);

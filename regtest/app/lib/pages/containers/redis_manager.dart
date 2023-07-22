@@ -28,19 +28,10 @@ class RedisManager {
     if (_isInitialized) {
       return;
     }
-    final store = await newFileLocalVaultStore(path: 'vaults');
-    _vault = await store.vault(name: 'redis_db_ids');
-
-    final keys = await _vault.keys;
-    final values = await _vault.getAll(keys.toSet());
-
-    for (var id in values.keys) {
-      final val = values[id];
-      _dbCounterMap[id] = val;
-      if (_dbCounter <= val) _dbCounter = val + 1;
-    }
 
     final res = NetworkManager().findFirstOf<RedisContainer>();
+
+    await _initVault();
 
     if (res == null) {
       // We haven't found a reusable Redis container, start a new one
@@ -58,6 +49,12 @@ class RedisManager {
     }
 
     if (!res.running) await NetworkManager().startContainer(res.dockerId);
+
+    if (NetworkManager().containers.length == 1) {
+      // A very crude way of resetting the Redis counter
+      // If we are here it means only Redis is running and it is safe to reset.
+      await _clearVault();
+    }
 
     if (!res.running) {
       throw StateError(
@@ -79,5 +76,25 @@ class RedisManager {
     _vault.put(key, _dbCounter);
 
     return _dbCounterMap[key]!;
+  }
+
+  Future<void> _initVault() async {
+    final store = await newFileLocalVaultStore(path: 'vaults');
+    _vault = await store.vault(name: 'redis_db_ids');
+
+    final keys = await _vault.keys;
+    final values = await _vault.getAll(keys.toSet());
+
+    for (var id in values.keys) {
+      final val = values[id];
+      _dbCounterMap[id] = val;
+      if (_dbCounter <= val) _dbCounter = val + 1;
+    }
+  }
+
+  Future<void> _clearVault() async {
+    await _vault.clear();
+    _dbCounter = 0;
+    _dbCounterMap.clear();
   }
 }
