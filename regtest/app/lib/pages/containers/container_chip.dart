@@ -7,6 +7,7 @@ class ContainerChipWidget extends StatefulWidget {
   final double? imageScale;
   final double? chipWidth;
   final double chipHeight;
+  final String tooltip;
 
   const ContainerChipWidget(
     this.imageAssetName, {
@@ -14,6 +15,7 @@ class ContainerChipWidget extends StatefulWidget {
     this.imageScale,
     this.chipWidth,
     this.chipHeight = 39,
+    this.tooltip = '',
   });
 
   @override
@@ -27,19 +29,22 @@ class _ContainerChipWidgetState extends State<ContainerChipWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => hovered = true),
-      onExit: (_) => setState(() => hovered = false),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 150),
-        child: Container(
-          key: hovered
-              ? Key('cntr_chip_${math.Random().nextInt(99999999)}_in')
-              : Key('cntr_chip_${math.Random().nextInt(99999999)}_out'),
-          width: widget.chipWidth,
-          height: widget.chipHeight,
-          decoration: _buildBoxDecoration(hovered, theme),
-          child: Image.asset(widget.imageAssetName, scale: widget.imageScale),
+    return Tooltip(
+      message: widget.tooltip,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => hovered = true),
+        onExit: (_) => setState(() => hovered = false),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 150),
+          child: Container(
+            key: hovered
+                ? Key('cntr_chip_${math.Random().nextInt(99999999)}_in')
+                : Key('cntr_chip_${math.Random().nextInt(99999999)}_out'),
+            width: widget.chipWidth,
+            height: widget.chipHeight,
+            decoration: _buildBoxDecoration(hovered, theme),
+            child: Image.asset(widget.imageAssetName, scale: widget.imageScale),
+          ),
         ),
       ),
     );

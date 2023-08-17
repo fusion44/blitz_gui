@@ -225,6 +225,7 @@ class _ContainersPageState extends State<ContainersPage> {
       getContainerLogo(containerType),
       imageScale: scale,
       chipWidth: chipWidth,
+      tooltip: getContainerTooltip(containerType),
     );
 
     return Draggable(

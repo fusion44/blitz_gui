@@ -20,6 +20,17 @@ String getContainerLogo(ContainerType type) => switch (type) {
       ContainerType.redis => '',
     };
 
+String getContainerTooltip(ContainerType type) => switch (type) {
+      ContainerType.bitcoinCore => 'Bitcoin Core',
+      ContainerType.blitzApi => '',
+      ContainerType.cashuMint => 'Cashu Mint',
+      ContainerType.cln => 'Core Lightning Node',
+      ContainerType.fakeLn => '',
+      ContainerType.lnbits => 'LNbits Server',
+      ContainerType.lnd => 'LND Node',
+      ContainerType.redis => '',
+    };
+
 Future<void> openTerminalInDialog(BuildContext c, String containerId) async {
   final container = NetworkManager().findContainerById(containerId);
 
