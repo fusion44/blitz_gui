@@ -14,6 +14,7 @@ import '../exceptions.dart';
 
 enum ContainerStatus {
   uninitialized,
+  created,
   starting,
   started,
   stopping,

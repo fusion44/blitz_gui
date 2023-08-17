@@ -65,6 +65,7 @@ Future<List<ContainerData>> getRunningContainerNames(
 
     final dockerStatus = inspectJson['State']['Status'];
     final ContainerStatus status = switch (dockerStatus) {
+      'created' => ContainerStatus.created,
       'starting' => ContainerStatus.starting,
       'restarting' => ContainerStatus.starting,
       'running' => ContainerStatus.started,

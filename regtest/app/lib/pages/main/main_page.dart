@@ -55,8 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
       rethrow;
     }
 
-    _sub = _mgr.netStateStream
-        .listen((event) => setState(() => _networkState = event));
+    _sub = _mgr.netStateStream.listen(
+        (event) => mounted ? setState(() => _networkState = event) : null);
     _mgr.refresh();
 
     RedisManager().init();
