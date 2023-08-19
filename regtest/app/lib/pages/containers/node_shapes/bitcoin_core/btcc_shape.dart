@@ -103,7 +103,7 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
         if (state.status.status == ContainerStatus.started) {
           return _buildShape(
             state,
-            const Center(child: Text('Running Bitcoin')),
+            Center(child: Text('Running Bitcoin ${widget.btccContainerId}')),
             footer,
           );
         }

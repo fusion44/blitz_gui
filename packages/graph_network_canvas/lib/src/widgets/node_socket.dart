@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../constants.dart';
 import '../data.dart';
+import '../internal_data.dart';
 import '../theme/theme.dart';
 
 const offset = 10.0;
@@ -14,7 +15,7 @@ class NodeSocketWidget extends StatefulWidget {
   final Socket socket;
   final Size size;
   final Size parentSize;
-  final Function(TapDownDetails?)? onStartDrag;
+  final Function(Offset?)? onStartDrag;
   final Function(bool)? onHovered;
 
   const NodeSocketWidget(
@@ -46,34 +47,32 @@ class _NodeSocketWidgetState extends State<NodeSocketWidget> {
     final socketTheme =
         GraphCanvasTheme.of(context)?.socket ?? const SocketThemeData();
 
-    return Positioned(
-      left: socket.position.dx,
-      top: socket.position.dy,
-      child: MouseRegion(
-        onEnter: (_) {
-          setState(() {
-            widget.onHovered?.call(true);
-            _isHovered = true;
-          });
+    return MouseRegion(
+      onEnter: (_) {
+        setState(() {
+          widget.onHovered?.call(true);
+          _isHovered = true;
+        });
+      },
+      onExit: (_) {
+        setState(() {
+          widget.onHovered?.call(false);
+          _isHovered = false;
+        });
+      },
+      child: GestureDetector(
+        onTapDown: (details) {
+          widget.onStartDrag?.call(socket.position);
         },
-        onExit: (_) {
-          setState(() {
-            widget.onHovered?.call(false);
-            _isHovered = false;
-          });
-        },
-        child: GestureDetector(
-          onTapDown: widget.onStartDrag,
-          child: AnimatedSwitcher(
-            duration: socketTheme.hoverColorSwitchDuration,
-            child: Container(
-              key: _isHovered
-                  ? Key('socket_${math.Random().nextInt(99999999)}_1')
-                  : Key('socket_${math.Random().nextInt(99999999)}_2'),
-              width: socketTheme.size.width,
-              height: socketTheme.size.height,
-              decoration: _buildDeco(socketTheme),
-            ),
+        child: AnimatedSwitcher(
+          duration: socketTheme.hoverColorSwitchDuration,
+          child: Container(
+            key: _isHovered
+                ? Key('socket_${math.Random().nextInt(99999999)}_1')
+                : Key('socket_${math.Random().nextInt(99999999)}_2'),
+            width: socketTheme.size.width,
+            height: socketTheme.size.height,
+            decoration: _buildDeco(socketTheme),
           ),
         ),
       ),

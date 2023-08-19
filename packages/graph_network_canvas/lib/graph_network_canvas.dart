@@ -6,3 +6,4 @@ export 'src/constants.dart';
 export 'src/data.dart';
 export 'src/network_canvas.dart';
 export 'src/utils.dart';
+export 'src/node_frame_rectangle.dart';

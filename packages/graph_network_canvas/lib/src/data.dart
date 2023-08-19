@@ -1,98 +1,76 @@
 import 'package:flutter/material.dart';
 
+import 'node_frame_rectangle.dart';
+
 class GraphCanvasNodeInfo {
-  Offset position;
-  final List<Socket> _sockets;
+  final String id;
+  NodeFrameRectangle shape;
   Widget? body;
 
-  final Function(Offset position)? onPositionUpdated;
+  final Function(NodeFrameRectangle position)? onPositionUpdated;
 
   GraphCanvasNodeInfo(
-    this.position, {
-    List<Socket>? sockets,
+    this.shape, {
     this.body,
     this.onPositionUpdated,
-  }) : _sockets = sockets ?? [];
-
-  List<Socket> get sockets => _sockets;
-
-  bool get hasSockets => _sockets.isEmpty;
-
-  Socket addSocket(SocketSide side) {
-    final socket = Socket(side: side, parent: this);
-    _sockets.add(socket);
-
-    return socket;
-  }
-
-  void removeSocket(Socket socket) {
-    if (!_sockets.contains(socket)) throw StateError('Socket not found');
-
-    _sockets.remove(socket);
-  }
-
-  bool containsSocket(Socket socket) => _sockets.contains(socket);
+    this.id = '',
+  });
 
   // copyWith
-  GraphCanvasNodeInfo copyWith({Offset? position, List<Socket>? sockets}) {
+  GraphCanvasNodeInfo copyWith({NodeFrameRectangle? shape, String? id}) {
     return GraphCanvasNodeInfo(
-      position ?? this.position,
-      sockets: sockets ?? _sockets,
+      shape ?? this.shape,
       body: body,
       onPositionUpdated: onPositionUpdated,
+      id: id ?? this.id,
     );
   }
 }
 
 enum SocketSide { left, right, top, bottom }
 
-class Socket {
-  final GraphCanvasNodeInfo _parent;
-  Offset position;
-  SocketSide side;
-  Connection? connection;
-
-  Socket({
-    required this.side,
-    this.position = Offset.zero,
-    GraphCanvasNodeInfo? parent,
-    this.connection,
-  }) : _parent = parent ?? GraphCanvasNodeInfo(Offset.zero);
-
-  /// Get this Sockets global position relative to the canvas
-  Offset get globalPosition => position + _parent.position;
-
-  /// Get whether this Socket has a connection or not
-  bool get hasConnection => connection != null;
-
-  /// Copy this socket with a different parameter
-  Socket copyWith({
-    Offset? position,
-    SocketSide? side,
-    Connection? connection,
-  }) {
-    return Socket(
-      position: position ?? this.position,
-      side: side ?? this.side,
-      parent: _parent,
-      connection: connection,
-    );
+extension SocketSideExtensions on SocketSide {
+  SocketSide get opposite {
+    switch (this) {
+      case SocketSide.left:
+        return SocketSide.right;
+      case SocketSide.right:
+        return SocketSide.left;
+      case SocketSide.top:
+        return SocketSide.bottom;
+      case SocketSide.bottom:
+        return SocketSide.top;
+    }
   }
 }
 
-class Connection {
-  Socket socket1;
-  Socket socket2;
+class ConnectionData {
+  /// ID where this connection is originating from
+  final String from;
 
-  Offset get midPoint => Offset(
-        socket1.globalPosition.dx +
-            (socket2.globalPosition.dx - socket1.globalPosition.dx) / 2,
-        socket1.globalPosition.dy +
-            (socket2.globalPosition.dy - socket1.globalPosition.dy) / 2,
-      );
+  /// Target node ID
+  final String to;
 
-  Connection({required this.socket1, required this.socket2}) {
-    socket1.connection = this;
-    socket2.connection = this;
-  }
+  /// If > 0, this is a split connection the connection is drawn in two
+  /// segments. See [firstSegmentColor] and [secondSegmentColor]. If == 0
+  /// then [firstSegmentColor] will be used to draw the whole path.
+  final double splitPercentage;
+
+  /// Color of the connection and the first segment if [splitPercentage] > 0
+  final Color firstSegmentColor;
+
+  /// The color of the second segment if [splitPercentage] > 0
+  final Color secondSegmentColor;
+
+  /// See [Paint.strokeWidth]
+  final double strokeWidth;
+
+  ConnectionData(
+    this.from,
+    this.to, {
+    this.splitPercentage = 0.0,
+    this.firstSegmentColor = Colors.blueGrey,
+    this.secondSegmentColor = Colors.grey,
+    this.strokeWidth = 0.0,
+  });
 }

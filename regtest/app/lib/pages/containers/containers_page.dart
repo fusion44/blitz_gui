@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graph_network_canvas/graph_network_canvas.dart' as gnc;
+import 'package:regtest_app/connection_manager.dart';
 import 'package:regtest_core/core.dart';
 import 'package:stash/stash_api.dart';
 import 'package:stash_file/stash_file.dart';
@@ -33,12 +34,13 @@ class _ContainersPageState extends State<ContainersPage> {
 
   final notificationPlugin = FlutterLocalNotificationsPlugin();
 
-  List<ContainerNode> nodes = [];
+  Map<String, ContainerNode> nodes = {};
 
   StreamSubscription<DockerContainer>? _containerDelSub;
   late final Vault _posVault;
   bool _loading = true;
   final portMgr = PortManager();
+  final connectionMgr = ConnectionManager();
 
   @override
   void initState() {
@@ -49,9 +51,7 @@ class _ContainersPageState extends State<ContainersPage> {
         setState(() {
           _canvasKey = GlobalKey();
           portMgr.clearPorts(container.usedPorts);
-          nodes.removeWhere(
-            (element) => element.mainContainerId == container.internalId,
-          );
+          nodes.remove(container.internalId);
         });
       },
     );
@@ -85,20 +85,20 @@ class _ContainersPageState extends State<ContainersPage> {
     final values = await _posVault.getAll(keys.toSet());
 
     for (var node in NetworkManager().userNodes) {
-      Offset? o;
+      gnc.NodeFrameRectangle? o;
       if (values.keys.contains(node.internalId)) {
-        o = OffsetExtension.fromJson(values[node.internalId]);
+        o = gnc.NodeFrameRectangle.fromJson(values[node.internalId]);
       }
 
-      nodes.add(
-        ContainerNode(
-          o ?? Offset.zero,
-          node.type,
-          node.internalId,
-          _findComplementaryNode(node),
-        ),
+      nodes[node.internalId] = ContainerNode(
+        o ?? gnc.NodeFrameRectangle.zero(),
+        node.type,
+        node.internalId,
+        _findComplementaryNode(node),
       );
     }
+
+    await connectionMgr.update();
 
     setState(() {
       _loading = false;
@@ -156,27 +156,18 @@ class _ContainersPageState extends State<ContainersPage> {
 
                       return gnc.NetworkCanvas(
                         key: _canvasKey,
-                        nodes: nodes.map((e) {
+                        connections: connectionMgr.connections,
+                        nodes: nodes.values.map((e) {
                           return gnc.GraphCanvasNodeInfo(
                             e.initialPos,
-                            body: switch (e.type) {
-                              ContainerType.bitcoinCore => BitcoinCoreShape(
-                                  e.mainContainerId,
-                                  e.complementaryContainerId,
-                                ),
-                              ContainerType.lnd => LndShape(
-                                  e.mainContainerId,
-                                  e.complementaryContainerId,
-                                ),
-                              _ => throw UnimplementedError(
-                                  '${e.type.name} not implemented yet'),
-                            },
+                            body: _buildNodeInfoBody(e),
                             onPositionUpdated: (position) async {
                               await _posVault.put(
                                 e.mainContainerId,
                                 position.toJson(),
                               );
                             },
+                            id: e.mainContainerId,
                           );
                         }).toList(),
                       );
@@ -243,9 +234,11 @@ class _ContainersPageState extends State<ContainersPage> {
 
     final RenderBox target = targetCtx.findRenderObject() as RenderBox;
 
-    final initialPos = gnc.constrainNodeToCanvas(
-      target.globalToLocal(globalPos),
-      target.size,
+    final initialPos = gnc.NodeFrameRectangle.fromOffset(
+      gnc.constrainNodeToCanvas(
+        target.globalToLocal(globalPos),
+        target.size,
+      ),
     );
 
     final container = NetworkManager().createContainer(type);
@@ -266,12 +259,13 @@ class _ContainersPageState extends State<ContainersPage> {
 
       setState(() {
         _canvasKey = GlobalKey();
-        nodes.add(ContainerNode(
+        nodes[container.internalId] = ContainerNode(
           initialPos,
           type,
           container.internalId,
           bapi != null ? bapi.internalId : '',
-        ));
+        );
+        connectionMgr.update();
       });
     } on RequirementsNotMetError catch (e) {
       buildSnackbar(
@@ -320,10 +314,24 @@ class _ContainersPageState extends State<ContainersPage> {
 
     return null;
   }
+
+  StatefulWidget _buildNodeInfoBody(ContainerNode e) {
+    return switch (e.type) {
+      ContainerType.bitcoinCore => BitcoinCoreShape(
+          e.mainContainerId,
+          e.complementaryContainerId,
+        ),
+      ContainerType.lnd => LndShape(
+          e.mainContainerId,
+          e.complementaryContainerId,
+        ),
+      _ => throw UnimplementedError('${e.type.name} not implemented yet'),
+    };
+  }
 }
 
 class ContainerNode {
-  final Offset initialPos;
+  final gnc.NodeFrameRectangle initialPos;
   final ContainerType type;
 
   /// The container ID of the main container as requested by the user

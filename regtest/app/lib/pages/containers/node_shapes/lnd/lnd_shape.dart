@@ -103,7 +103,7 @@ class _LndShapeState extends State<LndShape> {
         if (state.status.status == ContainerStatus.started) {
           return _buildShape(
             state,
-            const Center(child: Text('Running LND')),
+            Center(child: Text('Running LND ${widget.lndContainerId}')),
             footer,
           );
         }
