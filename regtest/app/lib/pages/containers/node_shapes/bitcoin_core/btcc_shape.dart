@@ -33,7 +33,10 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
   @override
   void initState() {
     super.initState();
-    _bapi = BlitzApiContainerBloc(widget.bapiContainerId);
+    _bapi = BlitzApiContainerBloc(
+      widget.btccContainerId,
+      widget.bapiContainerId,
+    );
     _btcc = BitcoinCoreContainerBloc(widget.btccContainerId);
   }
 

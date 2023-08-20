@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graph_network_canvas/graph_network_canvas.dart' as gnc;
+import 'package:ndialog/ndialog.dart';
 import 'package:regtest_app/connection_manager.dart';
 import 'package:regtest_core/core.dart';
 import 'package:stash/stash_api.dart';
 import 'package:stash_file/stash_file.dart';
 
 import '../../gui_constants.dart';
+import '../../widgets/open_channel_dlg_content.dart';
 import '../../widgets/widget_utils.dart';
 import 'container_chip.dart';
 import 'node_shapes/bitcoin_core/btcc_shape.dart';
@@ -41,6 +43,8 @@ class _ContainersPageState extends State<ContainersPage> {
   bool _loading = true;
   final portMgr = PortManager();
   final connectionMgr = ConnectionManager();
+
+  final _nodeData = <String, Map<String, dynamic>>{};
 
   @override
   void initState() {
@@ -90,11 +94,19 @@ class _ContainersPageState extends State<ContainersPage> {
         o = gnc.NodeFrameRectangle.fromJson(values[node.internalId]);
       }
 
-      nodes[node.internalId] = ContainerNode(
+      final n = ContainerNode(
         o ?? gnc.NodeFrameRectangle.zero(),
         node.type,
         node.internalId,
         _findComplementaryNode(node),
+      );
+
+      nodes[node.internalId] = n;
+
+      _nodeData[n.mainContainerId] = _buildBlocs(
+        node.type,
+        node.internalId,
+        n.complementaryContainerId,
       );
     }
 
@@ -157,6 +169,8 @@ class _ContainersPageState extends State<ContainersPage> {
                       return gnc.NetworkCanvas(
                         key: _canvasKey,
                         connections: connectionMgr.connections,
+                        onConnectionEstablished: (from, to) =>
+                            _onEstablishConnection(context, from, to),
                         nodes: nodes.values.map((e) {
                           return gnc.GraphCanvasNodeInfo(
                             e.initialPos,
@@ -256,6 +270,11 @@ class _ContainersPageState extends State<ContainersPage> {
       };
 
       _posVault.put(container.internalId, initialPos.toJson());
+      _nodeData[container.internalId] = _buildBlocs(
+        type,
+        container.internalId,
+        bapi?.internalId,
+      );
 
       setState(() {
         _canvasKey = GlobalKey();
@@ -315,17 +334,84 @@ class _ContainersPageState extends State<ContainersPage> {
     return null;
   }
 
-  StatefulWidget _buildNodeInfoBody(ContainerNode e) {
-    return switch (e.type) {
-      ContainerType.bitcoinCore => BitcoinCoreShape(
-          e.mainContainerId,
-          e.complementaryContainerId,
+  Widget _buildNodeInfoBody(ContainerNode e) {
+    if (e.type == ContainerType.bitcoinCore) {
+      return BitcoinCoreShape(
+        e.mainContainerId,
+        e.complementaryContainerId,
+      );
+    }
+
+    if (e.type == ContainerType.lnd) {
+      final lnd = _nodeData[e.mainContainerId]!['main'];
+      final bapi = _nodeData[e.mainContainerId]!['bapi'];
+      return LndShape(e.mainContainerId, lnd, bapi);
+    }
+
+    throw UnimplementedError('${e.type.name} not implemented yet');
+  }
+
+  _onEstablishConnection(BuildContext c, String from, String to) {
+    DockerContainer? fromNode = NetworkManager().findContainerById(from);
+    DockerContainer? toNode = NetworkManager().findContainerById(to);
+
+    if (fromNode is LnNode && toNode is LnNode) {
+      _openChannel(c, fromNode, toNode);
+    }
+  }
+
+  _openChannel(BuildContext context, LnNode from, LnNode to) async {
+    final ValueNotifier<OpenChannelDialogData> notifier =
+        ValueNotifier<OpenChannelDialogData>(OpenChannelDialogData.empty());
+
+    final ok = await NDialog(
+      dialogStyle: DialogStyle(titleDivider: true),
+      title: Text("Open Channel [${from.name}]"),
+      content: OpenChannelDlgContent(notifier, from),
+      actions: <Widget>[
+        ElevatedButton(
+          child: const Text("OK"),
+          onPressed: () => Navigator.pop(context, "OK"),
         ),
-      ContainerType.lnd => LndShape(
-          e.mainContainerId,
-          e.complementaryContainerId,
-        ),
-      _ => throw UnimplementedError('${e.type.name} not implemented yet'),
+      ],
+    ).show(context);
+
+    if (ok == null || ok != "OK") return;
+
+    final bapiBloc = _nodeData[from.internalId]!['bapi'];
+    if (bapiBloc == null || bapiBloc is! BlitzApiContainerBloc) {
+      print('Blitz API for from node not found');
+      return;
+    }
+
+    final data = notifier.value;
+
+    bapiBloc.add(
+      BlitzApiOpenChannelEvent(to.internalId, data.numSats, data.numPushSats),
+    );
+
+    // TODO: handle auto mine etc
+  }
+
+  Map<String, dynamic> _buildBlocs(
+    ContainerType type,
+    String mainId,
+    String? complementaryId,
+  ) {
+    final mainBloc = switch (type) {
+      ContainerType.bitcoinCore => BitcoinCoreContainerBloc(mainId),
+      ContainerType.lnd => LndContainerBloc(mainId),
+      _ => throw UnimplementedError('${type.name} not implemented yet')
+    };
+
+    BlitzApiContainerBloc? bapiBloc;
+    if (complementaryId != null) {
+      bapiBloc = BlitzApiContainerBloc(mainId, complementaryId);
+    }
+
+    return {
+      'main': mainBloc,
+      if (complementaryId != null) 'bapi': bapiBloc,
     };
   }
 }

@@ -20,3 +20,15 @@ class _BlitzApiStatusUpdate extends BlitzApiContainerEvent {
 
   _BlitzApiStatusUpdate(this.status);
 }
+
+class BlitzApiOpenChannelEvent extends BlitzApiContainerEvent {
+  final String targetContainerId;
+  final int localFundingAmount;
+  final int pushSats;
+
+  BlitzApiOpenChannelEvent(
+    this.targetContainerId,
+    this.localFundingAmount,
+    this.pushSats,
+  );
+}

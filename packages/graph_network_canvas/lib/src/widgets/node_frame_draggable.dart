@@ -18,7 +18,7 @@ class NodeFrameDraggableWidget extends StatefulWidget {
   final Function(DraggableDetails details) onDragEnd;
   final Function(Velocity velocity, Offset offset)? onDraggableCanceled;
   final Function(Socket socket)? onSocketDragStarted;
-  final Function(Socket? socket)? onSocketHovered;
+  final Function(Socket? socket, GraphCanvasNodeInfo? node)? onSocketHovered;
   final Function(GraphCanvasNodeInfo? node)? onNodeHovered;
   final Size size;
 
@@ -166,6 +166,7 @@ class _NodeFrameDraggableWidgetState extends State<NodeFrameDraggableWidget> {
       onHovered: (hovered) {
         widget.onSocketHovered?.call(
           hovered ? Socket(side: side, parent: widget.node) : null,
+          widget.node,
         );
         _guardedSetState(() => _socketHovered = hovered);
       },

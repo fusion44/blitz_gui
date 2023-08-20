@@ -10,44 +10,25 @@ import '../widgets/open_blitz_terminal_btn.dart';
 import '../widgets/show_blitz_logs_btn.dart';
 import 'lnd_settings_dlg_content.dart';
 
-class LndShape extends StatefulWidget {
+class LndShape extends StatelessWidget {
   final String lndContainerId;
-  final String bapiContainerId;
   final Function()? onDeleted;
+
+  final LndContainerBloc lnd;
+  final BlitzApiContainerBloc bapi;
 
   const LndShape(
     this.lndContainerId,
-    this.bapiContainerId, {
+    this.lnd,
+    this.bapi, {
     this.onDeleted,
     super.key,
   });
 
   @override
-  State<LndShape> createState() => _LndShapeState();
-}
-
-class _LndShapeState extends State<LndShape> {
-  late final BlitzApiContainerBloc _bapi;
-  late final LndContainerBloc _lnd;
-
-  @override
-  void initState() {
-    super.initState();
-    _bapi = BlitzApiContainerBloc(widget.bapiContainerId);
-    _lnd = LndContainerBloc(widget.lndContainerId);
-  }
-
-  @override
-  void dispose() async {
-    super.dispose();
-    await _bapi.close();
-    await _lnd.close();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<LndContainerBloc, LndContainerState>(
-      bloc: _lnd,
+      bloc: lnd,
       builder: (context, state) {
         Widget? footer;
 
@@ -71,10 +52,10 @@ class _LndShapeState extends State<LndShape> {
                   )
                 ],
               ),
-              _buildFooter(ContainerStatus.uninitialized));
+              _buildFooter(ContainerStatus.uninitialized, context));
         }
 
-        footer = _buildFooter(state.status.status);
+        footer = _buildFooter(state.status.status, context);
 
         if (state.status.status == ContainerStatus.starting ||
             state.status.status == ContainerStatus.stopping ||
@@ -103,7 +84,7 @@ class _LndShapeState extends State<LndShape> {
         if (state.status.status == ContainerStatus.started) {
           return _buildShape(
             state,
-            Center(child: Text('Running LND ${widget.lndContainerId}')),
+            Center(child: Text('Running LND $lndContainerId')),
             footer,
           );
         }
@@ -129,7 +110,8 @@ class _LndShapeState extends State<LndShape> {
     ]);
   }
 
-  Widget _buildFooter(ContainerStatus status) => switch (status) {
+  Widget _buildFooter(ContainerStatus status, BuildContext context) =>
+      switch (status) {
         ContainerStatus.uninitialized => Row(
             children: [
               ElevatedButton(
@@ -149,9 +131,9 @@ class _LndShapeState extends State<LndShape> {
                 child: const Text('Stop'),
               ),
               OpenTerminalBtn(() async =>
-                  await openTerminalInDialog(context, widget.lndContainerId)),
+                  await openTerminalInDialog(context, lndContainerId)),
               ShowLogsBtn(() async =>
-                  await openLogWindowInDialog(context, widget.lndContainerId)),
+                  await openLogWindowInDialog(context, lndContainerId)),
               PopupMenuButton<String>(
                 onSelected: (item) => switch (item) {
                   'delete' => _deleteContainers(),
@@ -182,15 +164,15 @@ class _LndShapeState extends State<LndShape> {
             children: [
               ElevatedButton(
                 onPressed: () {
-                  _bapi.add(StartBlitzApiContainerEvent());
-                  _lnd.add(StartLndContainerEvent());
+                  bapi.add(StartBlitzApiContainerEvent());
+                  lnd.add(StartLndContainerEvent());
                 },
                 child: const Text('Start'),
               ),
               IconButton(
                 onPressed: () {
-                  _bapi.add(DeleteBlitzApiContainerEvent());
-                  _lnd.add(DeleteLndContainerEvent());
+                  bapi.add(DeleteBlitzApiContainerEvent());
+                  lnd.add(DeleteLndContainerEvent());
                 },
                 icon: const Icon(Icons.delete),
               ),
@@ -201,7 +183,7 @@ class _LndShapeState extends State<LndShape> {
       };
 
   _editSettings(BuildContext context) async {
-    final c = NetworkManager().nodeMap[widget.lndContainerId] as LndContainer;
+    final c = NetworkManager().nodeMap[lndContainerId] as LndContainer;
     final ValueNotifier<LndOptions> notifier = ValueNotifier<LndOptions>(
       LndOptions(name: c.containerName, image: c.image, workDir: c.dataPath),
     );
@@ -233,27 +215,27 @@ class _LndShapeState extends State<LndShape> {
     final newOpts = notifier.value;
     if (opts == newOpts) return;
 
-    _lnd.add(LndSettingsUpdatedEvent(newOpts));
+    lnd.add(LndSettingsUpdatedEvent(newOpts));
   }
 
   void _startContainers() {
-    _bapi.add(StartBlitzApiContainerEvent());
-    _lnd.add(StartLndContainerEvent());
+    bapi.add(StartBlitzApiContainerEvent());
+    lnd.add(StartLndContainerEvent());
   }
 
   void _stopContainers() {
-    _bapi.add(StopBlitzApiContainerEvent());
-    _lnd.add(StopLndContainerEvent());
+    bapi.add(StopBlitzApiContainerEvent());
+    lnd.add(StopLndContainerEvent());
   }
 
   void _deleteContainers() {
-    _bapi.add(DeleteBlitzApiContainerEvent());
-    _lnd.add(DeleteLndContainerEvent());
+    bapi.add(DeleteBlitzApiContainerEvent());
+    lnd.add(DeleteLndContainerEvent());
   }
 
   _openBlitzTerminal(BuildContext context) async =>
-      await openTerminalInDialog(context, widget.bapiContainerId);
+      await openTerminalInDialog(context, bapi.myId);
 
   _showBlitzLogs(BuildContext context) async =>
-      await openLogWindowInDialog(context, widget.bapiContainerId);
+      await openLogWindowInDialog(context, bapi.myId);
 }

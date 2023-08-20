@@ -7,9 +7,13 @@ import 'widget_utils.dart';
 class OpenChannelDlgContent extends StatefulWidget {
   final ValueNotifier<OpenChannelDialogData> changeNotifier;
   final LnNode from;
-
-  const OpenChannelDlgContent(this.changeNotifier, this.from, {Key? key})
-      : super(key: key);
+  final LnNode? to;
+  const OpenChannelDlgContent(
+    this.changeNotifier,
+    this.from, {
+    Key? key,
+    this.to,
+  }) : super(key: key);
 
   @override
   State<OpenChannelDlgContent> createState() => _OpenChannelDlgContentState();
@@ -34,7 +38,7 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
     super.initState();
 
     _destinationNodes = NetworkManager().lnNodes..remove(widget.from);
-    _destinationNode = _destinationNodes.first;
+    _destinationNode = widget.to ?? _destinationNodes.first;
     _chanSizeCtrl.addListener(_updateNotifier);
     _pushSatsCtrl.addListener(_updateNotifier);
     _broadcastDelayCtrl.addListener(_updateNotifier);
@@ -64,12 +68,12 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
           children: [
             const Text("Destination: "),
             const Spacer(),
-            DropdownButton(
+            DropdownButton<LnNode>(
               value: _destinationNode,
               items: _destinationNodes
                   .map((e) => DropdownMenuItem(
                         value: e,
-                        child: Text(e.alias),
+                        child: Text(e.name),
                       ))
                   .toList(),
               onChanged: ((value) {

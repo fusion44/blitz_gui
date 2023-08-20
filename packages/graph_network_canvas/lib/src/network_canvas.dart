@@ -15,7 +15,7 @@ class NetworkCanvas extends StatefulWidget {
   final List<ConnectionData> connections;
   final NodeFrameThemeData themeData;
 
-  final Function(Connection c)? onConnectionEstablished;
+  final Function(String from, String to)? onConnectionEstablished;
   final Function(GraphCanvasNodeInfo? hoveredNode)? onNodeHovered;
 
   const NetworkCanvas({
@@ -42,8 +42,9 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
   bool _addingConnection = false;
   Connection? _newConnection;
   Socket? _mouseSocket;
-  Socket? _hoveredSocket;
-  Socket? _sourceSocket;
+
+  GraphCanvasNodeInfo? _sourceNode;
+  GraphCanvasNodeInfo? _targetNode;
 
   @override
   void initState() {
@@ -109,20 +110,18 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
       },
       onPointerUp: (event) {
         if (!_addingConnection) return;
-        if (_hoveredSocket != null &&
-            _sourceSocket != null &&
-            !_hoveredSocket!.hasConnection) {
-          widget.onConnectionEstablished?.call(Connection(
-            from: _sourceSocket!,
-            to: _hoveredSocket!,
-          ));
+        if (_sourceNode != null && _targetNode != null) {
+          widget.onConnectionEstablished?.call(
+            _sourceNode!.id,
+            _targetNode!.id,
+          );
         }
 
         setState(() {
           _connections.remove(_newConnection);
 
           _addingConnection = false;
-          _newConnection = _sourceSocket = _mouseSocket = null;
+          _newConnection = _mouseSocket = _sourceNode = _targetNode = null;
         });
       },
       child: _buildCanvas(),
@@ -175,7 +174,7 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
             });
           },
           onSocketDragStarted: (Socket socket) {
-            _sourceSocket = socket;
+            _sourceNode = node;
             _mouseSocket = Socket(
               side: SocketSide.bottom,
               position: socket.globalPosition,
@@ -189,7 +188,7 @@ class _NetworkCanvasState extends State<NetworkCanvas> {
               _connections.add(_newConnection!);
             });
           },
-          onSocketHovered: (Socket? socket) => _hoveredSocket = socket,
+          onSocketHovered: (socket, node) => _targetNode = node,
           onNodeHovered: (GraphCanvasNodeInfo? node) =>
               widget.onNodeHovered?.call(node),
         );

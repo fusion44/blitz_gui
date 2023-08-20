@@ -31,20 +31,8 @@ abstract class LnNode extends DockerContainer {
   late String? _token;
 
   LnNode({required this.opts, String? internalId, Function()? onDeleted})
-      : super(opts, internalId: internalId, onDeleted: onDeleted) {
-    _api = BlitzApiClient(basePathOverride: 'http://localhost:8825/latest');
+      : super(opts, internalId: internalId, onDeleted: onDeleted);
 
-    _api.dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (RequestOptions options, handler) {
-          if (_token != null && _token!.isNotEmpty) {
-            options.headers["AUTHORIZATION"] = _token;
-          }
-          handler.next(options);
-        },
-      ),
-    );
-  }
   String get hostname => containerName;
   String get fullUri => "$pubKey@$hostname:9735";
   String? get token => _token;
@@ -81,10 +69,27 @@ abstract class LnNode extends DockerContainer {
     setStatus(ContainerStatusMessage(ContainerStatus.stopped, ''));
   }
 
-  Future<void> bootstrap() async {
+  Future<void> bootstrap({
+    String host = 'localhost',
+    int port = 8800,
+    String path = 'latest',
+  }) async {
     if (_bootstrapped) {
       throw Exception("Node $containerName already bootstrapped");
     }
+
+    final url = 'http://$host:$port/$path';
+    _api = BlitzApiClient(basePathOverride: url);
+    _api.dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (RequestOptions options, handler) {
+          if (_token != null && _token!.isNotEmpty) {
+            options.headers["AUTHORIZATION"] = _token;
+          }
+          handler.next(options);
+        },
+      ),
+    );
 
     final api = _api.getSystemApi();
     final builder = LoginInputBuilder()..password = "12345678";

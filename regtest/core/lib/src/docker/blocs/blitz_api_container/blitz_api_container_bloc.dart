@@ -9,7 +9,8 @@ part 'blitz_api_container_state.dart';
 
 class BlitzApiContainerBloc
     extends Bloc<BlitzApiContainerEvent, BlitzApiContainerState> {
-  final String containerId;
+  final String parentId;
+  final String myId;
 
   StreamSubscription<ContainerStatusMessage>? _sub;
 
@@ -19,13 +20,13 @@ class BlitzApiContainerBloc
     super.close();
   }
 
-  BlitzApiContainerBloc(this.containerId)
-      : super(BlitzApiStatusUpdate.fromContainer(containerId)) {
+  BlitzApiContainerBloc(this.parentId, this.myId)
+      : super(BlitzApiStatusUpdate.fromContainer(myId)) {
     on<BlitzApiSettingsUpdatedEvent>((event, emit) async {
       // NetworkManager internally creates a new Container, so we have
       // to resubscribe to get status information from the new container
       await _unSubStatuses();
-      await NetworkManager().updateContainerOptions(containerId, event.options);
+      await NetworkManager().updateContainerOptions(myId, event.options);
       await _subStatuses();
 
       emit(
@@ -43,15 +44,15 @@ class BlitzApiContainerBloc
 
     on<StartBlitzApiContainerEvent>((event, emit) async {
       _subStatuses();
-      await NetworkManager().startContainer(containerId);
+      await NetworkManager().startContainer(myId);
     });
 
     on<StopBlitzApiContainerEvent>((event, emit) async {
-      await NetworkManager().stopContainer(containerId);
+      await NetworkManager().stopContainer(myId);
     });
 
     on<DeleteBlitzApiContainerEvent>((event, emit) async {
-      await NetworkManager().deleteContainer(containerId);
+      await NetworkManager().deleteContainer(myId);
     });
 
     on<_BlitzApiStatusUpdate>((event, emit) async {
@@ -72,7 +73,7 @@ class BlitzApiContainerBloc
         return;
       }
 
-      final c = NetworkManager().nodeMap[containerId] as BlitzApiContainer;
+      final c = NetworkManager().nodeMap[myId] as BlitzApiContainer;
       emit(
         BlitzApiStatusUpdate(
           event.status,
@@ -83,17 +84,42 @@ class BlitzApiContainerBloc
       );
     });
 
+    on<BlitzApiOpenChannelEvent>((event, emit) async {
+      final from = NetworkManager().findContainerById<LnNode>(
+        parentId,
+      );
+      final to = NetworkManager().findContainerById<LnNode>(
+        event.targetContainerId,
+      );
+
+      if (from == null || to == null) {
+        print('from or to is null');
+        return;
+      }
+
+      try {
+        final String id = await from.openChannel(
+          to,
+          localFundingAmount: event.localFundingAmount,
+          pushAmountSat: event.pushSats,
+        );
+
+        print(id);
+      } catch (e) {
+        print(e);
+      }
+    });
+
     _subStatuses();
   }
 
   Future<void> _subStatuses() async {
     _sub?.cancel();
 
-    final c =
-        NetworkManager().findContainerById<BlitzApiContainer>(containerId);
+    final c = NetworkManager().findContainerById<BlitzApiContainer>(myId);
 
     if (c == null) {
-      throw StateError('BlitzApiContainer with ID $containerId not found');
+      throw StateError('BlitzApiContainer with ID $myId not found');
     }
 
     _sub = c.statusStream.listen((event) {
