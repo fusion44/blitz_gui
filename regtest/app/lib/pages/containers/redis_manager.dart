@@ -33,6 +33,13 @@ class RedisManager {
 
     await _initVault();
 
+    if (NetworkManager().containers.length < 2) {
+      // A very crude way of resetting the Redis counter
+      // If we are here it means no Redis or only Redis is running and
+      // it is safe to reset.
+      await _clearVault();
+    }
+
     if (res == null) {
       // We haven't found a reusable Redis container, start a new one
       final c = NetworkManager().createContainer(
@@ -49,12 +56,6 @@ class RedisManager {
     }
 
     if (!res.running) await NetworkManager().startContainer(res.dockerId);
-
-    if (NetworkManager().containers.length == 1) {
-      // A very crude way of resetting the Redis counter
-      // If we are here it means only Redis is running and it is safe to reset.
-      await _clearVault();
-    }
 
     if (!res.running) {
       throw StateError(
