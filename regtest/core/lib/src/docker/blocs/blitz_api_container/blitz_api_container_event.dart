@@ -24,11 +24,11 @@ class _BlitzApiStatusUpdate extends BlitzApiContainerEvent {
 class BlitzApiOpenChannelEvent extends BlitzApiContainerEvent {
   final String targetContainerId;
   final int localFundingAmount;
-  final int pushSats;
+  final int pushAmountSat;
 
   BlitzApiOpenChannelEvent(
     this.targetContainerId,
     this.localFundingAmount,
-    this.pushSats,
+    this.pushAmountSat,
   );
 }

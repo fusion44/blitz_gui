@@ -1,7 +1,9 @@
 library docker.containers;
 
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:common/common.dart';
 import 'package:regtest_core/core.dart';
 
 import '../arg_builder.dart';
@@ -42,6 +44,9 @@ class LndOptions extends LnNodeOptions {
 }
 
 class LndContainer extends LnNode {
+  static const grpcPortRange = ValueRange(10009, 10080 + 50);
+  static const restPortRange = ValueRange(8080, 8080 + 50);
+
   late final LndOptions lndOpts;
   final int? _gRPCPort;
   final int? _restPort;
@@ -49,7 +54,9 @@ class LndContainer extends LnNode {
   LndContainer({required this.lndOpts, final Function()? onDeleted})
       : _gRPCPort = lndOpts.gRPCPort,
         _restPort = lndOpts.restPort,
-        super(opts: lndOpts, onDeleted: onDeleted);
+        super(opts: lndOpts, onDeleted: onDeleted) {
+    bootstrapCli();
+  }
 
   // This private constructor is only available for instantiating from
   // an actual running docker container. At this point we do have an internalId
@@ -65,16 +72,36 @@ class LndContainer extends LnNode {
           internalId: cd.internalId,
           onDeleted: onDeleted,
         ) {
+    running = true;
     dockerId = cd.dockerId.trim();
+    bootstrapCli();
     setStatus(ContainerStatusMessage(cd.status, ''));
   }
 
   factory LndContainer.defaultOptions() => LndContainer(lndOpts: LndOptions());
 
   static Future<LndContainer> fromRunningContainer(
-      ContainerData c, Function()? onDeleted) async {
+    ContainerData c,
+    Function()? onDeleted,
+  ) async {
+    final cmd = c.inspectData['Config']['Cmd'] as List;
+    final int gRPCPort = int.tryParse(cmd[2].split(':')[1]) ?? -1;
+    final int restPort = int.tryParse(cmd[3].split(':')[1]) ?? -1;
+
+    if (gRPCPort < 0 || restPort < 0) {
+      throw Exception('Invalid port number');
+    }
+
+    await PortManager().setPortUsed(gRPCPort);
+    await PortManager().setPortUsed(restPort);
+
     final newContainer = LndContainer._(
-      LndOptions(name: c.name, image: c.image),
+      LndOptions(
+        name: c.name,
+        image: c.image,
+        restPort: restPort,
+        gRPCPort: gRPCPort,
+      ),
       c,
       onDeleted,
     );
@@ -107,6 +134,24 @@ class LndContainer extends LnNode {
     }
 
     setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
+  }
+
+  @override
+  Future<void> bootstrapCli() async {
+    // docker exec lnbits-legend-lnd-$i-1 lncli --network regtest --rpcserver=lnd-$i:10009 "$@"
+    if (!running) return;
+    try {
+      final res = await execCommand(
+        'lncli --network regtest --rpcserver=$containerName:$_gRPCPort getinfo'
+            .split(' '),
+      );
+      final json = jsonDecode(res);
+      pubKey = json['identity_pubkey'];
+    } on DockerException catch (e) {
+      print(e.message);
+    }
+
+    return super.bootstrapCli();
   }
 
   @override

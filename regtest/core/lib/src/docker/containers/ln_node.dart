@@ -69,6 +69,8 @@ abstract class LnNode extends DockerContainer {
     setStatus(ContainerStatusMessage(ContainerStatus.stopped, ''));
   }
 
+  Future<void> bootstrapCli() async {}
+
   Future<void> bootstrap({
     String host = 'localhost',
     int port = 8800,

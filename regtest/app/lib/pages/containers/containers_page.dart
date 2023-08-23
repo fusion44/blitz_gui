@@ -255,14 +255,14 @@ class _ContainersPageState extends State<ContainersPage> {
       ),
     );
 
-    final container = NetworkManager().createContainer(type);
+    final container = await NetworkManager().createContainer(type);
 
     try {
       final bapi = switch (type) {
         ContainerType.bitcoinCore ||
         ContainerType.cln ||
         ContainerType.lnd =>
-          NetworkManager().createContainer(
+          await NetworkManager().createContainer(
             ContainerType.blitzApi,
             opts: await _buildBlitzApiOptions(container),
           ),
@@ -406,7 +406,11 @@ class _ContainersPageState extends State<ContainersPage> {
 
     BlitzApiContainerBloc? bapiBloc;
     if (complementaryId != null) {
-      bapiBloc = BlitzApiContainerBloc(mainId, complementaryId);
+      bapiBloc = BlitzApiContainerBloc(
+        mainId,
+        complementaryId,
+        bitcoinOnly: type == ContainerType.bitcoinCore,
+      );
     }
 
     return {

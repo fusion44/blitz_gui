@@ -228,12 +228,15 @@ abstract class DockerContainer {
 
     if (result.exitCode != 0) {
       throw DockerException(
-        "Failed to execute Docker command. Error: ${result.stderr.toString()}",
+        "Failed to execute Docker command. Error: ${result.stderr}",
       );
     }
 
     return result.stdout as String;
   }
+
+  Future<String> execCommand(List<String> args) async =>
+      runDockerCommand(['exec', dockerId, ...args]);
 
   List<String> bootstrapCommands() => [
         'docker exec -it $dockerId /bin/bash\n',

@@ -36,6 +36,7 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
     _bapi = BlitzApiContainerBloc(
       widget.btccContainerId,
       widget.bapiContainerId,
+      bitcoinOnly: true,
     );
     _btcc = BitcoinCoreContainerBloc(widget.btccContainerId);
   }

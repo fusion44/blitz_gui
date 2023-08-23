@@ -42,7 +42,7 @@ class RedisManager {
 
     if (res == null) {
       // We haven't found a reusable Redis container, start a new one
-      final c = NetworkManager().createContainer(
+      final c = await NetworkManager().createContainer(
         ContainerType.redis,
         opts: const RedisOptions(name: 'app_redis'),
       );

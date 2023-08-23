@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:blitz_api_client/blitz_api_client.dart' as client;
+import 'package:regtest_core/src/port_manager.dart';
 
 import 'docker/containers/cashu_mint.dart';
 import 'docker/containers/fake_ln.dart';
@@ -226,10 +227,10 @@ class NetworkManager {
     await dockerCmd(networkArgs, '.');
   }
 
-  DockerContainer createContainer(
+  Future<DockerContainer> createContainer(
     ContainerType type, {
     ContainerOptions? opts,
-  }) {
+  }) async {
     _checkRequirements(type);
 
     final DockerContainer container = switch (type) {
@@ -239,7 +240,7 @@ class NetworkManager {
       ContainerType.cln => CLNContainer.defaultOptions(),
       ContainerType.fakeLn => FakeLnContainer.defaultOptions(),
       ContainerType.lnbits => LNbitsContainer(),
-      ContainerType.lnd => _createLndContainer(
+      ContainerType.lnd => await _createLndContainer(
           opts == null ? null : opts as LndOptions,
         ),
       ContainerType.redis => RedisContainer(),
@@ -398,7 +399,7 @@ class NetworkManager {
     );
   }
 
-  LndContainer _createLndContainer([LndOptions? opts]) {
+  Future<LndContainer> _createLndContainer([LndOptions? opts]) async {
     String btccId = opts == null ? '' : opts.btccContainerId;
     LndOptions lndOptions = opts ?? LndOptions();
 
@@ -410,14 +411,12 @@ class NetworkManager {
 
       lndOptions = lndOptions.copyWith(btccContainerId: btcc.internalId);
     }
-    const int defaultgRPCPort = 11100;
-    const int defaultRestPort = 8080;
 
     var currId = _containerIds[ContainerType.lnd] ??= 0;
 
     lndOptions = lndOptions.copyWith(
-      gRPCPort: defaultgRPCPort + currId,
-      restPort: defaultRestPort + currId,
+      gRPCPort: await PortManager().nextUnusedPort(LndContainer.grpcPortRange),
+      restPort: await PortManager().nextUnusedPort(LndContainer.restPortRange),
     );
 
     _containerIds[ContainerType.lnd] = ++currId;
