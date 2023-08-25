@@ -11,14 +11,14 @@ part 'blitz_api_container_state.dart';
 
 class BlitzApiContainerBloc
     extends Bloc<BlitzApiContainerEvent, BlitzApiContainerState> {
-  final String parentId;
+  final String containerId;
   final String myId;
   BlitzApiClient? _client;
   final bool bitcoinOnly;
   StreamSubscription<ContainerStatusMessage>? _sub;
   String _token = '';
 
-  BlitzApiContainerBloc(this.parentId, this.myId, {this.bitcoinOnly = false})
+  BlitzApiContainerBloc(this.containerId, this.myId, {this.bitcoinOnly = false})
       : super(BlitzApiStatusUpdate.fromContainer(myId)) {
     if (NetworkManager().findContainerById(myId) == null) {
       throw StateError('BlitzApiContainer with ID $myId not found');
@@ -74,7 +74,6 @@ class BlitzApiContainerBloc
   }
 
   Future<void> _prepareAPI() async {
-    print('prepareAPI');
     final c = NetworkManager().findContainerById(myId);
     if (c == null || c is! BlitzApiContainer) {
       throw StateError('BlitzApiContainer with ID $myId not found');
@@ -124,7 +123,6 @@ class BlitzApiContainerBloc
           throw Exception("Failed to bootstrap API node $myId");
         }
 
-        print('Yay! Connected to API!!');
         success = true;
         break;
       } on DioError catch (e) {

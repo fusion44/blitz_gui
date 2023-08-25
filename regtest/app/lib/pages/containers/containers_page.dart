@@ -336,15 +336,16 @@ class _ContainersPageState extends State<ContainersPage> {
 
   Widget _buildNodeInfoBody(ContainerNode e) {
     if (e.type == ContainerType.bitcoinCore) {
-      return BitcoinCoreShape(
-        e.mainContainerId,
-        e.complementaryContainerId,
-      );
+      final btcc = _nodeData[e.mainContainerId]!['main'];
+      final bapi = _nodeData[e.mainContainerId]!['bapi'];
+
+      return BitcoinCoreShape(btcc, bapi);
     }
 
     if (e.type == ContainerType.lnd) {
       final lnd = _nodeData[e.mainContainerId]!['main'];
       final bapi = _nodeData[e.mainContainerId]!['bapi'];
+
       return LndShape(e.mainContainerId, lnd, bapi);
     }
 

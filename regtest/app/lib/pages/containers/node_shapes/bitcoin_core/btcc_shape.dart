@@ -11,13 +11,13 @@ import '../widgets/show_blitz_logs_btn.dart';
 import 'btcc_settings_dlg_content.dart';
 
 class BitcoinCoreShape extends StatefulWidget {
-  final String btccContainerId;
-  final String bapiContainerId;
+  final BlitzApiContainerBloc _bapi;
+  final BitcoinCoreContainerBloc _btcc;
   final Function()? onDeleted;
 
   const BitcoinCoreShape(
-    this.btccContainerId,
-    this.bapiContainerId, {
+    this._btcc,
+    this._bapi, {
     this.onDeleted,
     super.key,
   });
@@ -30,22 +30,13 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
   late final BlitzApiContainerBloc _bapi;
   late final BitcoinCoreContainerBloc _btcc;
 
+  _BitcoinCoreShapeState();
+
   @override
   void initState() {
     super.initState();
-    _bapi = BlitzApiContainerBloc(
-      widget.btccContainerId,
-      widget.bapiContainerId,
-      bitcoinOnly: true,
-    );
-    _btcc = BitcoinCoreContainerBloc(widget.btccContainerId);
-  }
-
-  @override
-  void dispose() async {
-    super.dispose();
-    await _bapi.close();
-    await _btcc.close();
+    _bapi = widget._bapi;
+    _btcc = widget._btcc;
   }
 
   @override
@@ -107,7 +98,7 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
         if (state.status.status == ContainerStatus.started) {
           return _buildShape(
             state,
-            Center(child: Text('Running Bitcoin ${widget.btccContainerId}')),
+            Center(child: Text('Running Bitcoin ${_btcc.containerId}')),
             footer,
           );
         }
@@ -161,9 +152,9 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
                 child: const Text('Stop'),
               ),
               OpenTerminalBtn(() async =>
-                  await openTerminalInDialog(context, widget.btccContainerId)),
+                  await openTerminalInDialog(context, _btcc.containerId)),
               ShowLogsBtn(() async =>
-                  await openLogWindowInDialog(context, widget.btccContainerId)),
+                  await openLogWindowInDialog(context, _btcc.containerId)),
               PopupMenuButton<String>(
                 onSelected: (item) => switch (item) {
                   'delete' => _deleteContainers(),
@@ -213,8 +204,8 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
       };
 
   _editSettings(BuildContext context) async {
-    final c = NetworkManager().nodeMap[widget.btccContainerId]
-        as BitcoinCoreContainer;
+    final c =
+        NetworkManager().nodeMap[_btcc.containerId] as BitcoinCoreContainer;
     final opts = BitcoinCoreOptions(
       name: c.containerName,
       image: c.image,
@@ -252,8 +243,8 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
   }
 
   _openBlitzTerminal(BuildContext context) async =>
-      await openTerminalInDialog(context, widget.bapiContainerId);
+      await openTerminalInDialog(context, _bapi.containerId);
 
   _showBlitzLogs(BuildContext context) async =>
-      await openLogWindowInDialog(context, widget.bapiContainerId);
+      await openLogWindowInDialog(context, _bapi.containerId);
 }
