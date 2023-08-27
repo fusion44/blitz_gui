@@ -382,6 +382,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
+  sse_client:
+    dependency: "direct overridden"
+    description:
+      path: "../../packages/sse_client"
+      relative: true
+    source: path
+    version: "0.5.1"
   stack_trace:
     dependency: transitive
     description:
@@ -406,6 +413,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  subscription_repository:
+    dependency: "direct overridden"
+    description:
+      path: "../../packages/subscription_repository"
+      relative: true
+    source: path
+    version: "0.5.1"
   term_glyph:
     dependency: transitive
     description:

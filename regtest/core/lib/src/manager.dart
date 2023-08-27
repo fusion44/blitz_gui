@@ -155,6 +155,8 @@ class NetworkManager {
 
       _containerMap[c.internalId] = container;
     }
+
+    _sendMessage(NetworkState.up);
   }
 
   _sendMessage(NetworkState state, [String? message]) =>

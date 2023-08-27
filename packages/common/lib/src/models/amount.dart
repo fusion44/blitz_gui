@@ -4,6 +4,20 @@ class Amount {
 
   const Amount({this.sat = 0, this.msat = 0});
 
+  Amount operator +(Amount other) {
+    return Amount(
+      sat: this.sat + other.sat,
+      msat: this.msat + other.msat,
+    );
+  }
+
+  Amount operator -(Amount other) {
+    return Amount(
+      sat: this.sat - other.sat,
+      msat: this.msat - other.msat,
+    );
+  }
+
   static Amount fromJson(Map<String, dynamic> json) {
     return Amount(
       sat: json['sat'],
