@@ -1,8 +1,11 @@
 import 'package:common/common.dart' show BtcValue;
 import 'package:flutter/material.dart';
 
-import 'package:blitz_api_client/blitz_api_client.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:regtest_app/pages/containers/utils.dart';
 import 'package:regtest_core/core.dart';
+
+import '../blocs/wallet_balance_cubit/wallet_balance_cubit.dart';
 
 class WalletBalanceCard extends StatefulWidget {
   final LnNode node;
@@ -13,26 +16,24 @@ class WalletBalanceCard extends StatefulWidget {
 }
 
 class _WalletBalanceCardState extends State<WalletBalanceCard> {
-  WalletBalance? _balance;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadBalance();
-  }
-
-  Future<void> _loadBalance() async {
-    final b = await widget.node.walletBalance();
-    setState(() => _balance = b);
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_balance == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    return BlocBuilder<WalletBalanceCubit, WalletBalanceState>(
+      bloc: WalletBalanceCubit(
+        NetworkManager().findContainerById(findComplementaryNode(widget.node))!,
+      ),
+      builder: (context, state) {
+        if (state is WalletBalanceUpdated) {
+          return _buildCard(state);
+        }
 
-    final WalletBalance b = _balance!;
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  Widget _buildCard(WalletBalanceUpdated state) {
+    final b = state.balance;
 
     return Card(
       child: Padding(
@@ -46,11 +47,6 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                 Text(
                   'Balances',
                   style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const Spacer(),
-                IconButton(
-                  icon: const Icon(Icons.refresh),
-                  onPressed: _loadBalance,
                 ),
               ],
             ),
@@ -92,8 +88,8 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                     const Spacer(),
                     Text(
                       BtcValue.fromMilliSat(
-                              b.channelLocalBalance + b.channelRemoteBalance)
-                          .formatted(),
+                        (b.localBalance + b.remoteBalance).msat,
+                      ).formatted(),
                     ),
                   ],
                 ),
@@ -103,7 +99,9 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                     const Icon(Icons.home, size: 16.0),
                     const Spacer(),
                     Text(
-                      BtcValue.fromMilliSat(b.channelLocalBalance).formatted(),
+                      BtcValue.fromMilliSat(
+                        b.localBalance.msat,
+                      ).formatted(),
                     ),
                   ],
                 ),
@@ -113,7 +111,9 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
                     const Icon(Icons.airline_stops, size: 16.0),
                     const Spacer(),
                     Text(
-                      BtcValue.fromMilliSat(b.channelRemoteBalance).formatted(),
+                      BtcValue.fromMilliSat(
+                        b.remoteBalance.msat,
+                      ).formatted(),
                     ),
                   ],
                 ),

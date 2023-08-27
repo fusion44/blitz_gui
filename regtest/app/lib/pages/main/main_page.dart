@@ -368,12 +368,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildMainContent() {
     if (_networkState.state == NetworkState.up) {
-      final n = NetworkManager().lnNodes;
-      if (n.isEmpty) {
+      if (NetworkManager().lnNodes.isEmpty) {
         return const Center(child: Text("Error: No nodes found"));
       }
 
-      return Expanded(child: ToolsColumns(_setNotificationCallback, n));
+      return Expanded(
+        child: ToolsColumns(_setNotificationCallback, NetworkManager().lnNodes),
+      );
     }
 
     if (_networkState.state == NetworkState.error) {

@@ -2,9 +2,12 @@ library docker.containers;
 
 import 'dart:async';
 
+import 'package:blitz_api_client/blitz_api_client.dart';
 import 'package:common/common.dart';
+import 'package:dio/dio.dart';
 import 'package:regtest_core/core.dart';
 
+import '../../regtest_bapi_subscription_repo.dart';
 import '../arg_builder.dart';
 
 enum ClnConnectionMode { gRPC, jRPC }
@@ -59,6 +62,30 @@ class BlitzApiContainer extends DockerContainer {
   static const portRange = ValueRange(8800, 8899);
 
   BlitzApiOptions opts;
+
+  bool _apiInitialized = false;
+  bool get bootstrapped => _apiInitialized;
+  late final BlitzApiClient _api;
+  String? _token;
+  String? get token => _token;
+  BlitzApiClient get api {
+    if (!_apiInitialized) {
+      throw Exception("Node $containerName not initialized");
+    }
+
+    return _api;
+  }
+
+  late final RegtestBapiSubRepo _repo;
+  RegtestBapiSubRepo get subRepo {
+    if (!_apiInitialized) {
+      throw Exception("Node $containerName not initialized");
+    }
+
+    return _repo;
+  }
+
+  final _apiInitializedCompleter = Completer();
 
   BlitzApiContainer({required this.opts}) : super(opts);
 
@@ -144,6 +171,7 @@ class BlitzApiContainer extends DockerContainer {
       onDeleted,
     );
     await newContainer.subscribeLogs();
+    await newContainer.initApi();
 
     if (c.status == ContainerStatus.started) {
       newContainer.running = true;
@@ -215,7 +243,9 @@ class BlitzApiContainer extends DockerContainer {
       throw DockerException('Failed to start BlitzApi container: $dockerId');
     }
 
-    super.subscribeLogs();
+    await super.subscribeLogs();
+    await initApi();
+
     running = true;
     setStatus(ContainerStatusMessage(ContainerStatus.started, ''));
   }
@@ -278,5 +308,61 @@ class BlitzApiContainer extends DockerContainer {
     argBuilder
         .addEnv('ln_node=cln_jrpc')
         .addEnv('cln_jrpc_path=${n.jRPCFilePath}');
+  }
+
+  Future<void> initApi({String host = 'localhost', String path = ''}) async {
+    if (_apiInitialized) {
+      throw Exception("API for $containerName already initialized");
+    }
+
+    final url = 'http://$host:${opts.apiRestPort}$path';
+    _api = BlitzApiClient(basePathOverride: '$url/latest');
+    _api.dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (RequestOptions options, handler) {
+          if (_token != null && _token!.isNotEmpty) {
+            options.headers["AUTHORIZATION"] = _token;
+          }
+          handler.next(options);
+        },
+      ),
+    );
+
+    final api = _api.getSystemApi();
+    final builder = LoginInputBuilder()..password = "12345678";
+
+    try {
+      final response = await api.systemLoginSystemLoginPost(
+        loginInput: builder.build(),
+      );
+
+      final data = response.data;
+      if (data == null || data.value is! String) {
+        throw StateError("Login response data was null");
+      }
+
+      _token = "Bearer ${data.value.toString()}";
+
+      _repo = RegtestBapiSubRepo(url, _token!);
+      await _repo.init();
+
+      _apiInitialized = true;
+      _apiInitializedCompleter.complete();
+    } on DioError catch (e) {
+      printDioError(
+        e,
+        'Node $containerName: Exception when calling SystemApi->systemLoginSystemLoginPost',
+      );
+    }
+
+    logMessage(
+      "Initialized $containerName using ${_api.dio.options.baseUrl}",
+    );
+  }
+
+  Future<void> ensureApiInitialized() async {
+    if (_apiInitialized) return;
+
+    return _apiInitializedCompleter.future;
   }
 }

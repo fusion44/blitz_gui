@@ -103,3 +103,57 @@ extension OffsetExtension on Offset {
 
   String toJson() => jsonEncode({'dx': dx, 'dy': dy});
 }
+
+Map<String, dynamic> buildBlocsForContainer(
+  ContainerType type,
+  String mainId,
+  String? complementaryId,
+) {
+  final mainBloc = switch (type) {
+    ContainerType.bitcoinCore => BitcoinCoreContainerBloc(mainId),
+    ContainerType.lnd => LndContainerBloc(mainId),
+    _ => throw UnimplementedError('${type.name} not implemented yet')
+  };
+
+  BlitzApiContainerBloc? bapiBloc;
+  if (complementaryId != null) {
+    bapiBloc = BlitzApiContainerBloc(
+      mainId,
+      complementaryId,
+      bitcoinOnly: type == ContainerType.bitcoinCore,
+    );
+  }
+
+  return {
+    'main': mainBloc,
+    if (complementaryId != null) 'bapi': bapiBloc,
+  };
+}
+
+class ContainerNode {
+  final ContainerType type;
+
+  /// The container ID of the main container as requested by the user
+  final String mainContainerId;
+
+  /// The container ID of the complementary container as required by
+  /// the app itself to make it easier to connect to the main container
+  final String complementaryContainerId;
+
+  ContainerNode(
+    this.type,
+    this.mainContainerId,
+    this.complementaryContainerId,
+  );
+}
+
+String findComplementaryNode(DockerContainer main) {
+  for (final node in NetworkManager().nodeMap.values) {
+    if (node.type != ContainerType.blitzApi) continue;
+    if (node.containerName.contains(main.internalId)) {
+      return node.internalId;
+    }
+  }
+
+  return '';
+}

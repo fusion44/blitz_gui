@@ -36,7 +36,7 @@ class _ContainersPageState extends State<ContainersPage> {
 
   final notificationPlugin = FlutterLocalNotificationsPlugin();
 
-  Map<String, ContainerNode> nodes = {};
+  Map<String, PositionedContainerNode> nodes = {};
 
   StreamSubscription<DockerContainer>? _containerDelSub;
   late final Vault _posVault;
@@ -71,17 +71,6 @@ class _ContainersPageState extends State<ContainersPage> {
     super.dispose();
   }
 
-  String _findComplementaryNode(DockerContainer main) {
-    for (final node in NetworkManager().nodeMap.values) {
-      if (node.type != ContainerType.blitzApi) continue;
-      if (node.containerName.contains(main.internalId)) {
-        return node.internalId;
-      }
-    }
-
-    return '';
-  }
-
   Future<void> _loadPositions() async {
     final store = await newFileLocalVaultStore(path: 'vaults');
     _posVault = await store.vault(name: 'positions');
@@ -94,16 +83,16 @@ class _ContainersPageState extends State<ContainersPage> {
         o = gnc.NodeFrameRectangle.fromJson(values[node.internalId]);
       }
 
-      final n = ContainerNode(
+      final n = PositionedContainerNode(
         o ?? gnc.NodeFrameRectangle.zero(),
         node.type,
         node.internalId,
-        _findComplementaryNode(node),
+        findComplementaryNode(node),
       );
 
       nodes[node.internalId] = n;
 
-      _nodeData[n.mainContainerId] = _buildBlocs(
+      _nodeData[n.mainContainerId] = buildBlocsForContainer(
         node.type,
         node.internalId,
         n.complementaryContainerId,
@@ -270,7 +259,7 @@ class _ContainersPageState extends State<ContainersPage> {
       };
 
       _posVault.put(container.internalId, initialPos.toJson());
-      _nodeData[container.internalId] = _buildBlocs(
+      _nodeData[container.internalId] = buildBlocsForContainer(
         type,
         container.internalId,
         bapi?.internalId,
@@ -278,7 +267,7 @@ class _ContainersPageState extends State<ContainersPage> {
 
       setState(() {
         _canvasKey = GlobalKey();
-        nodes[container.internalId] = ContainerNode(
+        nodes[container.internalId] = PositionedContainerNode(
           initialPos,
           type,
           container.internalId,
@@ -334,7 +323,7 @@ class _ContainersPageState extends State<ContainersPage> {
     return null;
   }
 
-  Widget _buildNodeInfoBody(ContainerNode e) {
+  Widget _buildNodeInfoBody(PositionedContainerNode e) {
     if (e.type == ContainerType.bitcoinCore) {
       final btcc = _nodeData[e.mainContainerId]!['main'];
       final bapi = _nodeData[e.mainContainerId]!['bapi'];
@@ -393,49 +382,15 @@ class _ContainersPageState extends State<ContainersPage> {
 
     // TODO: handle auto mine etc
   }
-
-  Map<String, dynamic> _buildBlocs(
-    ContainerType type,
-    String mainId,
-    String? complementaryId,
-  ) {
-    final mainBloc = switch (type) {
-      ContainerType.bitcoinCore => BitcoinCoreContainerBloc(mainId),
-      ContainerType.lnd => LndContainerBloc(mainId),
-      _ => throw UnimplementedError('${type.name} not implemented yet')
-    };
-
-    BlitzApiContainerBloc? bapiBloc;
-    if (complementaryId != null) {
-      bapiBloc = BlitzApiContainerBloc(
-        mainId,
-        complementaryId,
-        bitcoinOnly: type == ContainerType.bitcoinCore,
-      );
-    }
-
-    return {
-      'main': mainBloc,
-      if (complementaryId != null) 'bapi': bapiBloc,
-    };
-  }
 }
 
-class ContainerNode {
+class PositionedContainerNode extends ContainerNode {
   final gnc.NodeFrameRectangle initialPos;
-  final ContainerType type;
 
-  /// The container ID of the main container as requested by the user
-  final String mainContainerId;
-
-  /// The container ID of the complementary container as required by
-  /// the app itself to make it easier to connect to the main container
-  final String complementaryContainerId;
-
-  ContainerNode(
+  PositionedContainerNode(
     this.initialPos,
-    this.type,
-    this.mainContainerId,
-    this.complementaryContainerId,
+    super.type,
+    super.mainContainerId,
+    super.complementaryContainerId,
   );
 }
