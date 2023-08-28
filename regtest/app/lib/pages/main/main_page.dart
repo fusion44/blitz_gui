@@ -4,17 +4,18 @@ import 'dart:math';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:regtest_core/core.dart';
 
+import '../../blocs/network_bloc/network_bloc.dart';
 import '../../gui_constants.dart';
 import '../../widgets/mine_blocks_dlg_content.dart';
 import '../../widgets/tools_columns.dart';
 import '../../widgets/widget_utils.dart';
-import '../containers/redis_manager.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -34,38 +35,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   String _notification = "";
 
-  NetworkStateMessage _networkState = NetworkStateMessage.checking();
-  late final NetworkManager _mgr;
-
-  StreamSubscription<NetworkStateMessage>? _sub;
-
-  @override
-  void initState() {
-    super.initState();
-    _initNetwork();
-  }
-
-  void _initNetwork() async {
-    _mgr = NetworkManager();
-
-    try {
-      if (!_mgr.initialized) await _mgr.init();
-    } catch (e) {
-      debugPrint(e.toString());
-      rethrow;
-    }
-
-    _sub = _mgr.netStateStream.listen(
-        (event) => mounted ? setState(() => _networkState = event) : null);
-    _mgr.refresh();
-
-    RedisManager().init();
-  }
-
   @override
   void dispose() async {
     super.dispose();
-    if (_sub != null) await _sub!.cancel();
   }
 
   @override
@@ -75,17 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Machine Room"),
-        actions: [
-          if (_networkState.state == NetworkState.up)
-            Tooltip(
-              message: "Apply Network",
-              child: IconButton(
-                icon: const Icon(Icons.auto_graph, color: Colors.blue),
-                onPressed: () => _mgr.applyNetwork(),
-              ),
-            ),
-          _buildRunningActionBtn()
-        ],
+        actions: [_buildRunningActionBtn()],
       ),
       body: Row(
         children: [
@@ -107,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () => _mgr.fundNodes(),
+                        onPressed: () => print('_mgr.fundNodes()'),
                         child: const Text("Fund Nodes"),
                       ),
                       const SizedBox(width: 8.0),
@@ -148,90 +110,95 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildRunningActionBtn() {
-    if (_networkState.state == NetworkState.checking) {
-      return const Tooltip(
-        message: "Checking status of containers",
-        child: SpinKitFadingCube(
-          size: headerBarIconSize,
-          color: Colors.amberAccent,
-        ),
-      );
-    }
+    return BlocBuilder<NetworkBloc, NetworkState>(
+      builder: (context, state) {
+        final s = state.statusMessage;
+        if (s.status == NetworkStatus.checking) {
+          return const Tooltip(
+            message: "Checking status of containers",
+            child: SpinKitFadingCube(
+              size: headerBarIconSize,
+              color: Colors.amberAccent,
+            ),
+          );
+        }
 
-    if (_networkState.state == NetworkState.up) {
-      return Tooltip(
-        message: "Stop containers",
-        child: IconButton(
-          icon: const Icon(Icons.arrow_downward, color: Colors.red),
-          onPressed: () => _mgr.stop(),
-        ),
-      );
-    }
+        if (s.status == NetworkStatus.up) {
+          return Tooltip(
+            message: "Stop containers",
+            child: IconButton(
+              icon: const Icon(Icons.arrow_downward, color: Colors.red),
+              onPressed: () => print('_mgr.stop()'),
+            ),
+          );
+        }
 
-    if (_networkState.state == NetworkState.startingUp) {
-      return const Tooltip(
-        message: "Starting containers",
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: SpinKitFadingCube(
-              size: headerBarIconSize, color: Colors.greenAccent),
-        ),
-      );
-    }
+        if (s.status == NetworkStatus.startingUp) {
+          return const Tooltip(
+            message: "Starting containers",
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SpinKitFadingCube(
+                  size: headerBarIconSize, color: Colors.greenAccent),
+            ),
+          );
+        }
 
-    if (_networkState.state == NetworkState.shuttingDown) {
-      return const Tooltip(
-        message: "Shutting down containers",
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: SpinKitFadingCube(
-            size: headerBarIconSize,
-            color: Colors.redAccent,
+        if (s.status == NetworkStatus.shuttingDown) {
+          return const Tooltip(
+            message: "Shutting down containers",
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SpinKitFadingCube(
+                size: headerBarIconSize,
+                color: Colors.redAccent,
+              ),
+            ),
+          );
+        }
+
+        if (s.status == NetworkStatus.down) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () => print('_mgr.start(exposeDataDirToHost: true)'),
+              child: const Text("Start"),
+            ),
+          );
+        }
+
+        if (s.status == NetworkStatus.error) {
+          return Tooltip(
+            message: "Click to recreate containers",
+            child: IconButton(
+              icon: const Icon(Icons.error, color: Colors.red),
+              onPressed: () => print('_mgr.recreate()'),
+            ),
+          );
+        }
+
+        if (s.status == NetworkStatus.cleanup) {
+          return const Tooltip(
+            message: "Removing all containers",
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: SpinKitFadingCube(
+                size: headerBarIconSize,
+                color: Colors.redAccent,
+              ),
+            ),
+          );
+        }
+
+        return Tooltip(
+          message: "You should not see this. Invalid state: $s",
+          child: IconButton(
+            icon: const Icon(Icons.question_mark),
+            color: Colors.red,
+            onPressed: () => print('_mgr.refresh()'),
           ),
-        ),
-      );
-    }
-
-    if (_networkState.state == NetworkState.down) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ElevatedButton(
-          onPressed: () => _mgr.start(exposeDataDirToHost: true),
-          child: const Text("Start"),
-        ),
-      );
-    }
-
-    if (_networkState.state == NetworkState.error) {
-      return Tooltip(
-        message: "Click to recreate containers",
-        child: IconButton(
-          icon: const Icon(Icons.error, color: Colors.red),
-          onPressed: () => _mgr.recreate(),
-        ),
-      );
-    }
-
-    if (_networkState.state == NetworkState.cleanup) {
-      return const Tooltip(
-        message: "Removing all containers",
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: SpinKitFadingCube(
-            size: headerBarIconSize,
-            color: Colors.redAccent,
-          ),
-        ),
-      );
-    }
-
-    return Tooltip(
-      message: "You should not see this. Invalid state: $_networkState",
-      child: IconButton(
-        icon: const Icon(Icons.question_mark),
-        color: Colors.red,
-        onPressed: () => _mgr.refresh(),
-      ),
+        );
+      },
     );
   }
 
@@ -267,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _currentBlock = 0;
     });
 
-    final btcc = _mgr.findFirstOf<BitcoinCoreContainer>();
+    final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
     if (btcc == null) {
       throw StateError('BitcoinCoreContainer not found');
     }
@@ -367,20 +334,26 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() => _notification = message);
 
   Widget _buildMainContent() {
-    if (_networkState.state == NetworkState.up) {
-      if (NetworkManager().lnNodes.isEmpty) {
-        return const Center(child: Text("Error: No nodes found"));
-      }
+    return BlocBuilder<NetworkBloc, NetworkState>(
+      builder: (context, state) {
+        final m = state.statusMessage;
+        if (m.status == NetworkStatus.up) {
+          if (NetworkManager().lnNodes.isEmpty) {
+            return const Center(child: Text("Error: No nodes found"));
+          }
 
-      return Expanded(
-        child: ToolsColumns(_setNotificationCallback, NetworkManager().lnNodes),
-      );
-    }
+          return Expanded(
+            child: ToolsColumns(
+                _setNotificationCallback, NetworkManager().lnNodes),
+          );
+        }
 
-    if (_networkState.state == NetworkState.error) {
-      return Center(child: Text("Error:\n${_networkState.message.toString()}"));
-    }
+        if (m.status == NetworkStatus.error) {
+          return Center(child: Text("Error:\n${m.message.toString()}"));
+        }
 
-    return Center(child: Text("Network is ${_networkState.state.toString()}"));
+        return Center(child: Text("Network is ${m.status.toString()}"));
+      },
+    );
   }
 }

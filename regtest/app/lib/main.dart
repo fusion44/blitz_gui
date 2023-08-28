@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:regtest_app/blocs/network_bloc/network_bloc.dart';
 import 'package:regtest_core/core.dart';
 
 import 'gui_constants.dart';
@@ -50,71 +52,83 @@ void main(List<String> args) async {
     }
   });
 
-  runApp(MyApp());
+  runApp(MyApp(NetworkBloc()));
 }
 
 class MyApp extends StatelessWidget {
-  // GoRouter configuration
-  final _router = GoRouter(
-    routes: [
-      GoRoute(
-        path: '/',
-        name: RouteNames.machineRoom.name,
-        pageBuilder: (context, state) => CustomTransitionPage(
-          transitionDuration: const Duration(milliseconds: 300),
-          key: state.pageKey,
-          child: const MyHomePage(title: 'Regtest UI'),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: CurveTween(
-                curve: Curves.easeInOutCirc,
-              ).animate(animation),
-              child: child,
-            );
-          },
-        ),
-      ),
-      GoRoute(
-        path: '/containers',
-        name: RouteNames.containers.name,
-        pageBuilder: (context, state) => CustomTransitionPage(
-          transitionDuration: const Duration(milliseconds: 300),
-          key: state.pageKey,
-          child: const ContainersPage(title: 'Containers'),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: CurveTween(
-                curve: Curves.easeInOutCirc,
-              ).animate(animation),
-              child: child,
-            );
-          },
-        ),
-      ),
-      GoRoute(
-        path: '/sse-tester',
-        name: RouteNames.sseTester.name,
-        pageBuilder: (context, state) => CustomTransitionPage(
-          transitionDuration: const Duration(milliseconds: 300),
-          key: state.pageKey,
-          child: const SSEInspectorPage('http://192.168.1.49/api', 'test1234'),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: CurveTween(
-                curve: Curves.easeInOutCirc,
-              ).animate(animation),
-              child: child,
-            );
-          },
-        ),
-      )
-    ],
-  );
+  final NetworkBloc networkBloc;
 
-  MyApp({Key? key}) : super(key: key);
+  const MyApp(this.networkBloc, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // GoRouter configuration
+    final _router = GoRouter(
+      routes: [
+        GoRoute(
+          path: '/',
+          name: RouteNames.machineRoom.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            transitionDuration: const Duration(milliseconds: 300),
+            key: state.pageKey,
+            child: BlocProvider.value(
+              value: networkBloc,
+              child: const MyHomePage(title: 'Regtest UI'),
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: CurveTween(
+                  curve: Curves.easeInOutCirc,
+                ).animate(animation),
+                child: child,
+              );
+            },
+          ),
+        ),
+        GoRoute(
+          path: '/containers',
+          name: RouteNames.containers.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            transitionDuration: const Duration(milliseconds: 300),
+            key: state.pageKey,
+            child: BlocProvider.value(
+              value: networkBloc,
+              child: const ContainersPage(title: 'Containers'),
+            ),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: CurveTween(
+                  curve: Curves.easeInOutCirc,
+                ).animate(animation),
+                child: child,
+              );
+            },
+          ),
+        ),
+        GoRoute(
+          path: '/sse-tester',
+          name: RouteNames.sseTester.name,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            transitionDuration: const Duration(milliseconds: 300),
+            key: state.pageKey,
+            child:
+                const SSEInspectorPage('http://192.168.1.49/api', 'test1234'),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return FadeTransition(
+                opacity: CurveTween(
+                  curve: Curves.easeInOutCirc,
+                ).animate(animation),
+                child: child,
+              );
+            },
+          ),
+        )
+      ],
+    );
+
     return MaterialApp.router(
       title: 'Regtest UI',
       theme: ThemeData.dark(),

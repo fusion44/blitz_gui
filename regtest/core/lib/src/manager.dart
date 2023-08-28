@@ -13,7 +13,7 @@ import 'constants.dart';
 import 'models.dart';
 import 'utils.dart';
 
-enum NetworkState {
+enum NetworkStatus {
   down,
   cleanup,
   startingUp,
@@ -24,12 +24,12 @@ enum NetworkState {
 }
 
 class NetworkStateMessage {
-  final NetworkState state;
+  final NetworkStatus status;
   final String? message;
 
-  NetworkStateMessage(this.state, [this.message]);
+  NetworkStateMessage(this.status, [this.message]);
 
-  NetworkStateMessage.checking() : this(NetworkState.checking);
+  NetworkStateMessage.checking() : this(NetworkStatus.checking);
 }
 
 class NetworkManager {
@@ -103,7 +103,7 @@ class NetworkManager {
     bool exposeDataDirToHost = false,
     bool autoFundNodes = true,
   }) async {
-    _sendMessage(NetworkState.startingUp);
+    _sendMessage(NetworkStatus.startingUp);
 
     await prepareDataDir(dockerDataDir);
     await _ensureDockerNetwork();
@@ -112,12 +112,12 @@ class NetworkManager {
   Future<void> stop() async {
     final args = ["compose", "-p", projectName, "down", "--volumes"];
     try {
-      _sendMessage(NetworkState.shuttingDown);
+      _sendMessage(NetworkStatus.shuttingDown);
       final output = await dockerCmd(args, dockerDataDir);
 
       await cleanDataDirectories(dockerDataDir);
 
-      _sendMessage(NetworkState.down);
+      _sendMessage(NetworkStatus.down);
       logMessage(output.toString());
     } catch (e) {
       logMessage(e.toString());
@@ -129,12 +129,12 @@ class NetworkManager {
   }
 
   Future<void> _checkIfRunning() async {
-    _sendMessage(NetworkState.checking);
+    _sendMessage(NetworkStatus.checking);
 
     final containers = await getRunningContainerNames(projectName);
 
     if (containers.isEmpty) {
-      _sendMessage(NetworkState.down);
+      _sendMessage(NetworkStatus.down);
       return;
     }
 
@@ -158,15 +158,15 @@ class NetworkManager {
       _containerMap[c.internalId] = container;
     }
 
-    _sendMessage(NetworkState.up);
+    _sendMessage(NetworkStatus.up);
   }
 
-  _sendMessage(NetworkState state, [String? message]) =>
+  _sendMessage(NetworkStatus state, [String? message]) =>
       _netStateController.add(NetworkStateMessage(state, message));
 
   recreate() async {
     final containers = await getRunningContainerNames();
-    _sendMessage(NetworkState.cleanup, "Removing containers $containers");
+    _sendMessage(NetworkStatus.cleanup, "Removing containers $containers");
     for (final container in containers) {
       final res = await Process.run('docker', ['rm', '-f', container.dockerId]);
       logMessage(res.stdout.toString());

@@ -363,10 +363,6 @@ class BlitzApiContainer extends DockerContainer {
         'Node $containerName: Exception when calling SystemApi->systemLoginSystemLoginPost',
       );
     }
-
-    logMessage(
-      "Initialized $containerName using ${_api.dio.options.baseUrl}",
-    );
   }
 
   Future<void> ensureApiInitialized() async {

@@ -75,25 +75,25 @@ Future<void> reset() async {
 
 void setup() async {
   manager.netStateStream.listen((event) async {
-    if (event.state == NetworkState.checking ||
-        event.state == NetworkState.startingUp) {
-      return print(event.state);
+    if (event.status == NetworkStatus.checking ||
+        event.status == NetworkStatus.startingUp) {
+      return print(event.status);
     }
-    if (event.state == NetworkState.down) {
+    if (event.status == NetworkStatus.down) {
       return await manager.start(
         autoFundNodes: false,
         exposeDataDirToHost: false,
       );
     }
-    if (event.state == NetworkState.up) {
+    if (event.status == NetworkStatus.up) {
       // TODO: fixme
       // N.set({});
       return await test();
     }
-    if (event.state == NetworkState.error) {
+    if (event.status == NetworkStatus.error) {
       return print("Error: ${event.message}");
     }
-    print("Unhandled event: ${event.state}");
+    print("Unhandled event: ${event.status}");
   });
 
   await manager.init();
