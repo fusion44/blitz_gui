@@ -24,6 +24,30 @@ class WalletBalanceCubit extends Cubit<WalletBalanceState> {
   }
 
   Future<void> _subscribe() async {
+    final balance = await _bapi.api
+        .getLightningApi()
+        .lightningGetBalanceLightningGetBalanceGet();
+
+    final d = balance.data;
+    if (d != null) {
+      final b2 = WalletBalance(
+        onchainConfirmedBalance: d.onchainConfirmedBalance,
+        onchainTotalBalance: d.onchainTotalBalance,
+        onchainUnconfirmedBalance: d.onchainUnconfirmedBalance,
+        localBalance: Amount.fromMSats(d.channelLocalBalance),
+        pendingOpenLocalBalance:
+            Amount.fromMSats(d.channelPendingOpenLocalBalance),
+        pendingOpenRemoteBalance:
+            Amount.fromMSats(d.channelPendingOpenRemoteBalance),
+        remoteBalance: Amount.fromMSats(d.channelRemoteBalance),
+        unsettledLocalBalance: Amount.fromMSats(d.channelUnsettledLocalBalance),
+        unsettledRemoteBalance:
+            Amount.fromMSats(d.channelUnsettledRemoteBalance),
+      );
+
+      emit(WalletBalanceUpdated(b2));
+    }
+
     try {
       _sub = _bapi.subRepo.filteredStream([
         SseEventTypes.walletBalance,
