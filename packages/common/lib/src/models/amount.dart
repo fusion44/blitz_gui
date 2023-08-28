@@ -18,6 +18,8 @@ class Amount {
     );
   }
 
+  double get inBitcoin => sat / 100000000.0;
+
   static Amount fromJson(Map<String, dynamic> json) {
     return Amount(
       sat: json['sat'],

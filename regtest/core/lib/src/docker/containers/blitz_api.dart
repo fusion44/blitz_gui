@@ -110,9 +110,10 @@ class BlitzApiContainer extends DockerContainer {
     Function()? onDeleted,
   ) async {
     final envList = c.inspectData['Config']['Env'];
-    late final String? btccId;
-    late final String? redisHost;
-    late final int? redisDb;
+    String? btccId;
+    String? redisHost;
+    int? redisDb;
+    String lnContainerId = '';
     for (final String e in envList) {
       if (e.contains('REDIS_DB')) {
         final env = e.split('=');
@@ -123,6 +124,13 @@ class BlitzApiContainer extends DockerContainer {
       } else if (e.contains('bitcoind_ip_regtest')) {
         final env = e.split('=');
         btccId = env[1].split(dockerContainerNameDelimiter)[1];
+      } else if (!e.contains('ln_node=none')) {
+        final spl = c.name.split('___');
+        if (spl.length != 3) {
+          throw StateError('Invalid BlitzAPI container name: ${c.name}');
+        }
+
+        lnContainerId = spl[1];
       }
     }
 
@@ -166,6 +174,7 @@ class BlitzApiContainer extends DockerContainer {
         redisHost: redisHost,
         redisDB: redisDb,
         apiRestPort: port,
+        lnContainerId: lnContainerId,
       ),
       c,
       onDeleted,
@@ -364,5 +373,30 @@ class BlitzApiContainer extends DockerContainer {
     if (_apiInitialized) return;
 
     return _apiInitializedCompleter.future;
+  }
+
+  Future<String> newLightningAddress() async {
+    if (opts.lnContainerId == '') {
+      // Bitcoin only
+      throw StateError('This is a Bitcoin only node.');
+    }
+
+    try {
+      final builder = NewAddressInputBuilder()..type = OnchainAddressType.p2wkh;
+
+      final resp = await _api
+          .getLightningApi()
+          .lightningNewAddressLightningNewAddressPost(
+              newAddressInput: builder.build());
+
+      final d = resp.data;
+      if (resp.statusCode == 200 && d != null) return d;
+
+      throw Exception(
+        "Failed to get new address, status code: ${resp.statusCode}, ${resp.statusMessage}",
+      );
+    } catch (e) {
+      throw Exception("Failed to get new address: $e");
+    }
   }
 }

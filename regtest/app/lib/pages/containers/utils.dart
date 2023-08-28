@@ -146,14 +146,3 @@ class ContainerNode {
     this.complementaryContainerId,
   );
 }
-
-String findComplementaryNode(DockerContainer main) {
-  for (final node in NetworkManager().nodeMap.values) {
-    if (node.type != ContainerType.blitzApi) continue;
-    if (node.containerName.contains(main.internalId)) {
-      return node.internalId;
-    }
-  }
-
-  return '';
-}

@@ -87,14 +87,20 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
       paysCreated++;
     } else if (i == 2) {
       try {
-        final addr = await d.node.newAddress();
+        final c = NetworkManager().findComplementaryNode(d.node);
+        if (c == null) continue;
+
+        final addr = await c.newLightningAddress();
         cParty.sendOnChain(numSats, addr);
       } catch (e) {
         logMessage(e.toString());
       }
     } else if (i == 3) {
       try {
-        final addr = await cParty.newAddress();
+        final c = NetworkManager().findComplementaryNode(cParty);
+        if (c == null) continue;
+
+        final addr = await c.newLightningAddress();
         await d.node.sendOnChain(numSats, addr);
       } catch (e) {
         logMessage(e.toString());

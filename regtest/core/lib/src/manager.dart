@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:blitz_api_client/blitz_api_client.dart' as client;
+import 'package:common/common.dart';
 import 'package:regtest_core/src/port_manager.dart';
 
 import 'docker/containers/cashu_mint.dart';
@@ -33,6 +34,7 @@ class NetworkStateMessage {
 
 class NetworkManager {
   bool _isInitialized = false;
+  final Map<String, BlitzApiContainer> _complementaryCache = {};
   final Map<String, DockerContainer> _containerMap = {};
   final Map<ContainerType, int> _containerIds = {
     ContainerType.cln: 0,
@@ -175,8 +177,25 @@ class NetworkManager {
 
   Future<void> fundNodes({
     bool autoMine = true,
-    double amountInBtc = 15.0,
-  }) async {}
+    Amount amount = const Amount(sat: 1500000000),
+  }) async {
+    final btcc = findFirstOf<BitcoinCoreContainer>();
+    if (btcc == null) {
+      throw StateError('BitcoinCore container not found');
+    }
+
+    for (final node in lnNodes) {
+      final bapiContainer = findComplementaryNode(node);
+      if (bapiContainer == null) continue;
+
+      try {
+        final addr = await bapiContainer.newLightningAddress();
+        await btcc.sendFunds(addr, amount.inBitcoin);
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
 
   /// Wait until all nodes have all funds confirmed
   Future<int> waitOnchainConfirmed({int maxIterations = 30}) async {
@@ -389,6 +408,21 @@ class NetworkManager {
     }
 
     return list;
+  }
+
+  BlitzApiContainer? findComplementaryNode(DockerContainer main) {
+    if (_complementaryCache.keys.contains(main.internalId)) {
+      return _complementaryCache[main.internalId];
+    }
+
+    for (final node in nodeMap.values) {
+      if (node.type != ContainerType.blitzApi) continue;
+      if (node.containerName.contains(main.internalId)) {
+        return node as BlitzApiContainer;
+      }
+    }
+
+    return null;
   }
 
   BlitzApiContainer _createBlitzApiContainer(ContainerOptions? opts) {

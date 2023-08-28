@@ -2,7 +2,6 @@ import 'package:common/common.dart' show BtcValue;
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:regtest_app/pages/containers/utils.dart';
 import 'package:regtest_core/core.dart';
 
 import '../blocs/wallet_balance_cubit/wallet_balance_cubit.dart';
@@ -20,7 +19,7 @@ class _WalletBalanceCardState extends State<WalletBalanceCard> {
   Widget build(BuildContext context) {
     return BlocBuilder<WalletBalanceCubit, WalletBalanceState>(
       bloc: WalletBalanceCubit(
-        NetworkManager().findContainerById(findComplementaryNode(widget.node))!,
+        NetworkManager().findComplementaryNode(widget.node)!,
       ),
       builder: (context, state) {
         if (state is WalletBalanceUpdated) {

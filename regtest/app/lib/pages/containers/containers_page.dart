@@ -87,7 +87,7 @@ class _ContainersPageState extends State<ContainersPage> {
         o ?? gnc.NodeFrameRectangle.zero(),
         node.type,
         node.internalId,
-        findComplementaryNode(node),
+        NetworkManager().findComplementaryNode(node)?.internalId ?? '',
       );
 
       nodes[node.internalId] = n;
