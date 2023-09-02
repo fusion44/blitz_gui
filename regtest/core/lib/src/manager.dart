@@ -80,11 +80,12 @@ class NetworkManager {
   List<DockerContainer> get containers =>
       _containerMap.values.toList(growable: false);
 
-  LnNode? nodeByPubKey(String key) => _containerMap.values
-      .whereType<LnNode>()
+  LnContainer? nodeByPubKey(String key) => _containerMap.values
+      .whereType<LnContainer>()
       .firstWhere((node) => node.pubKey == key);
 
-  List<LnNode> get lnNodes => _containerMap.values.whereType<LnNode>().toList();
+  List<LnContainer> get lnNodes =>
+      _containerMap.values.whereType<LnContainer>().toList();
 
   /// Get all nodes that are controllable by the user
   List<DockerContainer> get userNodes => _containerMap.values
@@ -214,7 +215,7 @@ class NetworkManager {
   }
 
   Future<String> sweepOnchain({
-    List<LnNode> nodes = const [],
+    List<LnContainer> nodes = const [],
     String destAddress = "",
     autoMine = false,
   }) async {
@@ -229,7 +230,7 @@ class NetworkManager {
 
     final b = await Future.wait<client.WalletBalance>(futures);
 
-    final balances = <LnNode, client.WalletBalance>{};
+    final balances = <LnContainer, client.WalletBalance>{};
     for (var i = 0; i < b.length; i++) {
       balances[lnNodes[i]] = b[i];
     }

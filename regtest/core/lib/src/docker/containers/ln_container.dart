@@ -20,7 +20,7 @@ class LnNodeOptions extends ContainerOptions {
   });
 }
 
-abstract class LnNode extends DockerContainer {
+abstract class LnContainer extends DockerContainer {
   late final String pubKey;
   final List<RegtestChannel> channels = [];
   late LnInfo lnInfo;
@@ -30,7 +30,7 @@ abstract class LnNode extends DockerContainer {
   bool _bootstrapped = false;
   late String? _token;
 
-  LnNode(this.opts, {String? internalId, Function()? onDeleted})
+  LnContainer(this.opts, {String? internalId, Function()? onDeleted})
       : super(opts, internalId: internalId, onDeleted: onDeleted);
 
   String get hostname => containerName;
@@ -179,6 +179,7 @@ abstract class LnNode extends DockerContainer {
   }
 
   Future<String> newAddress() async {
+    // TODO: Remove me!
     try {
       final builder = NewAddressInputBuilder()..type = OnchainAddressType.p2wkh;
 
@@ -199,7 +200,7 @@ abstract class LnNode extends DockerContainer {
   }
 
   Future<String> openChannel(
-    LnNode to, {
+    LnContainer to, {
     int localFundingAmount = defaultChannelSize,
     int pushAmountSat = 0,
   }) async {

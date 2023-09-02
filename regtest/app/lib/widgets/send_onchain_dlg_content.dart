@@ -6,7 +6,7 @@ import 'widget_utils.dart';
 
 class SendOnchainDlgContent extends StatefulWidget {
   final ValueNotifier<SendOnchainDialogData> changeNotifier;
-  final LnNode from;
+  final LnContainer from;
 
   const SendOnchainDlgContent(this.changeNotifier, this.from, {Key? key})
       : super(key: key);
@@ -28,8 +28,8 @@ class _SendOnchainDlgContentState extends State<SendOnchainDlgContent> {
   bool _delay = false;
   bool _hasAddress = false;
   bool _sendAll = false;
-  late List<LnNode> _destinationNodes;
-  late LnNode _destinationNode;
+  late List<LnContainer> _destinationNodes;
+  late LnContainer _destinationNode;
 
   @override
   void initState() {
@@ -84,7 +84,7 @@ class _SendOnchainDlgContentState extends State<SendOnchainDlgContent> {
                     .toList(),
                 onChanged: ((value) {
                   setState(() {
-                    if (value is LnNode) {
+                    if (value is LnContainer) {
                       _destinationNode = value;
                       _updateNotifier();
                     }

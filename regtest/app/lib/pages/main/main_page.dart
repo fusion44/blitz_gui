@@ -397,7 +397,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _sendFunds(FundNodesData data, BitcoinCoreContainer btcc) async {
     for (var entry in data.funding.entries) {
       if (entry.value.inBitcoin == 0.0) continue;
-      final lnNode = NetworkManager().findContainerById<LnNode>(entry.key);
+      final lnNode = NetworkManager().findContainerById<LnContainer>(entry.key);
       if (lnNode == null) {
         throw StateError('Unable to find container with id ${entry.key}');
       }

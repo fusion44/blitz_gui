@@ -7,7 +7,7 @@ import 'package:regtest_core/core.dart';
 import '../blocs/wallet_balance_cubit/wallet_balance_cubit.dart';
 
 class WalletBalanceCard extends StatefulWidget {
-  final LnNode node;
+  final LnContainer node;
   const WalletBalanceCard(this.node, {super.key});
 
   @override

@@ -11,7 +11,7 @@ import 'widget_utils.dart';
 
 class ToolButtonsCard extends StatefulWidget {
   final void Function(String message) setNotificationCallback;
-  final LnNode node;
+  final LnContainer node;
   const ToolButtonsCard(this.node, this.setNotificationCallback, {super.key});
 
   @override
@@ -97,7 +97,7 @@ class _ToolButtonsCardState extends State<ToolButtonsCard> {
     );
   }
 
-  _genInvoice(BuildContext c, LnNode n) async {
+  _genInvoice(BuildContext c, LnContainer n) async {
     final ValueNotifier<GenInvoiceDialogData> invData =
         ValueNotifier<GenInvoiceDialogData>(GenInvoiceDialogData.empty(n));
 
@@ -147,7 +147,7 @@ class _ToolButtonsCardState extends State<ToolButtonsCard> {
     widget.setNotificationCallback("");
   }
 
-  _newAddress(BuildContext c, LnNode n) async {
+  _newAddress(BuildContext c, LnContainer n) async {
     String addr = await n.newAddress();
     if (addr.isNotEmpty && mounted) {
       copyToClipboardWithNotification(c, addr);

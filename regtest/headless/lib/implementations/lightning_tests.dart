@@ -5,8 +5,8 @@ import 'package:regtest_core/core.dart';
 import '../test_utils.dart';
 
 Future<void> _validateOpenChannelNoFundsFailureCode412({
-  required LnNode from,
-  required LnNode to,
+  required LnContainer from,
+  required LnContainer to,
   int amountSat = 500000,
 }) async {
   // Check if the open channel throws a proper 412 error when not enough
@@ -75,8 +75,8 @@ Future<void> validateOpenChannelNoFunds() async {
 
 Future<void> _validateOpensChan(
   NetworkManager mgr,
-  LnNode from,
-  LnNode to, {
+  LnContainer from,
+  LnContainer to, {
   int amountSat = 1000000,
   BtcValue? pushSat,
   bool waitForOpen = true,

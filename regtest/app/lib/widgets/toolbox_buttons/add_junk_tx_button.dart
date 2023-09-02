@@ -7,7 +7,7 @@ import '../add_junk_tx_dlg_content.dart';
 import '../tool_button.dart';
 
 class AddJunkTxButton extends StatefulWidget {
-  final LnNode node;
+  final LnContainer node;
 
   const AddJunkTxButton(this.node, {super.key});
 
@@ -31,7 +31,7 @@ class _AddJunkTxButtonState extends State<AddJunkTxButton> {
     );
   }
 
-  _addJunkTx(LnNode node) async {
+  _addJunkTx(LnContainer node) async {
     final notifier = ValueNotifier<AddJunkTxDlgData>(
       AddJunkTxDlgData.empty(node),
     );

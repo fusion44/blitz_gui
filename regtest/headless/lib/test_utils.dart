@@ -62,13 +62,13 @@ bool isValidRegtestBech32Address(String? address) {
 }
 
 class N {
-  static LnNode? CLNgRPC;
-  static LnNode? CLNjRPC;
-  static LnNode? LNDgRPC;
-  static LnNode? LND2gRPC;
-  static LnNode? LND3gRPC;
+  static LnContainer? CLNgRPC;
+  static LnContainer? CLNjRPC;
+  static LnContainer? LNDgRPC;
+  static LnContainer? LND2gRPC;
+  static LnContainer? LND3gRPC;
 
-  static void set(Map<NodeId, LnNode> nodeMap) {
+  static void set(Map<NodeId, LnContainer> nodeMap) {
     N.CLNgRPC = nodeMap[NodeId.cln1];
     N.CLNjRPC = nodeMap[NodeId.cln2];
     N.LNDgRPC = nodeMap[NodeId.lnd1];

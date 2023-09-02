@@ -8,7 +8,7 @@ part 'follow_logs_event.dart';
 part 'follow_logs_state.dart';
 
 class FollowLogsBloc extends Bloc<FollowLogsEvent, FollowLogsState> {
-  final LnNode node;
+  final LnContainer node;
   final int tail;
   StreamSubscription<String>? sub;
 

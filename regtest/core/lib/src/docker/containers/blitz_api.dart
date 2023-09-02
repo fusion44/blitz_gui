@@ -213,7 +213,7 @@ class BlitzApiContainer extends DockerContainer {
       throw StateError('BitcoinCore container not found');
     }
 
-    final ln = NetworkManager().findContainerById<LnNode>(o.lnContainerId);
+    final ln = NetworkManager().findContainerById<LnContainer>(o.lnContainerId);
 
     final DockerArgBuilder argBuilder = _buildCoreArgs(btcc);
 
@@ -312,7 +312,7 @@ class BlitzApiContainer extends DockerContainer {
         .addEnv('lnd_rest_port=${n.restPort}');
   }
 
-  void _buildClnJrpcArgs(LnNode ln, DockerArgBuilder argBuilder) {
+  void _buildClnJrpcArgs(LnContainer ln, DockerArgBuilder argBuilder) {
     final n = ln as CLNContainer;
     argBuilder
         .addEnv('ln_node=cln_jrpc')

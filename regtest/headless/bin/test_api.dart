@@ -9,7 +9,7 @@ var running = true;
 
 NetworkManager manager = NetworkManager();
 
-Future<void> _printImplementation(LnNode n) async {
+Future<void> _printImplementation(LnContainer n) async {
   var res = await n.api.getLightningApi().lightningGetInfoLightningGetInfoGet();
   if (res.statusCode != 200) {
     printResult(

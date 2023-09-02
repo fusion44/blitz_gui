@@ -144,7 +144,7 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
   );
 }
 
-LnNode getRandNode([LnNode? exclude]) {
+LnContainer getRandNode([LnContainer? exclude]) {
   final nodes = NetworkManager().lnNodes;
   if (exclude != null) nodes.remove(exclude);
   int rand = Random().nextInt(nodes.length - 1);

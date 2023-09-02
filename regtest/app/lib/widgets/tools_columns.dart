@@ -9,7 +9,7 @@ import 'widget_utils.dart';
 
 class ToolsColumns extends StatefulWidget {
   final void Function(String message) setNotificationCallback;
-  final List<LnNode> nodes;
+  final List<LnContainer> nodes;
   const ToolsColumns(this.setNotificationCallback, this.nodes, {Key? key})
       : super(key: key);
 
@@ -57,7 +57,7 @@ class _ToolsColumnsState extends State<ToolsColumns> {
     return c;
   }
 
-  Row _buildHeader(LnNode n, ThemeData theme) {
+  Row _buildHeader(LnContainer n, ThemeData theme) {
     return Row(
       children: [
         const SizedBox(width: 12.0),

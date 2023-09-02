@@ -8,7 +8,7 @@ import 'widget_utils.dart';
 
 class GenInvoiceDlgContent extends StatefulWidget {
   final ValueNotifier<GenInvoiceDialogData> changeNotifier;
-  final LnNode payeeNode;
+  final LnContainer payeeNode;
 
   const GenInvoiceDlgContent(this.changeNotifier, this.payeeNode, {Key? key})
       : super(key: key);
@@ -21,7 +21,7 @@ class _GenInvoiceDlgContentState extends State<GenInvoiceDlgContent> {
   final TextEditingController _memoCtrl = TextEditingController();
   final TextEditingController _mSatCtrl = TextEditingController();
   bool _autoPay = false;
-  late LnNode _payerNode;
+  late LnContainer _payerNode;
   final TextEditingController _payDelayCtrl = TextEditingController(text: "0");
   final TextEditingController _payAmt = TextEditingController(text: "0");
 
@@ -91,7 +91,7 @@ class _GenInvoiceDlgContentState extends State<GenInvoiceDlgContent> {
                 .toList(),
             onChanged: ((value) {
               setState(() {
-                if (value is LnNode) {
+                if (value is LnContainer) {
                   _payerNode = value;
                   _updateNotifier();
                 }

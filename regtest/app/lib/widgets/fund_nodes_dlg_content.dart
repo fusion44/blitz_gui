@@ -16,7 +16,7 @@ class FundNodesDlgContent extends StatefulWidget {
 }
 
 class _DataHolder {
-  final LnNode node;
+  final LnContainer node;
   final TextEditingController controller;
 
   _DataHolder(this.node, this.controller);

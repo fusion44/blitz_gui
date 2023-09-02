@@ -26,8 +26,8 @@ Future<void> validateOnchainAddressGeneration() async {
 }
 
 Future<bool> _validateSendOnchainFailureCode412(
-  LnNode sender,
-  LnNode receiver, [
+  LnContainer sender,
+  LnContainer receiver, [
   int amountSat = 500000,
 ]) async {
   // Check if the send onchain throws a proper 412 error when not enough
@@ -110,8 +110,8 @@ Future<void> validateSendOnchainFunds(NetworkManager mgr) async {
 
 Future<void> _sendOnChainFixedAmount(
   NetworkManager mgr,
-  LnNode sender,
-  LnNode receiver, [
+  LnContainer sender,
+  LnContainer receiver, [
   int amountSat = 500001,
 ]) async {
   final sBefore = await sender.walletBalance();
@@ -288,7 +288,7 @@ Future<void> _sendOnChainFixedAmount(
 }
 
 Future<void> _sendOnChainAll(
-    NetworkManager mgr, LnNode sender, LnNode receiver) async {
+    NetworkManager mgr, LnContainer sender, LnContainer receiver) async {
   final sBefore = await sender.walletBalance();
 
   final address = await receiver.newAddress();
@@ -413,7 +413,7 @@ Future<void> _sendOnChainAll(
 }
 
 bool _sendAllIsOK(
-  LnNode i,
+  LnContainer i,
   SendCoinsResponse data, {
   required bool targetState,
 }) {

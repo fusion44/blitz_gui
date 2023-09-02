@@ -6,8 +6,8 @@ import 'widget_utils.dart';
 
 class OpenChannelDlgContent extends StatefulWidget {
   final ValueNotifier<OpenChannelDialogData> changeNotifier;
-  final LnNode from;
-  final LnNode? to;
+  final LnContainer from;
+  final LnContainer? to;
   const OpenChannelDlgContent(
     this.changeNotifier,
     this.from, {
@@ -30,8 +30,8 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
 
   bool _autoMine = false;
   bool _delay = false;
-  late List<LnNode> _destinationNodes;
-  late LnNode _destinationNode;
+  late List<LnContainer> _destinationNodes;
+  late LnContainer _destinationNode;
 
   @override
   void initState() {
@@ -68,7 +68,7 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
           children: [
             const Text("Destination: "),
             const Spacer(),
-            DropdownButton<LnNode>(
+            DropdownButton<LnContainer>(
               value: _destinationNode,
               items: _destinationNodes
                   .map((e) => DropdownMenuItem(
@@ -78,7 +78,7 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
                   .toList(),
               onChanged: ((value) {
                 setState(() {
-                  if (value is LnNode) {
+                  if (value is LnContainer) {
                     _destinationNode = value;
                     _updateNotifier();
                   }

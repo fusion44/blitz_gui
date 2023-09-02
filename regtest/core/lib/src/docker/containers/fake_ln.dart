@@ -14,7 +14,7 @@ class FakeLnOptions extends LnNodeOptions {
   }) : super(name: name ?? '${projectName}_${generateRandomName()}');
 }
 
-class FakeLnContainer extends LnNode {
+class FakeLnContainer extends LnContainer {
   FakeLnContainer(super.opts);
 
   factory FakeLnContainer.defaultOptions() => FakeLnContainer(FakeLnOptions());

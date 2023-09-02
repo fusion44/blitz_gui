@@ -25,7 +25,7 @@ class ConnectionManager {
     _connections.clear();
     final mgr = NetworkManager();
 
-    final lnNodes = mgr.findAllOf<LnNode>();
+    final lnNodes = mgr.findAllOf<LnContainer>();
     final btcc = mgr.findFirstOf<BitcoinCoreContainer>();
     if (btcc != null) {
       for (final n in lnNodes) {

@@ -210,7 +210,7 @@ class BlitzApiContainerBloc
   ) async {
     if (_client == null) throw StateError('Blitz API client object is null');
 
-    final to = NetworkManager().findContainerById<LnNode>(
+    final to = NetworkManager().findContainerById<LnContainer>(
       event.targetContainerId,
     );
 

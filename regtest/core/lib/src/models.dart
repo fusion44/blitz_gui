@@ -6,7 +6,7 @@ import 'package:common/common.dart' show Amount, BtcValue;
 import '../core.dart';
 
 class WalletBalances {
-  Map<LnNode, WalletBalance> balances = {};
+  Map<LnContainer, WalletBalance> balances = {};
 
   WalletBalances(this.balances);
 
@@ -115,9 +115,9 @@ class WalletBalances {
 
 class RegtestChannel {
   final String id;
-  final LnNode from;
+  final LnContainer from;
   final BtcValue ourFunds;
-  final LnNode to;
+  final LnContainer to;
   final BtcValue otherFunds;
   final Channel channel;
 
@@ -132,7 +132,7 @@ class RegtestChannel {
 
   RegtestChannel.fromCLN(
     this.from,
-    Map<String, LnNode> nodes,
+    Map<String, LnContainer> nodes,
     Map<String, dynamic> json, {
     required this.channel,
   })  : id = json["id"],
@@ -147,7 +147,7 @@ class RegtestChannel {
 
   RegtestChannel.fromLND(
     this.from,
-    Map<String, LnNode> nodes,
+    Map<String, LnContainer> nodes,
     Map<String, dynamic> json, {
     required this.channel,
   })  : id = json["channel_point"],
@@ -208,7 +208,7 @@ class OpenChannelDialogData {
   final int numSats;
   final int numPushSats;
   final bool autoMine;
-  final LnNode? destination;
+  final LnContainer? destination;
   final bool delayBroadcast;
   final int broadcastDelay;
   final int mineDelay;
@@ -240,7 +240,7 @@ class SendOnchainDialogData {
   final bool autoMine;
   final int mineDelay;
   final int numBlocks;
-  final LnNode? destination;
+  final LnContainer? destination;
   final bool sendAll;
 
   SendOnchainDialogData({
@@ -291,10 +291,10 @@ class FundNodesData {
 }
 
 class GenInvoiceDialogData {
-  final LnNode node;
+  final LnContainer node;
   final String msg;
   final int mSat;
-  final LnNode? payer;
+  final LnContainer? payer;
   final int payAmt;
   final int payDelay;
 
@@ -320,7 +320,7 @@ class GenInvoiceDialogData {
 }
 
 class AddJunkTxDlgData {
-  final LnNode node;
+  final LnContainer node;
   final int numInvoices;
   final int numPayments;
   final int numOnchainTx;

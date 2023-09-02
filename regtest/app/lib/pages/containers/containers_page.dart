@@ -345,12 +345,12 @@ class _ContainersPageState extends State<ContainersPage> {
     DockerContainer? fromNode = NetworkManager().findContainerById(from);
     DockerContainer? toNode = NetworkManager().findContainerById(to);
 
-    if (fromNode is LnNode && toNode is LnNode) {
+    if (fromNode is LnContainer && toNode is LnContainer) {
       _openChannel(c, fromNode, toNode);
     }
   }
 
-  _openChannel(BuildContext context, LnNode from, LnNode to) async {
+  _openChannel(BuildContext context, LnContainer from, LnContainer to) async {
     final ValueNotifier<OpenChannelDialogData> notifier =
         ValueNotifier<OpenChannelDialogData>(OpenChannelDialogData.empty());
 

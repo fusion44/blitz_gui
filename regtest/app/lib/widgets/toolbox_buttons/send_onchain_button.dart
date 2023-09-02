@@ -9,7 +9,7 @@ import '../tool_button.dart';
 import '../widget_utils.dart';
 
 class SendOnchainButton extends StatefulWidget {
-  final LnNode node;
+  final LnContainer node;
   const SendOnchainButton(this.node, {super.key});
 
   @override
@@ -30,7 +30,7 @@ class _SendOnchainButtonState extends State<SendOnchainButton> {
     );
   }
 
-  _sendOnchain(BuildContext context, LnNode n) async {
+  _sendOnchain(BuildContext context, LnContainer n) async {
     final ValueNotifier<SendOnchainDialogData> notifier =
         ValueNotifier<SendOnchainDialogData>(SendOnchainDialogData.empty());
 

@@ -9,7 +9,7 @@ import '../tool_button.dart';
 import '../widget_utils.dart';
 
 class OpenChannelButton extends StatefulWidget {
-  final LnNode node;
+  final LnContainer node;
   const OpenChannelButton(this.node, {super.key});
 
   @override
@@ -30,7 +30,7 @@ class _OpenChannelButtonState extends State<OpenChannelButton> {
     );
   }
 
-  _openChannel(BuildContext context, LnNode n) async {
+  _openChannel(BuildContext context, LnContainer n) async {
     final ValueNotifier<OpenChannelDialogData> notifier =
         ValueNotifier<OpenChannelDialogData>(OpenChannelDialogData.empty());
 

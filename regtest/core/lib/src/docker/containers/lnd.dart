@@ -43,7 +43,7 @@ class LndOptions extends LnNodeOptions {
   }
 }
 
-class LndContainer extends LnNode {
+class LndContainer extends LnContainer {
   static const grpcPortRange = ValueRange(10009, 10080 + 50);
   static const restPortRange = ValueRange(8080, 8080 + 50);
 

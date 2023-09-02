@@ -5,7 +5,7 @@ import 'package:regtest_core/core.dart';
 import 'toolbox_buttons/open_channel_button.dart';
 
 class ChannelsCard extends StatefulWidget {
-  final LnNode node;
+  final LnContainer node;
   const ChannelsCard(this.node, {super.key});
 
   @override

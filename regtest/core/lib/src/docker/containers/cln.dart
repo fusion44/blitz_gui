@@ -21,7 +21,7 @@ class CLNOptions extends LnNodeOptions {
   }) : super(name: name ?? '${projectName}_${generateRandomName()}');
 }
 
-class CLNContainer extends LnNode {
+class CLNContainer extends LnContainer {
   final int? _gRPCPort;
 
   CLNContainer(CLNOptions opts)

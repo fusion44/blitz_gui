@@ -6,7 +6,7 @@ import 'widget_utils.dart';
 
 class AddJunkTxDlgContent extends StatefulWidget {
   final ValueNotifier<AddJunkTxDlgData> changeNotifier;
-  final LnNode node;
+  final LnContainer node;
 
   const AddJunkTxDlgContent(this.changeNotifier, this.node, {Key? key})
       : super(key: key);
