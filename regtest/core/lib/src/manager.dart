@@ -176,7 +176,7 @@ class NetworkManager {
   }
 
   Future<void> fundNodes({
-    bool autoMine = true,
+    bool autoMine = false,
     Amount amount = const Amount(sat: 1500000000),
   }) async {
     final btcc = findFirstOf<BitcoinCoreContainer>();

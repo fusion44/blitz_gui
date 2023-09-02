@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:blitz_api_client/blitz_api_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ndialog/ndialog.dart';
+import 'package:regtest_app/widgets/fund_nodes_dlg_content.dart';
 import 'package:regtest_core/core.dart';
 
 import '../../blocs/network_bloc/network_bloc.dart';
@@ -69,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () => print('_mgr.fundNodes()'),
+                        onPressed: () => _fundNodes(context),
                         child: const Text("Fund Nodes"),
                       ),
                       const SizedBox(width: 8.0),
@@ -356,5 +358,77 @@ class _MyHomePageState extends State<MyHomePage> {
         return Center(child: Text("Network is ${m.status.toString()}"));
       },
     );
+  }
+
+  Future<void> _fundNodes(context) async {
+    final ValueNotifier<FundNodesData> fundingData =
+        ValueNotifier<FundNodesData>(FundNodesData({}));
+
+    final res = await NDialog(
+      dialogStyle: DialogStyle(titleDivider: true),
+      title: const Text("Fund Nodes"),
+      content: FundNodesDlgContent(fundingData),
+      actions: <Widget>[
+        ElevatedButton(
+          child: const Text("OK"),
+          onPressed: () => Navigator.pop(context, "OK"),
+        ),
+      ],
+    ).show(context);
+
+    if (res == null || res != "OK") return;
+    final data = fundingData.value;
+
+    final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
+    if (btcc == null) {
+      throw StateError(
+        'There must be at least one bitcoin core container available',
+      );
+    }
+
+    await _sendFunds(data, btcc);
+    if (data.mineBlockData != null) {
+      setState(() => _miningBlocks = true);
+      await btcc.mineBlocks(data.mineBlockData!, printStatus: true);
+      setState(() => _miningBlocks = false);
+    }
+  }
+
+  Future<void> _sendFunds(FundNodesData data, BitcoinCoreContainer btcc) async {
+    for (var entry in data.funding.entries) {
+      if (entry.value.inBitcoin == 0.0) continue;
+      final lnNode = NetworkManager().findContainerById<LnNode>(entry.key);
+      if (lnNode == null) {
+        throw StateError('Unable to find container with id ${entry.key}');
+      }
+      final bapi = NetworkManager().findComplementaryNode(lnNode);
+      if (bapi == null) {
+        throw StateError(
+          'Unable to find complementary BlitzAPI container for id ${entry.key}',
+        );
+      }
+
+      try {
+        final builder = NewAddressInputBuilder()
+          ..type = OnchainAddressType.p2wkh;
+
+        final addr = await bapi.api
+            .getLightningApi()
+            .lightningNewAddressLightningNewAddressPost(
+              newAddressInput: builder.build(),
+            );
+
+        if (addr.data == null || addr.data!.isEmpty) {
+          throw StateError('Unable to find address for container ${entry.key}');
+        }
+
+        final res = await btcc.sendFunds(addr.data!, entry.value.inBitcoin);
+        if (res.isEmpty) {
+          throw StateError('Unable to send funds to to container ${entry.key}');
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
   }
 }

@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:blitz_api_client/blitz_api_client.dart';
-import 'package:common/common.dart' show BtcValue;
+import 'package:common/common.dart' show Amount, BtcValue;
 
 import '../core.dart';
 
@@ -281,6 +281,13 @@ class SendOnchainResult {
   @override
   String toString() =>
       "SendOnchainResult{success: $success, processOut: $processOut, request: $data}";
+}
+
+class FundNodesData {
+  final Map<String, Amount> funding;
+  final MineBlockData? mineBlockData;
+
+  FundNodesData(this.funding, {this.mineBlockData});
 }
 
 class GenInvoiceDialogData {
