@@ -240,16 +240,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     if (blockData.value.delay) {
+      // TODO: Refactor this to be reactive instead of imperative
       while (_currentBlock < blockData.value.numBlocks) {
         final delay = from != to ? Random().nextInt(to) + from : from;
         await Future.delayed(Duration(seconds: delay));
-        await btcc.mineBlocks(1);
+        await btcc.mineBlocks(MineBlockData(1));
         setState(() => _currentBlock += 1);
       }
 
       debugPrint('Done mining');
     } else {
-      await btcc.mineBlocks(blockData.value.numBlocks);
+      await btcc.mineBlocks(MineBlockData(blockData.value.numBlocks));
     }
 
     setState(() => _miningBlocks = false);

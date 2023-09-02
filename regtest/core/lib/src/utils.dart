@@ -114,7 +114,7 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
           throw StateError('BitcoinCoreContainer not found');
         }
 
-        await btcc.mineBlocks(rand.nextInt(6) + 3);
+        await btcc.mineBlocks(MineBlockData(rand.nextInt(6) + 3));
 
         onchainTxCreated++;
       } catch (e) {

@@ -226,7 +226,7 @@ Future<void> _sendOnChainFixedAmount(
         throw StateError('BitcoinCoreContainer not found');
       }
 
-      await btcc.mineBlocks(1);
+      await btcc.mineBlocks(MineBlockData(1));
       await Future.delayed(Duration(seconds: 1));
 
       rAfter = await receiver.walletBalance();
@@ -354,7 +354,7 @@ Future<void> _sendOnChainAll(
         throw StateError('BitcoinCoreContainer not found');
       }
 
-      await btcc.mineBlocks(1);
+      await btcc.mineBlocks(MineBlockData(1));
       await Future.delayed(Duration(seconds: 1));
 
       final sAfter = await sender.walletBalance();

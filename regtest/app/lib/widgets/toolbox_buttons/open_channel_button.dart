@@ -104,7 +104,7 @@ ${data.numBlocks - x} blocks left
             throw StateError('BitcoinCoreContainer not found');
           }
 
-          await btcc.mineBlocks(1);
+          await btcc.mineBlocks(MineBlockData(1));
         } catch (e) {
           debugPrint(e.toString());
         }

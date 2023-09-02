@@ -165,7 +165,12 @@ class MineBlockData {
   final int from;
   final int to;
 
-  MineBlockData(this.numBlocks, this.delay, this.from, this.to);
+  MineBlockData(
+    this.numBlocks, [
+    this.delay = false,
+    this.from = 0,
+    this.to = 0,
+  ]);
 
   MineBlockData.empty()
       : delay = false,

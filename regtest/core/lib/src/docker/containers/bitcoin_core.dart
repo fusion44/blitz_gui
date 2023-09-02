@@ -3,8 +3,10 @@ library docker.containers;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import '../../constants.dart';
+import '../../models.dart';
 import '../../utils.dart';
 import '../arg_builder.dart';
 import '../docker.dart';
@@ -107,7 +109,7 @@ class BitcoinCoreContainer extends DockerContainer {
       if (opts.fundWallet) {
         await ensureWalletLoaded(walletName: opts.walletName);
         // Bitcoin block rewards get unlocked after 100 blocks
-        await mineBlocks(110);
+        await mineBlocks(MineBlockData(110));
       }
 
       if (opts.makeDataDirPublic) {
@@ -121,12 +123,16 @@ class BitcoinCoreContainer extends DockerContainer {
   }
 
   Future<void> mineBlocks(
-    int numBlocks, {
-    int delayBetweenBlocks = 0,
+    MineBlockData data, {
     bool printStatus = false,
   }) async {
-    if (delayBetweenBlocks > 0) {
+    final numBlocks = data.numBlocks;
+    if (data.delay) {
       for (var i = 1; i < numBlocks + 1; i++) {
+        final delayBetweenBlocks = data.from == data.to
+            ? data.from
+            : Random().nextInt(data.to) + data.from;
+
         if (printStatus) {
           print("Mining block $i of $numBlocks with delay $delayBetweenBlocks");
         }
