@@ -18,17 +18,18 @@ class CLNOptions extends LnNodeOptions {
     super.btccContainerId = '',
     super.workDir = dockerDataDir,
     this.gRPCPort,
-  }) : super(name: name ?? '${projectName}_cln');
+  }) : super(name: name ?? '${projectName}_${generateRandomName()}');
 }
 
 class CLNContainer extends LnNode {
   final int? _gRPCPort;
 
-  CLNContainer({required CLNOptions opts})
+  CLNContainer(CLNOptions opts)
       : _gRPCPort = opts.gRPCPort,
-        super(opts: opts);
+        super(opts);
 
-  factory CLNContainer.defaultOptions() => CLNContainer(opts: CLNOptions());
+  factory CLNContainer.defaultOptions() =>
+      CLNContainer(CLNOptions(name: generateRandomName()));
 
   @override
   ContainerType get type => ContainerType.cln;

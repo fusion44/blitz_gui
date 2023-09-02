@@ -20,6 +20,7 @@ dependencies:
   blitz_api_client: ^0.5.1
   sse_client: ^0.5.1
   subscription_repository: ^0.5.1
+  unique_name_generator: ^1.0.0
 
 dev_dependencies:
   lints: ^2.0.0

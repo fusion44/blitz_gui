@@ -255,16 +255,16 @@ class NetworkManager {
     _checkRequirements(type);
 
     final DockerContainer container = switch (type) {
-      ContainerType.bitcoinCore => BitcoinCoreContainer(),
+      ContainerType.bitcoinCore => BitcoinCoreContainer(BitcoinCoreOptions()),
       ContainerType.blitzApi => _createBlitzApiContainer(opts),
-      ContainerType.cashuMint => CashuMintContainer(),
+      ContainerType.cashuMint => CashuMintContainer(CashuMintOptions()),
       ContainerType.cln => CLNContainer.defaultOptions(),
       ContainerType.fakeLn => FakeLnContainer.defaultOptions(),
-      ContainerType.lnbits => LNbitsContainer(),
+      ContainerType.lnbits => LNbitsContainer.defaultOptions(),
       ContainerType.lnd => await _createLndContainer(
           opts == null ? null : opts as LndOptions,
         ),
-      ContainerType.redis => RedisContainer(),
+      ContainerType.redis => RedisContainer.defaultOptions(),
     };
 
     _containerMap[container.internalId] = container;
@@ -319,16 +319,14 @@ class NetworkManager {
 
     final DockerContainer newContainer = switch (container.type) {
       ContainerType.bitcoinCore =>
-        BitcoinCoreContainer(opts: opts as BitcoinCoreOptions, internalId: id),
-      ContainerType.blitzApi =>
-        BlitzApiContainer(opts: opts as BlitzApiOptions),
-      ContainerType.cashuMint =>
-        CashuMintContainer(opts: opts as CashuMintOptions),
-      ContainerType.cln => CLNContainer(opts: opts as CLNOptions),
-      ContainerType.fakeLn => FakeLnContainer(opts: opts as FakeLnOptions),
-      ContainerType.lnbits => LNbitsContainer(opts: opts as LNbitsOptions),
-      ContainerType.lnd => LndContainer(lndOpts: opts as LndOptions),
-      ContainerType.redis => RedisContainer(opts: opts as RedisOptions),
+        BitcoinCoreContainer(opts as BitcoinCoreOptions, internalId: id),
+      ContainerType.blitzApi => BlitzApiContainer(opts as BlitzApiOptions),
+      ContainerType.cashuMint => CashuMintContainer(opts as CashuMintOptions),
+      ContainerType.cln => CLNContainer(opts as CLNOptions),
+      ContainerType.fakeLn => FakeLnContainer(opts as FakeLnOptions),
+      ContainerType.lnbits => LNbitsContainer(opts as LNbitsOptions),
+      ContainerType.lnd => LndContainer(opts as LndOptions),
+      ContainerType.redis => RedisContainer(opts as RedisOptions),
     };
 
     try {
@@ -431,7 +429,7 @@ class NetworkManager {
     }
 
     return BlitzApiContainer(
-      opts: opts == null ? BlitzApiOptions.empty() : opts as BlitzApiOptions,
+      opts == null ? BlitzApiOptions.empty() : opts as BlitzApiOptions,
     );
   }
 
@@ -457,6 +455,6 @@ class NetworkManager {
 
     _containerIds[ContainerType.lnd] = ++currId;
 
-    return LndContainer(lndOpts: lndOptions);
+    return LndContainer(lndOptions);
   }
 }

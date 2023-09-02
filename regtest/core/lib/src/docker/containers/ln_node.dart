@@ -30,7 +30,7 @@ abstract class LnNode extends DockerContainer {
   bool _bootstrapped = false;
   late String? _token;
 
-  LnNode({required this.opts, String? internalId, Function()? onDeleted})
+  LnNode(this.opts, {String? internalId, Function()? onDeleted})
       : super(opts, internalId: internalId, onDeleted: onDeleted);
 
   String get hostname => containerName;

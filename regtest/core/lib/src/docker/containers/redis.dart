@@ -8,14 +8,11 @@ import '../arg_builder.dart';
 import '../docker.dart';
 
 class RedisOptions extends ContainerOptions {
-  const RedisOptions({
-    super.name = defaultRedisName,
-    super.image = "redis:7.0.5",
-  });
+  RedisOptions({super.name = defaultRedisName, super.image = "redis:7.0.5"});
 }
 
 class RedisContainer extends DockerContainer {
-  RedisContainer({opts = const RedisOptions()}) : super(opts);
+  RedisContainer(RedisOptions opts) : super(opts);
 
   // This private constructor is only available for instantiating from
   // an actual running docker container. At this point we do have an internalId
@@ -32,6 +29,8 @@ class RedisContainer extends DockerContainer {
     dockerId = cd.dockerId.trim();
     setStatus(ContainerStatusMessage(cd.status, ''));
   }
+
+  factory RedisContainer.defaultOptions() => RedisContainer(RedisOptions());
 
   static Future<RedisContainer> fromRunningContainer(
       ContainerData c, Function()? onDeleted) async {

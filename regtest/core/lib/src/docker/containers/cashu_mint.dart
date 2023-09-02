@@ -4,21 +4,22 @@ import 'dart:async';
 import 'dart:io';
 
 import '../../constants.dart';
+import '../../utils.dart';
 import '../arg_builder.dart';
 import '../docker.dart';
 
 class CashuMintOptions extends ContainerOptions {
-  const CashuMintOptions({
-    super.name = defaultCashMintName,
+  CashuMintOptions({
+    String? name,
     super.image = "cashu:0.12.0",
     super.workDir = dockerDataDir,
-  });
+  }) : super(name: name ?? '${projectName}_${generateRandomName()}');
 }
 
 class CashuMintContainer extends DockerContainer {
   CashuMintOptions opts;
 
-  CashuMintContainer({this.opts = const CashuMintOptions()}) : super(opts);
+  CashuMintContainer(this.opts) : super(opts);
 
   @override
   ContainerType get type => ContainerType.cashuMint;

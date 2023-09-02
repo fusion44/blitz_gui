@@ -18,14 +18,14 @@ class BitcoinCoreOptions extends ContainerOptions {
   final String walletName;
   final bool makeDataDirPublic;
 
-  const BitcoinCoreOptions({
-    super.name = defaultBitcoinCoreName,
+  BitcoinCoreOptions({
+    String? name,
     super.image = 'boltz/bitcoin-core:24.0.1',
     super.workDir = dockerDataDir,
     this.fundWallet = true,
     this.walletName = defaultWalletName,
     this.makeDataDirPublic = false,
-  });
+  }) : super(name: name ?? '${projectName}_${generateRandomName()}');
 
   @override
   List<Object?> get props => [
@@ -65,8 +65,8 @@ class BitcoinCoreOptions extends ContainerOptions {
 class BitcoinCoreContainer extends DockerContainer {
   BitcoinCoreOptions opts;
 
-  BitcoinCoreContainer({
-    this.opts = const BitcoinCoreOptions(),
+  BitcoinCoreContainer(
+    this.opts, {
     String? internalId,
   }) : super(opts, internalId: internalId);
 
@@ -296,7 +296,7 @@ class BitcoinCoreContainer extends DockerContainer {
     }
 
     return BitcoinCoreContainer(
-      opts: BitcoinCoreOptions(
+      BitcoinCoreOptions(
         name: name ?? opts.name,
         image: image ?? opts.image,
         workDir: workDir ?? opts.workDir,

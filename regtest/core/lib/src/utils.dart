@@ -9,6 +9,7 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:english_words/english_words.dart';
 import 'package:regtest_core/core.dart';
+import 'package:unique_name_generator/unique_name_generator.dart' as ung;
 
 int validIntOrZero(String text) {
   final val = int.tryParse(text.replaceAll(",", ""));
@@ -159,6 +160,14 @@ String genRandomWords([int numWords = 5]) {
 
   return msg.trimRight();
 }
+
+final _gen = ung.UniqueNameGenerator(
+  dictionaries: [ung.adjectives, ung.animals],
+  style: ung.NameStyle.lowerCase,
+  separator: '_',
+);
+
+String generateRandomName({int? seed}) => _gen.generate(seed: seed);
 
 int clnParseMSatOrZero(String amt) =>
     int.tryParse(amt.replaceAll("msat", "")) ?? 0;

@@ -41,11 +41,11 @@ class ContainerOptions extends Equatable {
   final String image;
   final String workDir;
 
-  const ContainerOptions({
+  ContainerOptions({
     required this.name,
     required this.image,
     this.workDir = dockerDataDir,
-  });
+  }) : assert(name.startsWith(projectName));
 
   @override
   List<Object?> get props => [name, image, workDir];

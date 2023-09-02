@@ -20,7 +20,7 @@ class LndOptions extends LnNodeOptions {
     super.workDir = dockerDataDir,
     this.gRPCPort,
     this.restPort,
-  }) : super(name: name ?? '${projectName}_lnd');
+  }) : super(name: name ?? '${projectName}_${generateRandomName()}');
 
   LndOptions copyWith({
     String? name,
@@ -51,10 +51,10 @@ class LndContainer extends LnNode {
   final int? _gRPCPort;
   final int? _restPort;
 
-  LndContainer({required this.lndOpts, final Function()? onDeleted})
+  LndContainer(this.lndOpts, {final Function()? onDeleted})
       : _gRPCPort = lndOpts.gRPCPort,
         _restPort = lndOpts.restPort,
-        super(opts: lndOpts, onDeleted: onDeleted) {
+        super(lndOpts, onDeleted: onDeleted) {
     bootstrapCli();
   }
 
@@ -67,18 +67,14 @@ class LndContainer extends LnNode {
     final Function()? onDeleted,
   )   : _gRPCPort = lndOpts.gRPCPort,
         _restPort = lndOpts.restPort,
-        super(
-          opts: lndOpts,
-          internalId: cd.internalId,
-          onDeleted: onDeleted,
-        ) {
+        super(lndOpts, internalId: cd.internalId, onDeleted: onDeleted) {
     running = true;
     dockerId = cd.dockerId.trim();
     bootstrapCli();
     setStatus(ContainerStatusMessage(cd.status, ''));
   }
 
-  factory LndContainer.defaultOptions() => LndContainer(lndOpts: LndOptions());
+  factory LndContainer.defaultOptions() => LndContainer(LndOptions());
 
   static Future<LndContainer> fromRunningContainer(
     ContainerData c,

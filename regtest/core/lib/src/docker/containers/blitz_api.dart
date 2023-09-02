@@ -23,7 +23,7 @@ class BlitzApiOptions extends ContainerOptions {
   final ClnConnectionMode clnMode;
 
   BlitzApiOptions({
-    required super.name,
+    String? name,
     required this.btccContainerId,
     required this.redisHost,
     required this.apiRestPort,
@@ -33,7 +33,7 @@ class BlitzApiOptions extends ContainerOptions {
     this.clnMode = ClnConnectionMode.jRPC,
     super.image = 'blitz_api:latest',
     super.workDir = dockerDataDir,
-  });
+  }) : super(name: name ?? '${projectName}_${generateRandomName()}');
 
   /// factory with a fake Ln node
   factory BlitzApiOptions.empty() => BlitzApiOptions(
@@ -87,7 +87,7 @@ class BlitzApiContainer extends DockerContainer {
 
   final _apiInitializedCompleter = Completer();
 
-  BlitzApiContainer({required this.opts}) : super(opts);
+  BlitzApiContainer(this.opts) : super(opts);
 
   // This private constructor is only available for instantiating from
   // an actual running docker container. At this point we do have an internalId
@@ -340,28 +340,37 @@ class BlitzApiContainer extends DockerContainer {
     final api = _api.getSystemApi();
     final builder = LoginInputBuilder()..password = "12345678";
 
-    try {
-      final response = await api.systemLoginSystemLoginPost(
-        loginInput: builder.build(),
-      );
-
-      final data = response.data;
-      if (data == null || data.value is! String) {
-        throw StateError("Login response data was null");
+    int tries = 0;
+    DioError? lastError;
+    while (!_apiInitialized) {
+      if (tries > 5) {
+        throw Exception("Failed to initialize API. LastError: \n$lastError");
       }
 
-      _token = "Bearer ${data.value.toString()}";
+      try {
+        final response = await api.systemLoginSystemLoginPost(
+          loginInput: builder.build(),
+        );
 
-      _repo = RegtestBapiSubRepo(url, _token!);
-      await _repo.init();
+        final data = response.data;
+        if (data == null || data.value is! String) {
+          throw StateError("Login response data was null");
+        }
 
-      _apiInitialized = true;
-      _apiInitializedCompleter.complete();
-    } on DioError catch (e) {
-      printDioError(
-        e,
-        'Node $containerName: Exception when calling SystemApi->systemLoginSystemLoginPost',
-      );
+        _token = "Bearer ${data.value.toString()}";
+
+        _repo = RegtestBapiSubRepo(url, _token!);
+        await _repo.init();
+
+        _apiInitialized = true;
+        _apiInitializedCompleter.complete();
+      } on DioError catch (e) {
+        lastError = e;
+        tries++;
+        await Future.delayed(Duration(seconds: 2));
+
+        continue;
+      }
     }
   }
 

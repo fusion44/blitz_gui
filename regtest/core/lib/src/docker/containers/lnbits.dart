@@ -4,21 +4,24 @@ import 'dart:async';
 import 'dart:io';
 
 import '../../constants.dart';
+import '../../utils.dart';
 import '../arg_builder.dart';
 import '../docker.dart';
 
 class LNbitsOptions extends ContainerOptions {
-  const LNbitsOptions({
-    super.name = defaultLNbitsName,
+  LNbitsOptions({
+    String? name,
     super.image = "lnbitsdocker/lnbits-legend",
     super.workDir = dockerDataDir,
-  });
+  }) : super(name: name ?? '${projectName}_${generateRandomName()}');
 }
 
 class LNbitsContainer extends DockerContainer {
   LNbitsOptions opts;
 
-  LNbitsContainer({this.opts = const LNbitsOptions()}) : super(opts);
+  LNbitsContainer(this.opts) : super(opts);
+
+  factory LNbitsContainer.defaultOptions() => LNbitsContainer(LNbitsOptions());
 
   @override
   ContainerType get type => ContainerType.lnbits;
