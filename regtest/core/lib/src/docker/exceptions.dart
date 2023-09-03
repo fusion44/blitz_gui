@@ -4,8 +4,9 @@ import '../constants.dart';
 
 class DockerException implements Exception {
   final String message;
+  final String logs;
 
-  DockerException(this.message);
+  DockerException(this.message, {this.logs = ''});
 
   factory DockerException.containerNotFound(String containerName) {
     return DockerException('No such container: $containerName');

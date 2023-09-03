@@ -12,6 +12,8 @@ import '../arg_builder.dart';
 
 enum ClnConnectionMode { gRPC, jRPC }
 
+const String containerDataMount = '/root/data';
+
 class BlitzApiOptions extends ContainerOptions {
   /// Can be one of LnNode and descendants or a BitcoinCore Container
   final String lnContainerId;
@@ -38,7 +40,6 @@ class BlitzApiOptions extends ContainerOptions {
   /// factory with a fake Ln node
   factory BlitzApiOptions.empty() => BlitzApiOptions(
         btccContainerId: '',
-        name: '',
         lnContainerId: '',
         redisHost: '',
         apiRestPort: 0,
@@ -222,7 +223,7 @@ class BlitzApiContainer extends DockerContainer {
       logMessage('BAPI: Running in bitcoin only mode');
     } else if (ln.type == ContainerType.cln &&
         o.clnMode == ClnConnectionMode.gRPC) {
-      _buildClnGrpcArgs(argBuilder, ln as CLNContainer);
+      _buildClnGrpcArgs(argBuilder, ln as ClnContainer);
     } else if (ln.type == ContainerType.cln &&
         o.clnMode == ClnConnectionMode.jRPC) {
       _buildClnJrpcArgs(ln, argBuilder);
@@ -263,7 +264,7 @@ class BlitzApiContainer extends DockerContainer {
     return DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'on-failure')
-        .addOption('--volume', '$dockerDataDir:/root/data')
+        .addOption('--volume', '$dockerDataDir:$containerDataMount')
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
         .addEnv('secret=please_please_update_me_please')
@@ -290,7 +291,7 @@ class BlitzApiContainer extends DockerContainer {
         .addEnv('platform=native_python');
   }
 
-  void _buildClnGrpcArgs(DockerArgBuilder argBuilder, CLNContainer n) {
+  void _buildClnGrpcArgs(DockerArgBuilder argBuilder, ClnContainer n) {
     argBuilder
         .addEnv('ln_node=cln_grpc')
         .addEnv('cln_grpc_cert=${n.gRPCCert}')
@@ -304,19 +305,19 @@ class BlitzApiContainer extends DockerContainer {
     argBuilder
         .addEnv('ln_node=lnd_grpc')
         .addEnv(
-          'lnd_macaroon=/root/data/${n.containerName}/data/chain/bitcoin/regtest/admin.macaroon',
+          'lnd_macaroon=$containerDataMount/${n.containerName}/data/chain/bitcoin/regtest/admin.macaroon',
         )
-        .addEnv('lnd_cert=/root/data/${n.containerName}/tls.cert')
+        .addEnv('lnd_cert=$containerDataMount/${n.containerName}/tls.cert')
         .addEnv('lnd_grpc_ip=${n.containerName}')
         .addEnv('lnd_grpc_port=${n.gRPCPort}')
         .addEnv('lnd_rest_port=${n.restPort}');
   }
 
   void _buildClnJrpcArgs(LnContainer ln, DockerArgBuilder argBuilder) {
-    final n = ln as CLNContainer;
-    argBuilder
-        .addEnv('ln_node=cln_jrpc')
-        .addEnv('cln_jrpc_path=${n.jRPCFilePath}');
+    final n = ln as ClnContainer;
+    argBuilder.addEnv('ln_node=cln_jrpc').addEnv(
+          'cln_jrpc_path=$containerDataMount/${n.containerName}/regtest/lightning-rpc',
+        );
   }
 
   Future<void> initApi({String host = 'localhost', String path = ''}) async {

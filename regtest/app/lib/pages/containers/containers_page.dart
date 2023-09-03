@@ -16,6 +16,7 @@ import '../../widgets/open_channel_dlg_content.dart';
 import '../../widgets/widget_utils.dart';
 import 'container_chip.dart';
 import 'node_shapes/bitcoin_core/btcc_shape.dart';
+import 'node_shapes/cln/cln_shape.dart';
 import 'node_shapes/lnd/lnd_shape.dart';
 import 'redis_manager.dart';
 import 'utils.dart';
@@ -309,7 +310,7 @@ class _ContainersPageState extends State<ContainersPage> {
       throw StateError('No btcc container found');
     }
 
-    if (parent.type == ContainerType.lnd) {
+    if (parent.type == ContainerType.cln || parent.type == ContainerType.lnd) {
       return BlitzApiOptions(
         name: name,
         btccContainerId: btccContainer.internalId,
@@ -320,7 +321,7 @@ class _ContainersPageState extends State<ContainersPage> {
       );
     }
 
-    return null;
+    throw UnimplementedError('${parent.type.name} not implemented yet');
   }
 
   Widget _buildNodeInfoBody(PositionedContainerNode e) {
@@ -336,6 +337,13 @@ class _ContainersPageState extends State<ContainersPage> {
       final bapi = _nodeData[e.mainContainerId]!['bapi'];
 
       return LndShape(e.mainContainerId, lnd, bapi);
+    }
+
+    if (e.type == ContainerType.cln) {
+      final cln = _nodeData[e.mainContainerId]!['main'];
+      final bapi = _nodeData[e.mainContainerId]!['bapi'];
+
+      return ClnShape(e.mainContainerId, cln, bapi);
     }
 
     throw UnimplementedError('${e.type.name} not implemented yet');

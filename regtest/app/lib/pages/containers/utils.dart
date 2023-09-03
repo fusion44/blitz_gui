@@ -111,7 +111,10 @@ Map<String, dynamic> buildBlocsForContainer(
 ) {
   final mainBloc = switch (type) {
     ContainerType.bitcoinCore => BitcoinCoreContainerBloc(mainId),
-    ContainerType.lnd => LndContainerBloc(mainId),
+    ContainerType.lnd ||
+    ContainerType.cln ||
+    ContainerType.fakeLn =>
+      LnContainerBloc(mainId),
     _ => throw UnimplementedError('${type.name} not implemented yet')
   };
 

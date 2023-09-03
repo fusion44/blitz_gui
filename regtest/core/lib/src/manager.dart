@@ -143,6 +143,8 @@ class NetworkManager {
       DockerContainer? container;
       if (c.image.contains('bitcoin-core')) {
         container = await BitcoinCoreContainer.fromRunningContainer(c, null);
+      } else if (c.image.contains('boltz/c-lightning')) {
+        container = await ClnContainer.fromRunningContainer(c, null);
       } else if (c.image.contains('lnd')) {
         container = await LndContainer.fromRunningContainer(c, null);
       } else if (c.image.contains('redis')) {
@@ -259,7 +261,7 @@ class NetworkManager {
       ContainerType.bitcoinCore => BitcoinCoreContainer(BitcoinCoreOptions()),
       ContainerType.blitzApi => _createBlitzApiContainer(opts),
       ContainerType.cashuMint => CashuMintContainer(CashuMintOptions()),
-      ContainerType.cln => CLNContainer.defaultOptions(),
+      ContainerType.cln => await _createClnContainer(opts),
       ContainerType.fakeLn => FakeLnContainer.defaultOptions(),
       ContainerType.lnbits => LNbitsContainer.defaultOptions(),
       ContainerType.lnd => await _createLndContainer(
@@ -282,6 +284,10 @@ class NetworkManager {
     try {
       await container.start();
     } on DockerException catch (e) {
+      if (e.logs.isNotEmpty) {
+        return logMessage('message: ${e.message},\nlogs: ${e.logs}');
+      }
+
       logMessage(e.message);
     }
   }
@@ -323,7 +329,7 @@ class NetworkManager {
         BitcoinCoreContainer(opts as BitcoinCoreOptions, internalId: id),
       ContainerType.blitzApi => BlitzApiContainer(opts as BlitzApiOptions),
       ContainerType.cashuMint => CashuMintContainer(opts as CashuMintOptions),
-      ContainerType.cln => CLNContainer(opts as CLNOptions),
+      ContainerType.cln => ClnContainer(opts as ClnOptions),
       ContainerType.fakeLn => FakeLnContainer(opts as FakeLnOptions),
       ContainerType.lnbits => LNbitsContainer(opts as LNbitsOptions),
       ContainerType.lnd => LndContainer(opts as LndOptions),
@@ -457,5 +463,33 @@ class NetworkManager {
     _containerIds[ContainerType.lnd] = ++currId;
 
     return LndContainer(lndOptions);
+  }
+
+  Future<ClnContainer> _createClnContainer(ContainerOptions? baseOpts) async {
+    ClnOptions opts = ClnOptions();
+    if (baseOpts != null && baseOpts is ClnOptions) {
+      opts = baseOpts;
+    }
+
+    String btccId = opts.btccContainerId;
+
+    if (btccId.isEmpty) {
+      final btcc = findFirstOf<BitcoinCoreContainer>();
+      if (btcc == null) {
+        throw StateError('CLN needs a Bitcoin Core container to run.');
+      }
+
+      opts = opts.copyWith(btccContainerId: btcc.internalId);
+    }
+
+    var currId = _containerIds[ContainerType.cln] ??= 0;
+
+    opts = opts.copyWith(
+      gRPCPort: await PortManager().nextUnusedPort(ClnContainer.grpcPortRange),
+    );
+
+    _containerIds[ContainerType.cln] = ++currId;
+
+    return ClnContainer(opts);
   }
 }
