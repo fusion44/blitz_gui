@@ -61,7 +61,6 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
           GenInvoiceDialogData(
             node: d.node,
             mSat: numSats,
-            payer: cParty,
             msg: genRandomWords(Random().nextInt(5) + 5),
           ),
         );
@@ -147,6 +146,9 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
 LnContainer getRandNode([LnContainer? exclude]) {
   final nodes = NetworkManager().lnNodes;
   if (exclude != null) nodes.remove(exclude);
+  if (nodes.isEmpty) throw StateError('No nodes');
+  if (nodes.length == 1) return nodes.first;
+
   int rand = Random().nextInt(nodes.length - 1);
 
   return nodes[rand];

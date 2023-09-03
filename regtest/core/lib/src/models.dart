@@ -294,7 +294,7 @@ class GenInvoiceDialogData {
   final LnContainer node;
   final String msg;
   final int mSat;
-  final LnContainer? payer;
+  final BlitzApiContainer? payer;
   final int payAmt;
   final int payDelay;
 

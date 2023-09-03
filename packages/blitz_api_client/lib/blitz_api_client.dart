@@ -8,6 +8,7 @@ export 'package:blitz_api_client/src/auth/basic_auth.dart';
 export 'package:blitz_api_client/src/auth/oauth.dart';
 export 'package:blitz_api_client/src/serializers.dart';
 export 'package:blitz_api_client/src/model/date.dart';
+export 'package:blitz_api_client/src/api_error.dart';
 
 export 'package:blitz_api_client/src/api/apps_api.dart';
 export 'package:blitz_api_client/src/api/bitcoin_core_api.dart';

@@ -3,7 +3,7 @@ library docker.containers;
 import 'dart:async';
 
 import 'package:blitz_api_client/blitz_api_client.dart';
-import 'package:common/common.dart';
+import 'package:common/common.dart' hide Invoice;
 import 'package:dio/dio.dart';
 import 'package:regtest_core/core.dart';
 
@@ -403,6 +403,44 @@ class BlitzApiContainer extends DockerContainer {
       );
     } catch (e) {
       throw Exception("Failed to get new address: $e");
+    }
+  }
+
+  Future<Invoice?> genInvoice(GenInvoiceDialogData i) async {
+    if (opts.lnContainerId == '') {
+      // Bitcoin only
+      throw StateError('This is a Bitcoin only node.');
+    }
+
+    final resp =
+        await _api.getLightningApi().lightningAddInvoiceLightningAddInvoicePost(
+              valueMsat: i.mSat,
+              memo: i.msg,
+            );
+
+    if (resp.data != null) return resp.data;
+
+    logMessage('Error generating invoice: ${resp.statusMessage}');
+
+    return null;
+  }
+
+  Future<Payment> payInvoice(PayInvoiceData i) async {
+    try {
+      final res = await _api
+          .getLightningApi()
+          .lightningSendPaymentLightningSendPaymentPost(
+            payReq: i.bolt11,
+            amountMsat: i.amt,
+          );
+
+      if (res.data == null) {
+        throw ApiError.unknown(detail: 'Payment data was null');
+      }
+
+      return res.data!;
+    } on DioError catch (e) {
+      throw ApiError.fromDioError(e);
     }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:blitz_api_client/blitz_api_client.dart';
 import 'package:flutter/material.dart';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
@@ -115,36 +116,60 @@ class _ToolButtonsCardState extends State<ToolButtonsCard> {
 
     if (res == null && res != "OK") return;
 
-    String invoice = await n.genInvoice(invData.value);
+    final bapi = NetworkManager().findComplementaryNode(n);
 
     if (!mounted) return;
+    if (bapi == null) {
+      buildSnackbar(
+        c,
+        msg: "Unable to find complementary node",
+        ct: ContentType.failure,
+      );
+
+      return;
+    }
+
+    Invoice? invoice = await bapi.genInvoice(invData.value);
+
+    if (!mounted || invoice == null) return;
 
     if (invData.value.payer == null) {
-      copyToClipboardWithNotification(c, invoice);
+      copyToClipboardWithNotification(c, invoice.paymentRequest ?? '');
       return;
     }
 
     if (invData.value.payDelay > 0) {
-      await _delayWithNotification(invData.value.payDelay, "pay invoice");
+      await _delayWithNotification(invData.value.payDelay, 'pay invoice');
     }
 
-    widget.setNotificationCallback("Attempting send payment");
-    res = await invData.value.payer!.payInvoice(
-      PayInvoiceData(invoice, invData.value.payAmt),
-    );
+    widget.setNotificationCallback('Attempting send payment');
+    try {
+      Payment res = await invData.value.payer!.payInvoice(
+        PayInvoiceData(
+          invoice.paymentRequest!,
+          invoice.valueMsat == 0 ? invData.value.payAmt : null,
+        ),
+      );
 
-    if (!mounted) return;
-
-    if (res.success) {
+      if (mounted && res.status == PaymentStatus.succeeded) {
+        buildSnackbar(
+          context,
+          title: 'Nice!',
+          msg: 'Invoice paid successfully',
+          ct: ContentType.success,
+        );
+      }
+    } on ApiError catch (e) {
+      if (!mounted) return;
       buildSnackbar(
         context,
-        title: "Nice!",
-        msg: "Invoice paid successfully",
-        ct: ContentType.success,
+        title: e.message,
+        msg: e.detail,
+        ct: ContentType.failure,
       );
     }
 
-    widget.setNotificationCallback("");
+    widget.setNotificationCallback('');
   }
 
   _newAddress(BuildContext c, LnContainer n) async {
