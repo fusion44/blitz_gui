@@ -240,7 +240,7 @@ class SendOnchainDialogData {
   final bool autoMine;
   final int mineDelay;
   final int numBlocks;
-  final LnContainer? destination;
+  final BlitzApiContainer? destination;
   final bool sendAll;
 
   SendOnchainDialogData({

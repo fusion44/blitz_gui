@@ -79,7 +79,7 @@ class _SendOnchainDlgContentState extends State<SendOnchainDlgContent> {
                 items: _destinationNodes
                     .map((e) => DropdownMenuItem(
                           value: e,
-                          child: Text(e.alias),
+                          child: Text(e.name),
                         ))
                     .toList(),
                 onChanged: ((value) {
@@ -195,7 +195,9 @@ class _SendOnchainDlgContentState extends State<SendOnchainDlgContent> {
       mineDelay: validIntOrZero(_mineDelayCtrl.text),
       numBlocks: validIntOrZero(_numBlocksCtrl.text),
       address: _addressCtrl.text,
-      destination: _destinationNode,
+      destination: _addressCtrl.text.isEmpty
+          ? NetworkManager().findComplementaryNode(_destinationNode)
+          : null,
       sendAll: _sendAll,
     );
   }

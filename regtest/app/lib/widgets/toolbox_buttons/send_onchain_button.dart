@@ -68,9 +68,21 @@ class _SendOnchainButtonState extends State<SendOnchainButton> {
       destAddr = await destNode!.newAddress();
     }
 
+    final bapi = NetworkManager().findComplementaryNode(n);
+
+    if (!mounted) return;
+    if (bapi == null) {
+      buildSnackbar(
+        context,
+        msg: "Unable to find complementary node",
+        ct: ContentType.failure,
+      );
+
+      return;
+    }
     try {
       setState(() => _status = "Broadcasting ...");
-      final res = await n.sendOnChain(data.numSats, destAddr, data.sendAll);
+      final res = await bapi.sendOnChain(data.numSats, destAddr, data.sendAll);
 
       if (!mounted) return;
 

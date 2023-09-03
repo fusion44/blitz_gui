@@ -173,7 +173,12 @@ class _ToolButtonsCardState extends State<ToolButtonsCard> {
   }
 
   _newAddress(BuildContext c, LnContainer n) async {
-    String addr = await n.newAddress();
+    final bapi = NetworkManager().findComplementaryNode(n);
+    if (bapi == null) {
+      return buildSnackbar(c, msg: "Unable to find complementary node");
+    }
+
+    String addr = await bapi.newAddress();
     if (addr.isNotEmpty && mounted) {
       copyToClipboardWithNotification(c, addr);
     }

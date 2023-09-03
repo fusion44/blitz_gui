@@ -90,7 +90,7 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
         final c = NetworkManager().findComplementaryNode(d.node);
         if (c == null) continue;
 
-        final addr = await c.newLightningAddress();
+        final addr = await c.newAddress();
         cParty.sendOnChain(numSats, addr);
       } catch (e) {
         logMessage(e.toString());
@@ -100,7 +100,7 @@ Stream<JunkingStatusUpdate> addJunkTx(AddJunkTxDlgData d) async* {
         final c = NetworkManager().findComplementaryNode(cParty);
         if (c == null) continue;
 
-        final addr = await c.newLightningAddress();
+        final addr = await c.newAddress();
         await d.node.sendOnChain(numSats, addr);
       } catch (e) {
         logMessage(e.toString());

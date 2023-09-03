@@ -192,7 +192,7 @@ class NetworkManager {
       if (bapiContainer == null) continue;
 
       try {
-        final addr = await bapiContainer.newLightningAddress();
+        final addr = await bapiContainer.newAddress();
         await btcc.sendFunds(addr, amount.inBitcoin);
       } catch (e) {
         print(e);

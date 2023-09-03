@@ -381,7 +381,7 @@ class BlitzApiContainer extends DockerContainer {
     return _apiInitializedCompleter.future;
   }
 
-  Future<String> newLightningAddress() async {
+  Future<String> newAddress() async {
     if (opts.lnContainerId == '') {
       // Bitcoin only
       throw StateError('This is a Bitcoin only node.');
@@ -442,5 +442,33 @@ class BlitzApiContainer extends DockerContainer {
     } on DioError catch (e) {
       throw ApiError.fromDioError(e);
     }
+  }
+
+  Future<SendCoinsResponse?> sendOnChain(
+    int numSats,
+    String addr, [
+    bool sendAll = false,
+  ]) async {
+    try {
+      final builder = SendCoinsInputBuilder();
+      builder.address = addr;
+      builder.amount = numSats;
+      builder.sendAll = sendAll;
+
+      final res = await _api
+          .getLightningApi()
+          .lightningSendCoinsLightningSendCoinsPost(
+              sendCoinsInput: builder.build());
+
+      return res.data;
+    } catch (e) {
+      if (e is DioError) {
+        printDioError(e, "Error sending on-chain from $containerName");
+      }
+
+      logMessage("$e");
+    }
+
+    return null;
   }
 }
