@@ -11,7 +11,10 @@ class FakeLnOptions extends LnNodeOptions {
     super.alias = '',
     super.btccContainerId = '',
     super.workDir = dockerDataDir,
-  }) : super(name: name ?? '${projectName}_${generateRandomName()}');
+  }) : super(
+          ContainerType.fakeLn,
+          name: name ?? '${projectName}_${generateRandomName()}',
+        );
 }
 
 class FakeLnContainer extends LnContainer {

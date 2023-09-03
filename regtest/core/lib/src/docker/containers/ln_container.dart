@@ -8,10 +8,12 @@ import '../../../core.dart';
 import '../arg_builder.dart';
 
 class LnNodeOptions extends ContainerOptions {
+  final ContainerType type;
   final String alias;
   final String btccContainerId;
 
-  LnNodeOptions({
+  LnNodeOptions(
+    this.type, {
     required super.name,
     required super.image,
     super.workDir = dockerDataDir,

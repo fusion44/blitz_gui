@@ -14,12 +14,12 @@ class LndShape extends StatelessWidget {
   final String lndContainerId;
   final Function()? onDeleted;
 
-  final LndContainerBloc lnd;
+  final LnContainerBloc lnBloc;
   final BlitzApiContainerBloc bapi;
 
   const LndShape(
     this.lndContainerId,
-    this.lnd,
+    this.lnBloc,
     this.bapi, {
     this.onDeleted,
     super.key,
@@ -27,12 +27,12 @@ class LndShape extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LndContainerBloc, LndContainerState>(
-      bloc: lnd,
+    return BlocBuilder<LnContainerBloc, LnContainerState>(
+      bloc: lnBloc,
       builder: (context, state) {
         Widget? footer;
 
-        if (state is! LndStatusUpdate) {
+        if (state is! LnStatusUpdate) {
           return Center(child: Text('UNKNOWN STATE $state'));
         }
 
@@ -95,7 +95,7 @@ class LndShape extends StatelessWidget {
   }
 
   Widget _buildShape(
-    LndContainerState state,
+    LnContainerState state,
     Widget? body,
     Widget? footer,
   ) {
@@ -165,14 +165,14 @@ class LndShape extends StatelessWidget {
               ElevatedButton(
                 onPressed: () {
                   bapi.add(StartBlitzApiContainerEvent());
-                  lnd.add(StartLndContainerEvent());
+                  lnBloc.add(StartLnContainerEvent());
                 },
                 child: const Text('Start'),
               ),
               IconButton(
                 onPressed: () {
                   bapi.add(DeleteBlitzApiContainerEvent());
-                  lnd.add(DeleteLndContainerEvent());
+                  lnBloc.add(DeleteLnContainerEvent());
                 },
                 icon: const Icon(Icons.delete),
               ),
@@ -215,22 +215,22 @@ class LndShape extends StatelessWidget {
     final newOpts = notifier.value;
     if (opts == newOpts) return;
 
-    lnd.add(LndSettingsUpdatedEvent(newOpts));
+    lnBloc.add(LnSettingsUpdatedEvent(newOpts));
   }
 
   void _startContainers() {
     bapi.add(StartBlitzApiContainerEvent());
-    lnd.add(StartLndContainerEvent());
+    lnBloc.add(StartLnContainerEvent());
   }
 
   void _stopContainers() {
     bapi.add(StopBlitzApiContainerEvent());
-    lnd.add(StopLndContainerEvent());
+    lnBloc.add(StopLnContainerEvent());
   }
 
   void _deleteContainers() {
     bapi.add(DeleteBlitzApiContainerEvent());
-    lnd.add(DeleteLndContainerEvent());
+    lnBloc.add(DeleteLnContainerEvent());
   }
 
   _openBlitzTerminal(BuildContext context) async =>

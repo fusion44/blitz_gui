@@ -4,10 +4,10 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:regtest_core/core.dart';
 
-part 'lnd_container_event.dart';
-part 'lnd_container_state.dart';
+part 'ln_container_event.dart';
+part 'ln_container_state.dart';
 
-class LndContainerBloc extends Bloc<LndContainerEvent, LndContainerState> {
+class LnContainerBloc extends Bloc<LnContainerEvent, LnContainerState> {
   final String containerId;
 
   StreamSubscription<ContainerStatusMessage>? _sub;
@@ -18,13 +18,13 @@ class LndContainerBloc extends Bloc<LndContainerEvent, LndContainerState> {
     super.close();
   }
 
-  LndContainerBloc(this.containerId)
-      : super(LndStatusUpdate.fromContainer(containerId)) {
-    on<LndSettingsUpdatedEvent>((event, emit) async {
+  LnContainerBloc(this.containerId)
+      : super(LnStatusUpdate.fromContainer(containerId)) {
+    on<LnSettingsUpdatedEvent>((event, emit) async {
       await NetworkManager().updateContainerOptions(containerId, event.options);
 
       emit(
-        LndStatusUpdate(
+        LnStatusUpdate(
           ContainerStatusMessage(
             ContainerStatus.uninitialized,
             'Settings updated.',
@@ -36,25 +36,25 @@ class LndContainerBloc extends Bloc<LndContainerEvent, LndContainerState> {
       );
     });
 
-    on<StartLndContainerEvent>((event, emit) async {
+    on<StartLnContainerEvent>((event, emit) async {
       _subStatuses();
       await NetworkManager().startContainer(containerId);
     });
 
-    on<StopLndContainerEvent>((event, emit) async {
+    on<StopLnContainerEvent>((event, emit) async {
       await NetworkManager().stopContainer(containerId);
     });
 
-    on<DeleteLndContainerEvent>((event, emit) async {
+    on<DeleteLnContainerEvent>((event, emit) async {
       await NetworkManager().deleteContainer(containerId);
     });
 
-    on<_LndStatusUpdate>((event, emit) async {
+    on<_LnStatusUpdate>((event, emit) async {
       if (event.status.status == ContainerStatus.deleted) {
         final lastState = state;
-        if (lastState is LndStatusUpdate) {
+        if (lastState is LnStatusUpdate) {
           emit(
-            LndStatusUpdate(
+            LnStatusUpdate(
               event.status,
               lastState.name,
               lastState.image,
@@ -67,9 +67,9 @@ class LndContainerBloc extends Bloc<LndContainerEvent, LndContainerState> {
         return;
       }
 
-      final c = NetworkManager().nodeMap[containerId] as LndContainer;
+      final c = NetworkManager().nodeMap[containerId] as LnContainer;
       emit(
-        LndStatusUpdate(
+        LnStatusUpdate(
           event.status,
           c.containerName,
           c.image,
@@ -84,19 +84,19 @@ class LndContainerBloc extends Bloc<LndContainerEvent, LndContainerState> {
   Future<void> _subStatuses() async {
     _sub?.cancel();
 
-    final c = NetworkManager().findContainerById<LndContainer>(containerId);
+    final c = NetworkManager().findContainerById<LnContainer>(containerId);
 
     if (c == null) {
       throw StateError('LndContainer with ID $containerId not found');
     }
 
     _sub = c.statusStream.listen((event) {
-      add(_LndStatusUpdate(event));
+      add(_LnStatusUpdate(event));
     });
 
     try {
       final event = await c.statusStream.last;
-      add(_LndStatusUpdate(event));
+      add(_LnStatusUpdate(event));
     } catch (e) {
       print(e);
     }

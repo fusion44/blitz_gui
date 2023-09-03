@@ -20,7 +20,10 @@ class LndOptions extends LnNodeOptions {
     super.workDir = dockerDataDir,
     this.gRPCPort,
     this.restPort,
-  }) : super(name: name ?? '${projectName}_${generateRandomName()}');
+  }) : super(
+          ContainerType.lnd,
+          name: name ?? '${projectName}_${generateRandomName()}',
+        );
 
   LndOptions copyWith({
     String? name,
