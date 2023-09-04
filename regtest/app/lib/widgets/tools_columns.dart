@@ -62,9 +62,10 @@ class _ToolsColumnsState extends State<ToolsColumns> {
       children: [
         const SizedBox(width: 12.0),
         Text(
-          n.alias,
+          '${n.alias} (${n.type.name})',
           textAlign: TextAlign.center,
           style: theme.textTheme.headlineSmall,
+          overflow: TextOverflow.clip,
         ),
         const Spacer(),
         PopupMenuButton<String>(

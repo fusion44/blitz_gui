@@ -9,7 +9,6 @@ import '../arg_builder.dart';
 
 class LnNodeOptions extends ContainerOptions {
   final ContainerType type;
-  final String alias;
   final String btccContainerId;
 
   LnNodeOptions(
@@ -17,7 +16,6 @@ class LnNodeOptions extends ContainerOptions {
     required super.name,
     required super.image,
     super.workDir = dockerDataDir,
-    required this.alias,
     required this.btccContainerId,
   });
 }
@@ -31,9 +29,11 @@ abstract class LnContainer extends DockerContainer {
   late BlitzApiClient _api;
   bool _bootstrapped = false;
   late String? _token;
+  late final String alias;
 
   LnContainer(this.opts, {String? internalId, Function()? onDeleted})
-      : super(opts, internalId: internalId, onDeleted: onDeleted);
+      : alias = opts.name.replaceAll('${projectName}_', ''),
+        super(opts, internalId: internalId, onDeleted: onDeleted);
 
   String get hostname => containerName;
   String get fullUri => "$pubKey@$hostname:9735";
@@ -46,7 +46,6 @@ abstract class LnContainer extends DockerContainer {
 
   bool get bootstrapped => _bootstrapped;
   Implementation get implementation => Implementation.empty;
-  String get alias => opts.alias;
 
   @override
   Future<void> stop() async {

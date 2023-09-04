@@ -15,7 +15,6 @@ class LndOptions extends LnNodeOptions {
   LndOptions({
     String? name,
     super.image = 'boltz/lnd:0.16.2-beta',
-    super.alias = '',
     super.btccContainerId = '',
     super.workDir = dockerDataDir,
     this.gRPCPort,
@@ -28,7 +27,6 @@ class LndOptions extends LnNodeOptions {
   LndOptions copyWith({
     String? name,
     String? image,
-    String? alias,
     String? btccContainerId,
     String? workDir,
     int? gRPCPort,
@@ -37,7 +35,6 @@ class LndOptions extends LnNodeOptions {
     return LndOptions(
       name: name ?? this.name,
       image: image ?? this.image,
-      alias: alias ?? this.alias,
       btccContainerId: btccContainerId ?? this.btccContainerId,
       workDir: workDir ?? this.workDir,
       gRPCPort: gRPCPort ?? this.gRPCPort,
@@ -172,7 +169,6 @@ class LndContainer extends LnContainer {
     }
 
     setStatus(ContainerStatusMessage(ContainerStatus.starting, ''));
-    String alias = o.alias.isNotEmpty ? o.alias : o.name;
 
     return DockerArgBuilder()
         .addArg('run')

@@ -8,7 +8,6 @@ class FakeLnOptions extends LnNodeOptions {
   FakeLnOptions({
     String? name,
     super.image = 'boltz/c-lightning:23.02.2',
-    super.alias = '',
     super.btccContainerId = '',
     super.workDir = dockerDataDir,
   }) : super(

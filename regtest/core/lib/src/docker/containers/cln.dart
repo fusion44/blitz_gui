@@ -14,7 +14,6 @@ class ClnOptions extends LnNodeOptions {
   ClnOptions({
     String? name,
     super.image = 'boltz/c-lightning:23.02.2',
-    super.alias = '',
     super.btccContainerId = '',
     super.workDir = dockerDataDir,
     this.gRPCPort,
@@ -26,7 +25,6 @@ class ClnOptions extends LnNodeOptions {
   ClnOptions copyWith({
     String? name,
     String? image,
-    String? alias,
     String? btccContainerId,
     String? workDir,
     int? gRPCPort,
@@ -34,7 +32,6 @@ class ClnOptions extends LnNodeOptions {
     return ClnOptions(
       name: name ?? this.name,
       image: image ?? this.image,
-      alias: alias ?? this.alias,
       btccContainerId: btccContainerId ?? this.btccContainerId,
       workDir: workDir ?? this.workDir,
       gRPCPort: gRPCPort ?? this.gRPCPort,
@@ -161,7 +158,7 @@ class ClnContainer extends LnContainer {
         .addOption('--name', containerName)
         .addArg('--detach')
         .addArg(image)
-        .addArg('--alias=${clnOpts.alias}')
+        .addArg('--alias=$alias')
         .addArg('--large-channels')
         .addArg('--network=regtest')
         .addArg('--bind-addr=0.0.0.0:9735')
