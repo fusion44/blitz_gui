@@ -255,6 +255,7 @@ class _MyHomePageState extends State<MyHomePage> {
       await btcc.mineBlocks(MineBlockData(blockData.value.numBlocks));
     }
 
+    if (mounted) return;
     setState(() => _miningBlocks = false);
   }
 
