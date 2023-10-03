@@ -77,6 +77,9 @@ class BlitzApiContainer extends DockerContainer {
     return _api;
   }
 
+  LnContainer get lnContainer =>
+      NetworkManager().findContainerById(opts.lnContainerId)!;
+
   late final RegtestBapiSubRepo _repo;
   RegtestBapiSubRepo get subRepo {
     if (!_apiInitialized) {

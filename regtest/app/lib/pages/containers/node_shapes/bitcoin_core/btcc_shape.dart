@@ -243,8 +243,8 @@ class _BitcoinCoreShapeState extends State<BitcoinCoreShape> {
   }
 
   _openBlitzTerminal(BuildContext context) async =>
-      await openTerminalInDialog(context, _bapi.containerId);
+      await openTerminalInDialog(context, _bapi.blitzApiContainerId);
 
   _showBlitzLogs(BuildContext context) async =>
-      await openLogWindowInDialog(context, _bapi.containerId);
+      await openLogWindowInDialog(context, _bapi.blitzApiContainerId);
 }

@@ -230,8 +230,8 @@ class ClnShape extends StatelessWidget {
   }
 
   _openBlitzTerminal(BuildContext context) async =>
-      await openTerminalInDialog(context, bapi.myId);
+      await openTerminalInDialog(context, bapi.blitzApiContainerId);
 
   _showBlitzLogs(BuildContext context) async =>
-      await openLogWindowInDialog(context, bapi.myId);
+      await openLogWindowInDialog(context, bapi.blitzApiContainerId);
 }

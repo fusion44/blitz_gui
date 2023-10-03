@@ -121,7 +121,6 @@ Map<String, dynamic> buildBlocsForContainer(
   BlitzApiContainerBloc? bapiBloc;
   if (complementaryId != null) {
     bapiBloc = BlitzApiContainerBloc(
-      mainId,
       complementaryId,
       bitcoinOnly: type == ContainerType.bitcoinCore,
     );
