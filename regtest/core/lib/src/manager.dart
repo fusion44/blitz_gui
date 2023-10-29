@@ -141,16 +141,29 @@ class NetworkManager {
 
     for (final ContainerData c in containers) {
       DockerContainer? container;
+      BlitzApiContainer? bapi;
+      final bapiData = c.bapi;
+      if (bapiData != null) {
+        bapi = await BlitzApiContainer.fromRunningContainer(bapiData, null);
+        _containerMap[c.bapi!.internalId] = bapi;
+      }
+
       if (c.image.contains('bitcoin-core')) {
         container = await BitcoinCoreContainer.fromRunningContainer(c, null);
       } else if (c.image.contains('boltz/c-lightning')) {
-        container = await ClnContainer.fromRunningContainer(c, null);
+        if (bapi == null) {
+          throw StateError('Blitz API container can\'t be null');
+        }
+        container = await ClnContainer.fromRunningContainer(c, null, bapi);
       } else if (c.image.contains('lnd')) {
-        container = await LndContainer.fromRunningContainer(c, null);
+        if (bapi == null) {
+          throw StateError('Blitz API container can\'t be null');
+        }
+        container = await LndContainer.fromRunningContainer(c, null, bapi);
       } else if (c.image.contains('redis')) {
         container = await RedisContainer.fromRunningContainer(c, null);
       } else if (c.image.contains('blitz_api')) {
-        container = await BlitzApiContainer.fromRunningContainer(c, null);
+        continue;
       }
 
       if (container == null) {

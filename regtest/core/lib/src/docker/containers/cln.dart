@@ -70,6 +70,7 @@ class ClnContainer extends LnContainer {
   static Future<ClnContainer> fromRunningContainer(
     ContainerData c,
     Function()? onDeleted,
+    BlitzApiContainer bapi,
   ) async {
     final cmd = c.inspectData['Config']['Cmd'] as List;
     final int gRPCPort = int.tryParse(cmd[8].split('=')[1]) ?? -1;
@@ -86,6 +87,7 @@ class ClnContainer extends LnContainer {
       onDeleted,
     );
     await newContainer.subscribeLogs();
+    await newContainer.bootstrap(port: bapi.restPort);
 
     return newContainer;
   }

@@ -15,6 +15,8 @@ class ContainerData {
   final String image;
   final ContainerStatus status;
   final Map<String, dynamic> inspectData;
+  final String? parentId;
+  ContainerData? bapi;
 
   ContainerData(
     this.internalId,
@@ -23,6 +25,8 @@ class ContainerData {
     this.name,
     this.status, {
     this.inspectData = const {},
+    this.parentId = '',
+    this.bapi,
   });
 }
 
@@ -43,6 +47,9 @@ Future<List<ContainerData>> getRunningContainerNames(
   }
 
   final lines = proc.stdout.split("\n");
+
+  // <parentId, childContainerData>{}
+  final apis = <String, ContainerData>{};
 
   for (int i = 1; i < lines.length; i++) {
     final String line = lines[i];
@@ -83,7 +90,7 @@ Future<List<ContainerData>> getRunningContainerNames(
     if (!dockerName.contains(dockerContainerNameDelimiter)) continue;
 
     var res = dockerName.split(dockerContainerNameDelimiter).toList();
-    String name = '', internalId = '';
+    String name = '', internalId = '', parentId = '';
 
     if (res.length == 2) {
       name = res[0];
@@ -92,6 +99,7 @@ Future<List<ContainerData>> getRunningContainerNames(
       name =
           '${res[0]}$dockerContainerNameDelimiter${res[1]}$dockerContainerNameDelimiter${res[2]}';
       internalId = res[3];
+      parentId = res[1];
     } else {
       logMessage('Ignoring unparsable container name: $dockerName');
       continue;
@@ -104,13 +112,22 @@ Future<List<ContainerData>> getRunningContainerNames(
       name.replaceFirst('/', ''),
       status,
       inspectData: inspectJson,
+      parentId: parentId,
     );
+
+    if (data.image.contains('blitz_api')) {
+      apis[parentId] = (data);
+    }
 
     if (filterName.isEmpty) {
       output.add(data);
     } else if (data.name.contains(filterName)) {
       output.add(data);
     }
+  }
+
+  for (final c in output) {
+    if (apis.containsKey(c.internalId)) c.bapi = apis[c.internalId];
   }
 
   return output;

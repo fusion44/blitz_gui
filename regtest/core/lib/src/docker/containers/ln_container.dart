@@ -21,14 +21,14 @@ class LnNodeOptions extends ContainerOptions {
 }
 
 abstract class LnContainer extends DockerContainer {
-  late final String pubKey;
+  String pubKey = '';
   final List<RegtestChannel> channels = [];
   late LnInfo lnInfo;
   final LnNodeOptions opts;
 
   late BlitzApiClient _api;
   bool _bootstrapped = false;
-  late String? _token;
+  String _token = '';
   late final String alias;
 
   LnContainer(this.opts, {String? internalId, Function()? onDeleted})
@@ -86,7 +86,7 @@ abstract class LnContainer extends DockerContainer {
     _api.dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (RequestOptions options, handler) {
-          if (_token != null && _token!.isNotEmpty) {
+          if (_token.isNotEmpty) {
             options.headers["AUTHORIZATION"] = _token;
           }
           handler.next(options);
@@ -113,6 +113,8 @@ abstract class LnContainer extends DockerContainer {
         e,
         'Node $containerName: Exception when calling SystemApi->systemLoginSystemLoginPost',
       );
+
+      rethrow;
     }
 
     Response<LnInfo> lnInfoResp;
