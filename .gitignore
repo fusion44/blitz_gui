@@ -30,6 +30,7 @@
 .pub-cache/
 .pub/
 /build/
+*flutter_jank_metrics*
 
 # Web related
 lib/generated_plugin_registrant.dart

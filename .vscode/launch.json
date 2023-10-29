@@ -60,14 +60,15 @@
             "env": {
                 "REGTEST-PRINT-RESULTS": true
             },
-            "program": "regtest/headless/bin/test_api.dart"
+            "program": "${workspaceFolder}/regtest/headless/bin/test_api.dart"
         },
         {
             "name": "regtest-gui",
             "request": "launch",
             "type": "dart",
-            "program": "regtest/app/lib/main.dart",
-            "flutterMode": "debug"
-        },
+            "program": "${workspaceFolder}/regtest/app/lib/main.dart",
+            "flutterMode": "debug",
+            "cwd": "${workspaceFolder}/regtest/app"
+        }
     ]
 }
