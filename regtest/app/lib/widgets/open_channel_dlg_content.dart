@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:regtest_app/widgets/mine_blocks_dlg_content.dart';
 
 import 'package:regtest_core/core.dart';
 
@@ -28,8 +29,11 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
   final TextEditingController _mineDelayCtrl = TextEditingController(text: "5");
   final TextEditingController _numBlocksCtrl = TextEditingController(text: "3");
 
-  bool _autoMine = false;
   bool _delay = false;
+  bool _autoMine = false;
+  final ValueNotifier<MineBlockData> _mineBlocksNotifier =
+      ValueNotifier(MineBlockData.empty());
+
   late List<LnContainer> _destinationNodes;
   late LnContainer _destinationNode;
 
@@ -44,6 +48,7 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
     _broadcastDelayCtrl.addListener(_updateNotifier);
     _mineDelayCtrl.addListener(_updateNotifier);
     _numBlocksCtrl.addListener(_updateNotifier);
+    _mineBlocksNotifier.addListener(_updateNotifier);
 
     _updateNotifier();
   }
@@ -56,6 +61,7 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
     _broadcastDelayCtrl.dispose();
     _mineDelayCtrl.dispose();
     _numBlocksCtrl.dispose();
+    _mineBlocksNotifier.dispose();
   }
 
   @override
@@ -121,20 +127,7 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
             _autoMine = false;
           }),
         ),
-        if (_autoMine)
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Flexible(
-                child: Tooltip(
-                  message: "Number of seconds between each mined block",
-                  child: buildNumberTextField("Mine Delay (s)", _mineDelayCtrl),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Flexible(child: buildNumberTextField("Blocks", _numBlocksCtrl)),
-            ],
-          ),
+        if (_autoMine) MineBlocksDlgContent(_mineBlocksNotifier)
       ],
     );
   }
@@ -146,9 +139,15 @@ class _OpenChannelDlgContentState extends State<OpenChannelDlgContent> {
       delayBroadcast: _delay,
       broadcastDelay: validIntOrZero(_broadcastDelayCtrl.text),
       autoMine: _autoMine,
-      mineDelay: validIntOrZero(_mineDelayCtrl.text),
-      numBlocks: validIntOrZero(_numBlocksCtrl.text),
       destination: _destinationNode,
+      mineData: _autoMine
+          ? MineBlockData(
+              _mineBlocksNotifier.value.numBlocks,
+              _mineBlocksNotifier.value.delay,
+              _mineBlocksNotifier.value.from,
+              _mineBlocksNotifier.value.to,
+            )
+          : null,
     );
   }
 }

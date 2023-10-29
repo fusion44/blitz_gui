@@ -384,11 +384,42 @@ class _ContainersPageState extends State<ContainersPage> {
 
     final data = notifier.value;
 
+    final wb = await from.walletBalance();
+    if (wb.total < data.numSats) {
+      buildSnackbar(
+        this.context,
+        title: 'Missing funds',
+        msg: 'Source node doesn\'t have enough funds',
+        ct: ContentType.failure,
+      );
+
+      return;
+    }
+
+    if (data.delayBroadcast) {
+      await Future.delayed(Duration(seconds: data.broadcastDelay));
+    }
+
     bapiBloc.add(
       BlitzApiOpenChannelEvent(to.internalId, data.numSats, data.numPushSats),
     );
 
-    // TODO: handle auto mine etc
+    if (!notifier.value.autoMine) return;
+
+    final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
+    if (btcc == null) {
+      throw StateError(
+          'Trying to mine blocks without a Bitcoin Core container');
+    }
+
+    final mineBlocksData = notifier.value.mineData;
+    if (mineBlocksData == null) {
+      throw StateError(
+        'Mine blocks data can\'t be null when auto mine is enabled',
+      );
+    }
+
+    await btcc.mineBlocks(mineBlocksData);
   }
 }
 

@@ -211,8 +211,7 @@ class OpenChannelDialogData {
   final LnContainer? destination;
   final bool delayBroadcast;
   final int broadcastDelay;
-  final int mineDelay;
-  final int numBlocks;
+  final MineBlockData? mineData;
 
   OpenChannelDialogData({
     this.numSats = 5000000,
@@ -221,13 +220,12 @@ class OpenChannelDialogData {
     this.destination,
     this.delayBroadcast = false,
     this.broadcastDelay = 0,
-    this.mineDelay = 0,
-    this.numBlocks = 3,
+    this.mineData,
   });
 
   @override
   String toString() =>
-      "OpenChannelDialogData{numSats: $numSats, numPushSats: $numPushSats, autoMine: $autoMine, destination: $destination}";
+      "OpenChannelDialogData{numSats: $numSats, numPushSats: $numPushSats, autoMine: $autoMine, destination: $destination, mindeData: $mineData}";
 
   factory OpenChannelDialogData.empty() => OpenChannelDialogData(numSats: 0);
 }

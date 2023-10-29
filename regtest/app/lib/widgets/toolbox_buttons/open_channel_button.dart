@@ -87,31 +87,22 @@ class _OpenChannelButtonState extends State<OpenChannelButton> {
     }
 
     if (data.autoMine) {
-      for (var x = 0; x < data.numBlocks; x++) {
-        if (data.mineDelay > 0) {
-          for (var y = 0; y < data.mineDelay; y++) {
-            setState(() => _status = """
-Mining in ${data.mineDelay - y} s
-${data.numBlocks - x} blocks left
-                                """);
-            await Future.delayed(const Duration(seconds: 1));
-          }
-        }
-
-        try {
-          final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
-          if (btcc == null) {
-            throw StateError('BitcoinCoreContainer not found');
-          }
-
-          await btcc.mineBlocks(MineBlockData(1));
-        } catch (e) {
-          debugPrint(e.toString());
-        }
-        setState(() => _status = "");
+      final mineData = data.mineData;
+      if (mineData == null) {
+        throw StateError('Blockdata can\'t be null when auto mine is enabled');
       }
-    }
 
-    setState(() => _status = "");
+      try {
+        final btcc = NetworkManager().findFirstOf<BitcoinCoreContainer>();
+        if (btcc == null) {
+          throw StateError('BitcoinCoreContainer not found');
+        }
+
+        await btcc.mineBlocks(MineBlockData(1));
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+      setState(() => _status = "");
+    }
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show Colors;
 import 'package:graph_network_canvas/graph_network_canvas.dart';
 import 'package:regtest_core/core.dart';
 /*
@@ -30,6 +31,43 @@ class ConnectionManager {
     if (btcc != null) {
       for (final n in lnNodes) {
         _connections.add(ConnectionData(n.internalId, btcc.internalId));
+      }
+    }
+
+    final bapis = NetworkManager()
+        .lnNodes
+        .map((e) => NetworkManager().findComplementaryNode(e))
+        .toList();
+
+    if (bapis.length != lnNodes.length) {
+      throw StateError('All nodes must have a complementary Blitz API node');
+    }
+
+    final channelIds = <String>[];
+
+    for (var n in bapis) {
+      if (n == null) continue;
+
+      final channels = await n.fetchChannels();
+      for (var c in channels) {
+        if (channelIds.contains(c.channel.channelId)) continue;
+        if (c.channel.channelId == null) continue;
+        if (c.channel.channelId!.isEmpty) continue;
+
+        channelIds.add(c.channel.channelId!);
+
+        double split = (1 / (c.ourFunds.btcTotal + c.otherFunds.btcTotal)) *
+            c.ourFunds.btcTotal;
+
+        final active = c.channel.active;
+        _connections.add(ConnectionData(
+          c.from.internalId,
+          c.to.internalId,
+          splitPercentage: split,
+          firstSegmentColor: active ? Colors.blue : Colors.grey.shade400,
+          secondSegmentColor: active ? Colors.orange : Colors.grey,
+          strokeWidth: 5,
+        ));
       }
     }
   }

@@ -474,4 +474,49 @@ class BlitzApiContainer extends DockerContainer {
 
     return null;
   }
+
+  Future<List<RegtestChannel>> fetchChannels([
+    bool includeClosed = false,
+  ]) async {
+    try {
+      final res = await _api
+          .getLightningApi()
+          .lightningListChannelsLightningListChannelsGet(
+            includeClosed: includeClosed,
+          );
+      final data = res.data;
+      if (data == null) return [];
+
+      final d = data.toList().map(
+        (e) {
+          final r = NetworkManager().nodeByPubKey(e.peerPublickey);
+          if (r == null) {
+            logMessage("Failed to find node for pubkey ${e.peerPublickey}");
+            throw StateError(
+              "Failed to find node for pubkey ${e.peerPublickey}",
+            );
+          }
+
+          return RegtestChannel(
+            e.channelId ?? "",
+            lnContainer,
+            BtcValue.fromMilliSat(e.balanceLocal ?? 0),
+            r,
+            BtcValue.fromMilliSat(e.balanceRemote ?? 0),
+            channel: e,
+          );
+        },
+      ).toList();
+
+      return d;
+    } catch (e) {
+      if (e is DioError) {
+        printDioError(e, "Error fetching channels from $containerName");
+      }
+
+      logMessage("$e");
+    }
+
+    return [];
+  }
 }
