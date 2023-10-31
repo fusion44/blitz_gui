@@ -20,6 +20,18 @@ class DockerArgBuilder {
     return this;
   }
 
+  DockerArgBuilder publishPort({int? from, int? to}) {
+    if (from == null && to == null) {
+      return this;
+    }
+
+    if (from != null && to == null) {
+      return addOption('--publish', '$from:$from');
+    }
+
+    return addOption('--publish', '$to:$from');
+  }
+
   /// Prepends '--environment' to the given value
   DockerArgBuilder addEnv(String val) => addOption('-e', val);
 

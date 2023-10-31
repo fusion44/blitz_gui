@@ -176,9 +176,8 @@ class LndContainer extends LnContainer {
     return DockerArgBuilder()
         .addArg('run')
         .addOption('--restart', 'always')
-        .addOption('--expose', _gRPCPort, omit: _gRPCPort == null)
-        .addOption('--expose', _restPort, omit: _restPort == null)
-        .addArg('--publish-all')
+        .publishPort(from: _gRPCPort, to: _gRPCPort)
+        .publishPort(from: _restPort, to: _restPort)
         .addOption('--volume', '$dataPath:/root/.lnd/')
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
@@ -200,8 +199,10 @@ class LndContainer extends LnContainer {
         .addArg('--protocol.wumbo-channels')
         .addArg('--tlsextraip=127.0.0.1')
         .addArg('--tlsextraip=0.0.0.0')
+        .addArg('--tlsextraip=${NetworkManager().gatewayIP}')
         .addArg('--tlsextradomain=localhost')
         .addArg('--tlsextradomain=$containerName')
+        .addArg('--debuglevel=debug')
         .build();
   }
 }

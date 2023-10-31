@@ -309,10 +309,9 @@ class BitcoinCoreContainer extends DockerContainer {
     final builder = DockerArgBuilder()
         .addArg("run")
         .addOption('--restart', 'always')
-        .addOption('--expose', '18443')
-        .addOption('--expose', '29000')
-        .addOption('--expose', '29001')
-        .addArg('--publish-all')
+        .publishPort(from: 18443, to: 18443)
+        .publishPort(from: 29000, to: 29000)
+        .publishPort(from: 29001, to: 29001)
         .addOption('--network', projectNetwork)
         .addOption('--name', containerName)
         .addArg('--detach');

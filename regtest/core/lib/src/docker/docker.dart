@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:fpdart/fpdart.dart';
+
 import '../../core.dart';
 
 export 'blocs/blocs.dart';
@@ -28,6 +30,40 @@ class ContainerData {
     this.parentId = '',
     this.bapi,
   });
+}
+
+Future<Option<String>> getDockerNetworkGateway() async {
+  try {
+    // Run the docker network inspect command
+    var result = await Process.run(
+      'docker',
+      ['network', 'inspect', projectNetwork],
+    );
+
+    if (result.exitCode != 0) {
+      print('Error: ${result.stderr}');
+
+      return Option.none();
+    }
+
+    List<dynamic> data = jsonDecode(result.stdout);
+
+    for (var network in data) {
+      if (network['Name'] == projectNetwork) {
+        String gateway = network['IPAM']['Config'][0]['Gateway'];
+
+        return Option.of(gateway);
+      }
+    }
+
+    print('Network $projectNetwork not found');
+
+    return Option.none();
+  } catch (e) {
+    print('An error occurred: $e');
+
+    return Option.none();
+  }
 }
 
 /// Returns a list of running containers

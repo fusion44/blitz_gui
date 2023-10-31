@@ -43,6 +43,9 @@ class NetworkManager {
 
   static final NetworkManager _instance = NetworkManager._internal();
 
+  String _gatewayIP = '';
+  String get gatewayIP => _gatewayIP;
+
   factory NetworkManager() => _instance;
 
   final StreamController<NetworkStateMessage> _netStateController =
@@ -254,6 +257,8 @@ class NetworkManager {
   }
 
   Future<void> _ensureDockerNetwork() async {
+    if (_gatewayIP.isNotEmpty) return;
+
     final networkArgs = [
       'network',
       'create',
@@ -262,6 +267,13 @@ class NetworkManager {
       projectNetwork
     ];
     await dockerCmd(networkArgs, '.');
+
+    final res = await getDockerNetworkGateway();
+    res.match(
+      () => throw StateError('Unable to get Gateway IP'),
+      (t) => _gatewayIP = t,
+    );
+    print('Found gateway $_gatewayIP');
   }
 
   Future<DockerContainer> createContainer(
