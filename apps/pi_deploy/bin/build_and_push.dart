@@ -57,7 +57,9 @@ final progress = <String, String>{};
 final console = Console();
 late final Coordinate printPos;
 
-final String pwd = '${Directory.current.path}/packages/apps/blitz_app';
+final String pwd = '${Directory.current.path}/apps/blitz_app';
+final String scriptPath =
+    '${Directory.current.path}/apps/pi_deploy/bin/scripts';
 
 void main() async {
   console.hideCursor();
@@ -159,7 +161,7 @@ Future<void> restartApps() async {
 final processes = <Process>[];
 Future<int> executeApp(Remote r) async {
   final p = await Process.start('bash', [
-    '${Directory.current.path}/scripts/restart_ui.sh',
+    '$scriptPath/restart_ui.sh',
     r.password,
     r.username,
     r.ip,
@@ -251,14 +253,20 @@ void copyRestartShellFiles() {
 
     String displayOption = '';
     if (r.displayWidth != null && r.displayHeight != null) {
-      displayOption = "-d '${r.displayWidth}, ${r.displayHeight}' ";
+      displayOption = "-d '${r.displayWidth}, ${r.displayHeight}'";
     }
 
     newFile.writeAsStringSync('''
 sudo setfacl -m u:admin:rw /dev/input/event*
-sudo kill -9 \$(pidof flutter-pi)
-sleep 1
-flutter-pi $displayOption~/dev/blitz_gui/ --observatory-host=0.0.0.0
+
+FLUTTER_PI_PID=\$(pidof flutter-pi)
+
+if [ -n "\$FLUTTER_PI_PID" ] && kill -0 "\$FLUTTER_PI_PID" &> /dev/null; then
+    sudo kill -9 "\$FLUTTER_PI_PID"
+    sleep  1
+fi
+
+flutter-pi $displayOption ~/dev/blitz_gui/ --observatory-host=0.0.0.0
 ''');
   }
 }
@@ -290,7 +298,7 @@ printUploadProgress() {
 
 Future<int> rsyncToRemote(Remote r) async {
   final p = await Process.start('bash', [
-    '${Directory.current.path}/scripts/push_files.sh',
+    '$scriptPath/push_files.sh',
     r.password,
     '$pwd/build/flutter_assets',
     '${r.username}@${r.ip}:/home/${r.username}/dev/blitz_gui/',
@@ -308,4 +316,14 @@ Future<int> rsyncToRemote(Remote r) async {
   p.stderr.transform(utf8.decoder).listen((error) => progress[r.name] = error);
 
   return p.exitCode;
+}
+
+Future<bool> isCommandAvailable(String command) async {
+  try {
+    final result = await Process.start('which', [command]);
+    final code = await result.exitCode;
+    return code == 0;
+  } catch (_) {
+    return false;
+  }
 }

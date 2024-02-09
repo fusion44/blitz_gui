@@ -1,6 +1,6 @@
 echo "Installing Blitz Dashboard"
 echo "Getting required libraries via apt"
-sudo apt install cmake libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev ttf-mscorefonts-installer fontconfig libsystemd-dev libinput-dev libudev-dev  libxkbcommon-dev
+sudo apt install cmake libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev ttf-mscorefonts-installer fontconfig libsystemd-dev libinput-dev libudev-dev libxkbcommon-dev libraspberrypi-dev raspberrypi-kernel-headers
 sudo fc-cache
 
 cd /tmp
@@ -20,7 +20,8 @@ sudo make install
 cd /tmp
 
 echo "Cloning Flutter Engine repository"
-git clone --depth 1 https://github.com/ardera/flutter-engine-binaries-for-arm.git engine-binaries
+# git clone --depth 1 https://github.com/ardera/flutter-engine-binaries-for-arm.git engine-binaries
+git clone --depth 1 https://github.com/ardera/flutter-engine-binaries-for-arm.git engine-binaries --branch engine_4a585b79294e830fa89c24924d58a27cc8fbf406 --single-branch
 cd engine-binaries
 sudo ./install.sh
 
