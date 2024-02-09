@@ -58,7 +58,7 @@ run-chrome:
 	flutter run -d chrome
 
 deploy-to-pi:
-	dart scripts/build_and_push.dart
+	dart apps/pi_deploy/bin/build_and_push.dart
 
 format:
 	flutter pub run import_sorter:main && dart format . --fix --set-exit-if-changed
