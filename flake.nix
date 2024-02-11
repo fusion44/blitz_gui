@@ -21,6 +21,7 @@
               sshpass # for the pi deploy script
               llvmPackages_latest.libcxxClang
               llvmPackages_latest.llvm
+              gtk3
               pkg-config
               ninja
               xorg.libX11

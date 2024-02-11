@@ -117,8 +117,8 @@ class SettingsRepository {
         _keyTheme: false,
         _keyEndpointUrls: [
           'http://0.0.0.0:11111',
-          'http://192.168.1.49/api',
-          'http://192.168.1.254/api',
+          'http://192.168.178.38/api',
+          'http://192.168.178.41/api',
           'http://127.0.0.1:8000/',
         ],
       });

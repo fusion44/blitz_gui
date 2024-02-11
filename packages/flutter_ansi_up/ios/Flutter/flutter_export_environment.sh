@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=/home/f44/dev/stuff/flutter"
-export "FLUTTER_APPLICATION_PATH=/home/f44/dev/blitz/gui/packages/flutter_ansi_up"
+export "FLUTTER_ROOT=/nix/store/c5rh4bzk9fc227m7ac2fvpiw6rxk1rd2-flutter-wrapped-3.16.7-sdk-links"
+export "FLUTTER_APPLICATION_PATH=/home/f44/dev/blitz/gui/no-compose/packages/flutter_ansi_up"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"
